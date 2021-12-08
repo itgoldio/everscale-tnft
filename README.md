@@ -434,4 +434,4 @@ Result: {
 ```
 
 <h1 id="interfaces">Система интерфейсов</h1>
-Мы разработали систему интерфейсов для True-NFT. Подробнее <a href="https://gitlab.itglobal.com/everscale/tnft-interfaces">по ссылке.</a>
+Мы разработали систему интерфейсов для True-NFT. Подробнее <a href="https://github.com/itgoldio/everscale-tnft-interfaces">по ссылке.</a>
