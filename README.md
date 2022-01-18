@@ -1,26 +1,66 @@
 # Update TNFT by itgold
 
+<div style="text-align: left">
+<img align="right" src="images/tnft_logo.png" width="200" alt="scenic logo"></img>
+</div>
+
+True-NFT (NFT) - это стандарт для представления права <br>собственности на невзаимозаменяемые токены, то есть там, <br> где каждый токен уникален.
+Технология позволяет хранить<br>контент nft как on-chain хранение, так и off-chain хранение (web2, IPFS)
+
 Ссылка на оригиналую версию TNFT (https://github.com/tonlabs/True-NFT/tree/main/components/true-nft-core)
 
 ## Содержание
 * [__Наши изменения__](#our_changes)
+    * [Система интерфейсов](#interfaces)
     * [Data](#ch_data)
     * [NftRoot](#ch_root)
 * [__Смарт-контракты:__](#smart_contracts)
-    * [Описание](#sm_description)
     * [NftRoot](#sm_nftroot)
     * [IndexBasis](#sm_indexBasis)
     * [Data](#sm_data)
     * [Index](#sm_index)
+* [__Поиск коллекции в ton.live__](#web_search)
 * [__Поиск контрактов в блокчейне:__](#search)
     * [Поиск NftRoot](#search_nftRoot)
     * [Поиск всех nft по владельцу и root адресу](#search_by_nftRoot&owner)
     * [Поиск всех nft владельца (без привязки к nftRoot address)](#search_nft_by_owner)
-* [__Система интерфейсов__](#interfaces)
 
 ***
 
+<h1>Обзор:</h1>
+
+Данная технология содержит 5 контрактов:
+
+* <a href="#sm_nftroot">NftRoot</a> - смарт-контракт, который отвечает за выпуск NFT и объединяет Data контракты (NFT) в одну коллекцию.
+
+* <a href="#sm_data">Data</a> - Контракт хранит информацию, которая по сути является NFT, а также отвечает за смену владельца.
+
+* <a href="#sm_index">Index</a> - контракт, который используется для поиска всех NFT для конкретного владельца.
+
+* <a href="#sm_indexBasis">IndexBasis</a> - Контракт, создание которого делает коллекцию "видимой" для всех.
+
+Ниже представлена диаграмма классов True-NFT.
+
+<h2>Class diagram</h2>
+
+![Class diagram](images/tnft-diagram.png "Class diagram")
+
+Изначально необходимо задеплоить NftRoot контракт, передав ему в конструкторе необходимые параметры. <br>
+
+Затем для более удобного поиска необходимо задеплоить IndexBasis, метод для деплоя: 
+```
+function deployIndexBasis(TvmCell codeIndexBasis) public onlyOwner
+```
+
+Далее можно минтить nft токены, каждый минт - деплой контракта Data контрактом NftRoot и автоматический деплой двух контрактов Index контрактом Data. <br> <a href="#2_deploy">2 индекса деплоятся</a> потому что в одном контракте индекса при деплое указываются все переменные (addrRoot, addrOwner, addrData), а во втором контракте индекса указываются только (addrOwner, addrData). addrRoot и addrOwner при "сборке" кода Index контракта "добавляются" к коду, пример можно посмотреть <a href="https://github.com/tonlabs/TON-Solidity-Compiler/blob/master/API.md#tvmsetcodesalt">тут</a>. Это позволяет получить разные codeHash у index контрактов, и затем легко искать контракты по codeHash. Пример <a href="#search_by_nftRoot&owner">тут</a>.
+
 <h1 id="our_changes">Наши изменения</h1>
+
+<h2 id="interfaces">Система интерфейсов</h2>
+Так как в данном репозитории представлена стандартная реализация True-NFT - была разработана система интерфесов, которая позволяет с помощью модулей (интерфейсов) доработать контракты под необходимую бизнес-логику.
+Подробнее <a href="https://gitlab.itglobal.com/everscale/tnft-interfaces">по ссылке.</a>
+<br>
+<br>
 
 <h2 id="ch_data">Data:</h2>
 
@@ -111,16 +151,6 @@ ownershipTransferred(addrOldOwner, addrNewOwner)
 ***
 
 <h1 id="smart_contracts">Смарт-контракты</h1>
-
-<h2 id="sm_description">Описание смарт-контрактов:</h2>
-
-* NftRoot - смарт-контракт, который отвечает за выпуск NFT.
-
-* Data - Контракт хранит информацию, которая по сути является NFT, а также отвечает за смену владельца.
-
-* Index - контракт, который используется для поиска всех NFT для конкретного владельца.
-
-* IndexBasis - Контракт, который используется для поиска всех корней и всех NFT.
 
 <h2 id="sm_nftroot"><b>NftRoot:</b></h2>
 Минтит Data контракты, а так же выпускает IndexBasis.
@@ -432,6 +462,3 @@ Result: {
   "addrData": "0:45e3dbe901b7f9946d345ef959c9ff057d273800e033e836ec79d3a44a4f43c8"
 }
 ```
-
-<h1 id="interfaces">Система интерфейсов</h1>
-Мы разработали систему интерфейсов для True-NFT. Подробнее <a href="https://github.com/itgoldio/everscale-tnft-interfaces">по ссылке.</a>
