@@ -49,7 +49,7 @@ contract NftRoot is DataResolver, IndexResolver {
     function mintNft() public {
         require(msg.value >= (_indexDeployValue * 2) + _remainOnData + _processingValue, NftRootErrors.value_less_than_required);
         tvm.accept();
-        tvm.rawReserve(msg.value, 0);
+        tvm.rawReserve(msg.value, 1);
 
         TvmCell codeData = _buildDataCode(address(this));
         TvmCell stateData = _buildDataState(codeData, _totalMinted);
