@@ -2,6 +2,7 @@ pragma ton-solidity >=0.43.0;
 
 pragma AbiHeader expire;
 pragma AbiHeader time;
+pragma AbiHeader pubkey;
 
 import './resolvers/IndexResolver.sol';
 import './interfaces/IData.sol';
@@ -11,10 +12,9 @@ contract Data is IData, IndexResolver {
     address _addrRoot;
     address _addrOwner;
 
-    uint128 _indexDeployValue = 0.4 ton;
-    uint128 _processingValue = 0.2 ton;
-
     uint256 static _id;
+
+    uint128 _indexDeployValue;
 
     event tokenWasMinted(address owner);
     event ownershipTransferred(address oldOwner, address newOwner);
@@ -22,20 +22,18 @@ contract Data is IData, IndexResolver {
     constructor(
         address addrOwner, 
         TvmCell codeIndex,
-        uint128 indexDeployValue,
-        uint128 processingValue
+        uint128 indexDeployValue
     ) public {
         optional(TvmCell) optSalt = tvm.codeSalt(tvm.code());
         require(optSalt.hasValue(), DataErrors.value_is_empty);
         (address addrRoot) = optSalt.get().toSlice().decode(address);
         require(msg.sender == addrRoot, DataErrors.sender_is_not_root);
-        require(msg.value >= (_indexDeployValue * 2) + _processingValue, DataErrors.value_less_than_required);
+        require(msg.value >= (_indexDeployValue * 2), DataErrors.value_less_than_required);
         tvm.accept();
         _addrRoot = addrRoot;
         _addrOwner = addrOwner;
         _codeIndex = codeIndex;
         _indexDeployValue = indexDeployValue;
-        _processingValue = processingValue;
 
         emit tokenWasMinted(addrOwner);
 
@@ -44,7 +42,7 @@ contract Data is IData, IndexResolver {
 
     function transferOwnership(address addrTo) public override {
         require(msg.sender == _addrOwner, DataErrors.sender_is_not_owner);
-        require(msg.value >= (_indexDeployValue * 2) + _processingValue, DataErrors.value_less_than_required);
+        require(msg.value >= (_indexDeployValue * 2), DataErrors.value_less_than_required);
         require(addrTo != address(0), DataErrors.value_is_empty);
 
         address oldIndexOwner = resolveIndex(_addrRoot, address(this), _addrOwner);
@@ -69,7 +67,7 @@ contract Data is IData, IndexResolver {
     }
 
     function redeployIndex() public view onlyOwner {
-        require (msg.value >= (_indexDeployValue * 2) + _processingValue, DataErrors.value_less_than_required);
+        require (msg.value >= (_indexDeployValue * 2), DataErrors.value_less_than_required);
         tvm.accept();
 
         address oldIndexOwner = resolveIndex(address(0), address(this), _addrOwner);
@@ -121,17 +119,8 @@ contract Data is IData, IndexResolver {
         _indexDeployValue = indexDeployValue;
     } 
 
-    function setProcessingValue(uint128 processingValue) public onlyOwner {
-        tvm.accept();
-        _processingValue = processingValue;
-    } 
-
     function getIndexDeployValue() public view returns(uint128) {
         return _indexDeployValue;
-    }
-
-    function getProcessingValue() public view returns(uint128) {
-        return _processingValue;
     }
 
 }
