@@ -23,9 +23,6 @@ contract NftRoot is DataResolver, IndexResolver {
 
     /// _indexDeployValue will be spent on the Index deployment in the Data contract
     uint128 _indexDeployValue = 0.4 ton;
-    /// _processingValue - will be spent on executing the mint method
-    /// if you want to earn on the remainder, remove the rawReserve
-    uint128 _processingValue = 0.9 ton;
     /// _remainOnData - the number of crystals that will remain after the entire mint 
     /// process is completed on the Data contract
     uint128 _remainOnData = 0.3 ton;
@@ -48,9 +45,7 @@ contract NftRoot is DataResolver, IndexResolver {
     }
 
     function mintNft() public {
-        require(msg.value >= (_indexDeployValue * 2) + _remainOnData, NftRootErrors.value_less_than_required);
-        tvm.accept();
-        tvm.rawReserve(msg.value, 1);
+        tvm.rawReserve(0 ton, 4);
 
         TvmCell codeData = _buildDataCode(address(this));
         TvmCell stateData = _buildDataState(codeData, _totalMinted);
@@ -71,7 +66,7 @@ contract NftRoot is DataResolver, IndexResolver {
     }
 
     function deployIndexBasis(TvmCell codeIndexBasis) public onlyOwner {
-        require(address(this).balance > _deployIndexBasisValue + 0.1 ton, NftRootErrors.value_less_than_required); /// 0.1 ton this is freeze protection
+        tvm.rawReserve(0.1 ton, 4);
         uint256 codeHashData = resolveCodeHashData();
         TvmCell state = tvm.buildStateInit({
             contr: IndexBasis,
@@ -99,11 +94,6 @@ contract NftRoot is DataResolver, IndexResolver {
         tvm.accept();
         _indexDeployValue = indexDeployValue;
     }
-    
-    function setProcessingValue(uint128 processingValue) public onlyOwner {
-        tvm.accept();
-        _processingValue = processingValue;
-    }
 
     function setRemainOnData(uint128 remainOnData) public onlyOwner {
         tvm.accept();
@@ -117,10 +107,6 @@ contract NftRoot is DataResolver, IndexResolver {
 
     function getIndexDeployValue() public view returns(uint128) {
         return _indexDeployValue;
-    }
-
-    function getProcessingValue() public view returns(uint128) {
-        return _processingValue;
     }
 
     function getRemainOnData() public view returns(uint128) {

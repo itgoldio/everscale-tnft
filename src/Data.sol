@@ -40,11 +40,9 @@ contract Data is IData, IndexResolver {
         deployIndex(addrOwner);
     }
 
-    function transferOwnership(address addrTo) public override {
-        require(msg.sender == _addrOwner, DataErrors.sender_is_not_owner);
+    function transferOwnership(address addrTo) public override onlyOwner {
         require(msg.value >= (_indexDeployValue * 2), DataErrors.value_less_than_required);
         require(addrTo != address(0), DataErrors.value_is_empty);
-        tvm.rawReserve(msg.value, 1);
 
         address oldIndexOwner = resolveIndex(_addrRoot, address(this), _addrOwner);
         IIndex(oldIndexOwner).destruct();
@@ -72,14 +70,14 @@ contract Data is IData, IndexResolver {
     function redeployIndex() public view onlyOwner {
         require (msg.value >= (_indexDeployValue * 2), DataErrors.value_less_than_required);
         tvm.accept();
-        tvm.rawReserve(msg.value, 1);
+
 
         address oldIndexOwner = resolveIndex(address(0), address(this), _addrOwner);
-        IIndex(oldIndexOwner).destruct();
+        IIndex(oldIndexOwner).destruct(); // Like tvm.commit
         address oldIndexOwnerRoot = resolveIndex(_addrRoot, address(this), _addrOwner);
-        IIndex(oldIndexOwnerRoot).destruct();
+        IIndex(oldIndexOwnerRoot).destruct(); // Like tvm.commit
 
-        deployIndex(_addrOwner);
+        deployIndex(_addrOwner); // Like tvm.commit
 
         _addrOwner.transfer({value: 0, flag: 128});
     }
@@ -121,7 +119,6 @@ contract Data is IData, IndexResolver {
 
     function setIndexDeployValue(uint128 indexDeployValue) public onlyOwner {
         tvm.accept();
-        tvm.rawReserve(msg.value, 1);
 
         _indexDeployValue = indexDeployValue;
 
@@ -130,7 +127,6 @@ contract Data is IData, IndexResolver {
 
     function setIndexCode(TvmCell codeIndex) public onlyOwner {
         tvm.accept();
-        tvm.rawReserve(msg.value, 1);
         
         _codeIndex = codeIndex;
     
