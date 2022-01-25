@@ -2,6 +2,7 @@ pragma ton-solidity >=0.43.0;
 
 pragma AbiHeader expire;
 pragma AbiHeader time;
+pragma AbiHeader pubkey;
 
 import './resolvers/IndexResolver.sol';
 import './interfaces/IData.sol';
@@ -11,10 +12,9 @@ contract Data is IData, IndexResolver {
     address _addrRoot;
     address _addrOwner;
 
-    uint128 _indexDeployValue = 0.4 ton;
-    uint128 _processingValue = 0.2 ton;
-
     uint256 static _id;
+
+    uint128 _indexDeployValue;
 
     event tokenWasMinted(address owner);
     event ownershipTransferred(address oldOwner, address newOwner);
@@ -22,20 +22,18 @@ contract Data is IData, IndexResolver {
     constructor(
         address addrOwner, 
         TvmCell codeIndex,
-        uint128 indexDeployValue,
-        uint128 processingValue
+        uint128 indexDeployValue
     ) public {
         optional(TvmCell) optSalt = tvm.codeSalt(tvm.code());
         require(optSalt.hasValue(), DataErrors.value_is_empty);
         (address addrRoot) = optSalt.get().toSlice().decode(address);
         require(msg.sender == addrRoot, DataErrors.sender_is_not_root);
-        require(msg.value >= (_indexDeployValue * 2) + _processingValue, DataErrors.value_less_than_required);
+        require(msg.value >= (_indexDeployValue * 2), DataErrors.value_less_than_required);
         tvm.accept();
         _addrRoot = addrRoot;
         _addrOwner = addrOwner;
         _codeIndex = codeIndex;
         _indexDeployValue = indexDeployValue;
-        _processingValue = processingValue;
 
         emit tokenWasMinted(addrOwner);
 
@@ -44,8 +42,9 @@ contract Data is IData, IndexResolver {
 
     function transferOwnership(address addrTo) public override {
         require(msg.sender == _addrOwner, DataErrors.sender_is_not_owner);
-        require(msg.value >= (_indexDeployValue * 2) + _processingValue, DataErrors.value_less_than_required);
+        require(msg.value >= (_indexDeployValue * 2), DataErrors.value_less_than_required);
         require(addrTo != address(0), DataErrors.value_is_empty);
+        tvm.rawReserve(msg.value, 1);
 
         address oldIndexOwner = resolveIndex(_addrRoot, address(this), _addrOwner);
         IIndex(oldIndexOwner).destruct();
@@ -56,6 +55,8 @@ contract Data is IData, IndexResolver {
 
         _addrOwner = addrTo;
         deployIndex(addrTo);
+
+        _addrOwner.transfer({value: 0, flag: 128});
     }
 
     function deployIndex(address owner) private view {
@@ -69,8 +70,9 @@ contract Data is IData, IndexResolver {
     }
 
     function redeployIndex() public view onlyOwner {
-        require (msg.value >= (_indexDeployValue * 2) + _processingValue, DataErrors.value_less_than_required);
+        require (msg.value >= (_indexDeployValue * 2), DataErrors.value_less_than_required);
         tvm.accept();
+        tvm.rawReserve(msg.value, 1);
 
         address oldIndexOwner = resolveIndex(address(0), address(this), _addrOwner);
         IIndex(oldIndexOwner).destruct();
@@ -78,11 +80,8 @@ contract Data is IData, IndexResolver {
         IIndex(oldIndexOwnerRoot).destruct();
 
         deployIndex(_addrOwner);
-    }
 
-    function setIndexCode(TvmCell codeIndex) public onlyOwner {
-        tvm.accept();
-        _codeIndex = codeIndex;
+        _addrOwner.transfer({value: 0, flag: 128});
     }
 
     /// @return addrRoot address NftRoot
@@ -111,6 +110,10 @@ contract Data is IData, IndexResolver {
         addrOwner = _addrOwner;
     }
 
+    function getIndexDeployValue() public view returns(uint128) {
+        return _indexDeployValue;
+    }
+
     modifier onlyOwner {
         require(msg.sender == _addrOwner);
         _;
@@ -118,20 +121,20 @@ contract Data is IData, IndexResolver {
 
     function setIndexDeployValue(uint128 indexDeployValue) public onlyOwner {
         tvm.accept();
+        tvm.rawReserve(msg.value, 1);
+
         _indexDeployValue = indexDeployValue;
+
+        _addrOwner.transfer({value: 0, flag: 128});
     } 
 
-    function setProcessingValue(uint128 processingValue) public onlyOwner {
+    function setIndexCode(TvmCell codeIndex) public onlyOwner {
         tvm.accept();
-        _processingValue = processingValue;
-    } 
-
-    function getIndexDeployValue() public view returns(uint128) {
-        return _indexDeployValue;
-    }
-
-    function getProcessingValue() public view returns(uint128) {
-        return _processingValue;
+        tvm.rawReserve(msg.value, 1);
+        
+        _codeIndex = codeIndex;
+    
+        _addrOwner.transfer({value: 0, flag: 128});
     }
 
 }

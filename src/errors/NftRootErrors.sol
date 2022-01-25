@@ -8,4 +8,5 @@ library NftRootErrors {
     uint8 constant not_my_pubkey = 101;
     uint8 constant value_less_than_required = 102;
     uint8 constant index_not_deployed = 103;
+    uint8 constant value_is_greater_than_the_balance = 104;
 }

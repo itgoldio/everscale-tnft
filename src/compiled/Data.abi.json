@@ -1,14 +1,13 @@
 {
 	"ABI version": 2,
-	"header": ["time", "expire"],
+	"header": ["pubkey", "time", "expire"],
 	"functions": [
 		{
 			"name": "constructor",
 			"inputs": [
 				{"name":"addrOwner","type":"address"},
 				{"name":"codeIndex","type":"cell"},
-				{"name":"indexDeployValue","type":"uint128"},
-				{"name":"processingValue","type":"uint128"}
+				{"name":"indexDeployValue","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -24,14 +23,6 @@
 		{
 			"name": "redeployIndex",
 			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setIndexCode",
-			"inputs": [
-				{"name":"codeIndex","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -66,22 +57,6 @@
 			]
 		},
 		{
-			"name": "setIndexDeployValue",
-			"inputs": [
-				{"name":"indexDeployValue","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setProcessingValue",
-			"inputs": [
-				{"name":"processingValue","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "getIndexDeployValue",
 			"inputs": [
 			],
@@ -90,11 +65,19 @@
 			]
 		},
 		{
-			"name": "getProcessingValue",
+			"name": "setIndexDeployValue",
 			"inputs": [
+				{"name":"indexDeployValue","type":"uint128"}
 			],
 			"outputs": [
-				{"name":"value0","type":"uint128"}
+			]
+		},
+		{
+			"name": "setIndexCode",
+			"inputs": [
+				{"name":"codeIndex","type":"cell"}
+			],
+			"outputs": [
 			]
 		},
 		{

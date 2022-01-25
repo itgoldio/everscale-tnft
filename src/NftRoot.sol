@@ -2,6 +2,7 @@ pragma ton-solidity >=0.43.0;
 
 pragma AbiHeader expire;
 pragma AbiHeader time;
+pragma AbiHeader pubkey;
 
 import './resolvers/IndexResolver.sol';
 import './resolvers/DataResolver.sol';
@@ -47,7 +48,7 @@ contract NftRoot is DataResolver, IndexResolver {
     }
 
     function mintNft() public {
-        require(msg.value >= (_indexDeployValue * 2) + _remainOnData + _processingValue, NftRootErrors.value_less_than_required);
+        require(msg.value >= (_indexDeployValue * 2) + _remainOnData, NftRootErrors.value_less_than_required);
         tvm.accept();
         tvm.rawReserve(msg.value, 1);
 
@@ -59,8 +60,7 @@ contract NftRoot is DataResolver, IndexResolver {
             }(
                 msg.sender, 
                 _codeIndex,
-                _indexDeployValue,
-                _processingValue
+                _indexDeployValue
             ); 
 
         emit tokenWasMinted(dataAddr, msg.sender);
@@ -71,7 +71,7 @@ contract NftRoot is DataResolver, IndexResolver {
     }
 
     function deployIndexBasis(TvmCell codeIndexBasis) public onlyOwner {
-        require(msg.value > _deployIndexBasisValue + 0.1 ton, NftRootErrors.value_less_than_required);
+        require(address(this).balance > _deployIndexBasisValue + 0.1 ton, NftRootErrors.value_less_than_required); /// 0.1 ton this is freeze protection
         uint256 codeHashData = resolveCodeHashData();
         TvmCell state = tvm.buildStateInit({
             contr: IndexBasis,
@@ -89,9 +89,10 @@ contract NftRoot is DataResolver, IndexResolver {
         IIndexBasis(_addrIndexBasis).destruct();
     }
 
-    modifier onlyOwner {
-        require(msg.pubkey() == _ownerPubkey, NftRootErrors.not_my_pubkey);
-        _;
+    function withdraw(address to, uint128 value) public pure onlyOwner {
+        require(address(this).balance > value, NftRootErrors.value_is_greater_than_the_balance);
+        tvm.accept();
+        to.transfer(value, true, 0);
     }
 
     function setIndexDeployValue(uint128 indexDeployValue) public onlyOwner {
@@ -129,5 +130,10 @@ contract NftRoot is DataResolver, IndexResolver {
     function getDeployIndexValue() public view returns(uint128) {
         return _deployIndexBasisValue;
     }   
+
+    modifier onlyOwner {
+        require(msg.pubkey() == _ownerPubkey, NftRootErrors.not_my_pubkey);
+        _;
+    }
 
 }
