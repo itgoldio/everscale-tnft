@@ -28,14 +28,6 @@
 			]
 		},
 		{
-			"name": "setIndexCode",
-			"inputs": [
-				{"name":"codeIndex","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "getInfo",
 			"inputs": [
 			],
@@ -65,6 +57,14 @@
 			]
 		},
 		{
+			"name": "getIndexDeployValue",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint128"}
+			]
+		},
+		{
 			"name": "setIndexDeployValue",
 			"inputs": [
 				{"name":"indexDeployValue","type":"uint128"}
@@ -73,11 +73,11 @@
 			]
 		},
 		{
-			"name": "getIndexDeployValue",
+			"name": "setIndexCode",
 			"inputs": [
+				{"name":"codeIndex","type":"cell"}
 			],
 			"outputs": [
-				{"name":"value0","type":"uint128"}
 			]
 		},
 		{

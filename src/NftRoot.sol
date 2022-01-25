@@ -71,7 +71,7 @@ contract NftRoot is DataResolver, IndexResolver {
     }
 
     function deployIndexBasis(TvmCell codeIndexBasis) public onlyOwner {
-        require(address(this).balance > _deployIndexBasisValue + 0.1 ton, NftRootErrors.value_less_than_required);
+        require(address(this).balance > _deployIndexBasisValue + 0.1 ton, NftRootErrors.value_less_than_required); /// 0.1 ton this is freeze protection
         uint256 codeHashData = resolveCodeHashData();
         TvmCell state = tvm.buildStateInit({
             contr: IndexBasis,
