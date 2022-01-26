@@ -13,21 +13,6 @@
 			]
 		},
 		{
-			"name": "transferOwnership",
-			"inputs": [
-				{"name":"addrTo","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "redeployIndex",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "getInfo",
 			"inputs": [
 			],
@@ -49,19 +34,43 @@
 			]
 		},
 		{
-			"name": "getOwner",
+			"name": "transferOwnership",
 			"inputs": [
+				{"name":"addrTo","type":"address"}
 			],
 			"outputs": [
-				{"name":"addrOwner","type":"address"}
 			]
 		},
 		{
-			"name": "getIndexDeployValue",
+			"name": "getRequiredInterfaces",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"value0","type":"uint128"}
+				{"name":"requiredInterfaces","type":"int256[]"}
+			]
+		},
+		{
+			"name": "getRequiredInterfacesResponsible",
+			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"requiredInterfaces","type":"int256[]"}
+			]
+		},
+		{
+			"name": "redeployIndex",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setIndexCode",
+			"inputs": [
+				{"name":"codeIndex","type":"cell"}
+			],
+			"outputs": [
 			]
 		},
 		{
@@ -73,11 +82,35 @@
 			]
 		},
 		{
-			"name": "setIndexCode",
+			"name": "getSummaryRoyalty",
 			"inputs": [
-				{"name":"codeIndex","type":"cell"}
 			],
 			"outputs": [
+				{"name":"royaltyValue","type":"uint128"}
+			]
+		},
+		{
+			"name": "getRoyalty",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"royalty","type":"map(address,uint128)"}
+			]
+		},
+		{
+			"name": "getIndexDeployValue",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint128"}
+			]
+		},
+		{
+			"name": "getOwner",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"addrOwner","type":"address"}
 			]
 		},
 		{
@@ -107,18 +140,18 @@
 	],
 	"events": [
 		{
-			"name": "tokenWasMinted",
+			"name": "ownershipTransferred",
 			"inputs": [
-				{"name":"owner","type":"address"}
+				{"name":"oldOwner","type":"address"},
+				{"name":"newOwner","type":"address"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "ownershipTransferred",
+			"name": "tokenWasMinted",
 			"inputs": [
-				{"name":"oldOwner","type":"address"},
-				{"name":"newOwner","type":"address"}
+				{"name":"owner","type":"address"}
 			],
 			"outputs": [
 			]

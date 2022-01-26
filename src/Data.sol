@@ -4,20 +4,12 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import './resolvers/IndexResolver.sol';
-import './interfaces/IData.sol';
-import './errors/DataErrors.sol';
+import '../everscale-tnft-interfaces/DataInterfaces/IRequiredInterfaces/IRequiredInterfaces.sol';
+import '../everscale-tnft-interfaces/DataInterfaces/IDataBase/IDataBase.sol';
+import '../everscale-tnft-interfaces/DataInterfaces/ITransfer/ITransfer.sol';
+import '../everscale-tnft-interfaces/DataInterfaces/IGetInfo/IGetInfo.sol';
 
-contract Data is IData, IndexResolver {
-    address _addrRoot;
-    address _addrOwner;
-
-    uint256 static _id;
-
-    uint128 _indexDeployValue;
-
-    event tokenWasMinted(address owner);
-    event ownershipTransferred(address oldOwner, address newOwner);
+contract Data is DataBase, RequiredInterfaces, Transfer, GetInfo {
 
     constructor(
         address addrOwner, 
@@ -35,106 +27,14 @@ contract Data is IData, IndexResolver {
         _codeIndex = codeIndex;
         _indexDeployValue = indexDeployValue;
 
+        /// simple royalty, 5 percent will be received by the creator (NftRoot)
+        _royalty[msg.sender] = 5;
+
+        _requiredInterfaces = [RequiredInterfacesLib.ID, DataBaseLib.ID, TransferLib.ID, GetInfoLib.ID];
+
         emit tokenWasMinted(addrOwner);
 
         deployIndex(addrOwner);
-    }
-
-    function transferOwnership(address addrTo) public override {
-        require(msg.sender == _addrOwner, DataErrors.sender_is_not_owner);
-        require(msg.value >= (_indexDeployValue * 2), DataErrors.value_less_than_required);
-        require(addrTo != address(0), DataErrors.value_is_empty);
-        tvm.rawReserve(msg.value, 1);
-
-        address oldIndexOwner = resolveIndex(_addrRoot, address(this), _addrOwner);
-        IIndex(oldIndexOwner).destruct();
-        address oldIndexOwnerRoot = resolveIndex(address(0), address(this), _addrOwner);
-        IIndex(oldIndexOwnerRoot).destruct();
-
-        emit ownershipTransferred(_addrOwner, addrTo);
-
-        _addrOwner = addrTo;
-        deployIndex(addrTo);
-
-        _addrOwner.transfer({value: 0, flag: 128});
-    }
-
-    function deployIndex(address owner) private view {
-        TvmCell codeIndexOwner = _buildIndexCode(_addrRoot, owner);
-        TvmCell stateIndexOwner = _buildIndexState(codeIndexOwner, address(this));
-        new Index{stateInit: stateIndexOwner, value: _indexDeployValue}(_addrRoot);
-
-        TvmCell codeIndexOwnerRoot = _buildIndexCode(address(0), owner);
-        TvmCell stateIndexOwnerRoot = _buildIndexState(codeIndexOwnerRoot, address(this));
-        new Index{stateInit: stateIndexOwnerRoot, value: _indexDeployValue}(_addrRoot);
-    }
-
-    function redeployIndex() public view onlyOwner {
-        require (msg.value >= (_indexDeployValue * 2), DataErrors.value_less_than_required);
-        tvm.accept();
-        tvm.rawReserve(msg.value, 1);
-
-        address oldIndexOwner = resolveIndex(address(0), address(this), _addrOwner);
-        IIndex(oldIndexOwner).destruct();
-        address oldIndexOwnerRoot = resolveIndex(_addrRoot, address(this), _addrOwner);
-        IIndex(oldIndexOwnerRoot).destruct();
-
-        deployIndex(_addrOwner);
-
-        _addrOwner.transfer({value: 0, flag: 128});
-    }
-
-    /// @return addrRoot address NftRoot
-    /// @return addrOwner address contract owner ( _addrOwner )
-    /// @return addrData address of storage contract (since the nft content is stored outside the blockchain, we simply return address(this), this parameter is not used in any way)
-    function getInfo() public view override returns (
-        address addrRoot,
-        address addrOwner,
-        address addrData
-    ) {
-        addrRoot = _addrRoot;
-        addrOwner = _addrOwner;
-        addrData = address(this);
-    }
-
-    /// @notice used to get information by another contract
-    function getInfoResponsible() public view responsible returns (
-        address addrRoot,
-        address addrOwner,
-        address addrData
-    ) {
-        return {value: 0, flag: 64} (_addrRoot, _addrOwner, address(this));
-    }
-
-    function getOwner() public view override returns(address addrOwner) {
-        addrOwner = _addrOwner;
-    }
-
-    function getIndexDeployValue() public view returns(uint128) {
-        return _indexDeployValue;
-    }
-
-    modifier onlyOwner {
-        require(msg.sender == _addrOwner);
-        _;
-    }
-
-    function setIndexDeployValue(uint128 indexDeployValue) public onlyOwner {
-        tvm.accept();
-        tvm.rawReserve(msg.value, 1);
-
-        _indexDeployValue = indexDeployValue;
-
-        _addrOwner.transfer({value: 0, flag: 128});
-    } 
-
-    function setIndexCode(TvmCell codeIndex) public onlyOwner {
-        tvm.accept();
-        tvm.rawReserve(msg.value, 1);
-        
-        _codeIndex = codeIndex;
-    
-        _addrOwner.transfer({value: 0, flag: 128});
     }
 
 }
