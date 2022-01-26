@@ -4,10 +4,10 @@ pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import '../everscale-tnft-interfaces/DataInterfaces/IRequiredInterfaces/IRequiredInterfaces.sol';
-import '../everscale-tnft-interfaces/DataInterfaces/IDataBase/IDataBase.sol';
-import '../everscale-tnft-interfaces/DataInterfaces/ITransfer/ITransfer.sol';
-import '../everscale-tnft-interfaces/DataInterfaces/IGetInfo/IGetInfo.sol';
+import './interfaces/IDataBase.sol';
+import './interfaces/IRequiredInterfaces.sol';
+import './interfaces/IGetInfo.sol';
+import './interfaces/ITransfer.sol';
 
 contract Data is DataBase, RequiredInterfaces, Transfer, GetInfo {
 

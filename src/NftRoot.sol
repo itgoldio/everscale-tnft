@@ -129,7 +129,11 @@ contract NftRoot is DataResolver, IndexResolver {
 
     function getDeployIndexValue() public view returns(uint128) {
         return _deployIndexBasisValue;
-    }   
+    }  
+
+    function getIndexBasisAddress() public view returns(address) {
+        return _addrIndexBasis;
+    } 
 
     modifier onlyOwner {
         require(msg.pubkey() == _ownerPubkey, NftRootErrors.not_my_pubkey);

@@ -108,6 +108,14 @@
 			]
 		},
 		{
+			"name": "getIndexBasisAddress",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"address"}
+			]
+		},
+		{
 			"name": "resolveCodeHashIndex",
 			"inputs": [
 				{"name":"addrRoot","type":"address"},
