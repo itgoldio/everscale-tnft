@@ -12,29 +12,6 @@
 			]
 		},
 		{
-			"name": "transferOwnership",
-			"inputs": [
-				{"name":"addrTo","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "redeployIndex",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setIndexCode",
-			"inputs": [
-				{"name":"codeIndex","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "getInfo",
 			"inputs": [
 			],
@@ -56,11 +33,23 @@
 			]
 		},
 		{
-			"name": "getOwner",
+<<<<<<< HEAD:tnft-interfaces/NftInterfaces/IRequiredInterfaces/Example/compiled/Data.abi.json
+			"name": "setIndexCode",
 			"inputs": [
+				{"name":"codeIndex","type":"cell"}
 			],
 			"outputs": [
-				{"name":"addrOwner","type":"address"}
+			]
+		},
+		{
+			"name": "getInfo",
+=======
+			"name": "transferOwnership",
+>>>>>>> ebc03091fdc62ffb69045616aaa13ba86cbca9e8:src/compiled/Data.abi.json
+			"inputs": [
+				{"name":"addrTo","type":"address"}
+			],
+			"outputs": [
 			]
 		},
 		{
@@ -78,6 +67,76 @@
 			],
 			"outputs": [
 				{"name":"requiredInterfaces","type":"int256[]"}
+			]
+		},
+		{
+			"name": "redeployIndex",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+<<<<<<< HEAD:tnft-interfaces/NftInterfaces/IRequiredInterfaces/Example/compiled/Data.abi.json
+			"name": "getRequiredInterfaces",
+=======
+			"name": "setIndexCode",
+>>>>>>> ebc03091fdc62ffb69045616aaa13ba86cbca9e8:src/compiled/Data.abi.json
+			"inputs": [
+				{"name":"codeIndex","type":"cell"}
+			],
+			"outputs": [
+<<<<<<< HEAD:tnft-interfaces/NftInterfaces/IRequiredInterfaces/Example/compiled/Data.abi.json
+				{"name":"requiredInterfaces","type":"int256[]"}
+=======
+>>>>>>> ebc03091fdc62ffb69045616aaa13ba86cbca9e8:src/compiled/Data.abi.json
+			]
+		},
+		{
+			"name": "getRequiredInterfacesResponsible",
+			"inputs": [
+<<<<<<< HEAD:tnft-interfaces/NftInterfaces/IRequiredInterfaces/Example/compiled/Data.abi.json
+				{"name":"_answer_id","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"requiredInterfaces","type":"int256[]"}
+=======
+				{"name":"indexDeployValue","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getSummaryRoyalty",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"royaltyValue","type":"uint128"}
+			]
+		},
+		{
+			"name": "getRoyalty",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"royalty","type":"map(address,uint128)"}
+			]
+		},
+		{
+			"name": "getIndexDeployValue",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint128"}
+			]
+		},
+		{
+			"name": "getOwner",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"addrOwner","type":"address"}
+>>>>>>> ebc03091fdc62ffb69045616aaa13ba86cbca9e8:src/compiled/Data.abi.json
 			]
 		},
 		{
@@ -107,18 +166,18 @@
 	],
 	"events": [
 		{
-			"name": "tokenWasMinted",
+			"name": "ownershipTransferred",
 			"inputs": [
-				{"name":"owner","type":"address"}
+				{"name":"oldOwner","type":"address"},
+				{"name":"newOwner","type":"address"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "ownershipTransferred",
+			"name": "tokenWasMinted",
 			"inputs": [
-				{"name":"oldOwner","type":"address"},
-				{"name":"newOwner","type":"address"}
+				{"name":"owner","type":"address"}
 			],
 			"outputs": [
 			]
