@@ -29,6 +29,27 @@ def mint(setcodemultisig, nft_root):
     
     return nft
 
+def resolveIndexes(nft_root, nft, setcodemultisig): 
+    zero_address = ts4.Address('0:' + '0'*64)
+    addr_or = nft.call_getter('resolveIndex', {'addrRoot': nft_root.address, 'addrData': nft.address, 'addrOwner': setcodemultisig.address})
+    addr_o = nft.call_getter('resolveIndex', {'addrRoot': zero_address, 'addrData': nft.address, 'addrOwner': setcodemultisig.address})
+
+    ts4.Address.ensure_address(addr_or)
+    index_1 = ts4.BaseContract('Index', ctor_params = None, address = addr_or)
+    ts4.Address.ensure_address(addr_o)
+    index_2 = ts4.BaseContract('Index', ctor_params = None, address = addr_o)
+
+    return index_1, index_2
+
+def verify_indexes(nft_root, nft, setcodemultisig): 
+    (index_1, index_2) = resolveIndexes(nft_root, nft, setcodemultisig)
+    answer = index_1.call_getter('getInfo')
+    exp_answer = (nft_root.address, setcodemultisig.address, nft.address)
+    assert eq(exp_answer, answer)
+    answer = index_2.call_getter('getInfo')
+    exp_answer = (nft_root.address, setcodemultisig.address, nft.address)
+    assert eq(exp_answer, answer)
+
 def getIndexBasisAddress(nft_root):
     return nft_root.call_getter('getIndexBasisAddress')
 
@@ -55,7 +76,7 @@ def get_info(nft):
     return nft.call_getter('getInfo')
 
 def get_owner(nft):
-    return nft.call_getter('getOwner')
+    return nft.call_getter('getOwner', {'_answer_id': 0})
 
 def transfer_ownership(nft, owner, new_owner):
     payload = ts4.encode_message_body('Nft', 'transferOwnership', {'addrTo': new_owner.address})
@@ -63,10 +84,10 @@ def transfer_ownership(nft, owner, new_owner):
     ts4.dispatch_messages()
 
 def get_index_deploy_value(nft):
-    return nft.call_getter('getIndexDeployValue')
+    return nft.call_getter('getIndexDeployValue', {'_answer_id': 0})
 
 def set_index_deploy_value(nft, owner, value):
-    payload = ts4.encode_message_body('Data', 'setIndexDeployValue', {'indexDeployValue': value})
+    payload = ts4.encode_message_body('Nft', 'setIndexDeployValue', {'indexDeployValue': value})
     owner.call_method_signed('sendTransaction', {'dest': nft.address, 'value': 2000000000, 'bounce': False, 'flags': 0, 'payload': payload}, expect_ec = 0)
     ts4.dispatch_messages()
 
@@ -86,30 +107,36 @@ assert eq(exp_answer, nft_root.balance)
 #deployIndexBasis test
 # index_basis = deployIndexBasis(nft_root, ts4.load_code_cell('IndexBasis.tvc'))
 
-#mint
+#mint nft test
 nft = mint(setcodemultisig, nft_root)
+# check that indexes was deployed
+verify_indexes(nft_root, nft, setcodemultisig)
 
 #get_info test
 answer = get_info(nft)
 exp_answer = (nft_root.address, setcodemultisig.address, nft.address)
 assert eq(exp_answer, answer)
 
-#transfer_ownership test
+# #transfer_ownership test
 answer = get_owner(nft)
 exp_answer = setcodemultisig.address
 assert eq(exp_answer, answer)
 
-# transfer_ownership(nft, setcodemultisig, setcodemultisig2)
+# from ITransfer
+transfer_ownership(nft, setcodemultisig, setcodemultisig2)
 
-# answer = get_owner(nft)
-# exp_answer = setcodemultisig2.address
-# assert eq(exp_answer, answer)
+answer = get_owner(nft)
+exp_answer = setcodemultisig2.address
+assert eq(exp_answer, answer)
+
+# check that indexes was redeployed after transfer ownership
+verify_indexes(nft_root, nft, setcodemultisig2)
 
 #get_index_deploy_value test
-# answer = get_index_deploy_value(nft)
-# assert eq(400000000, answer)
+answer = get_index_deploy_value(nft)
+assert eq(400000000, answer)
 
 # #set_index_deploy_value
-# set_index_deploy_value(nft, setcodemultisig2, 900000000)
-# answer = get_index_deploy_value(nft)
-# assert eq(900000000, answer)
+set_index_deploy_value(nft, setcodemultisig2, 900000000)
+answer = get_index_deploy_value(nft)
+assert eq(900000000, answer)
