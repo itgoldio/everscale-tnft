@@ -5,7 +5,7 @@ pragma AbiHeader time;
 
 contract IndexBasis {
     address static _addrRoot;
-    uint256 static _codeHashNft;
+    uint256 static _codeHashData;
 
     modifier onlyRoot() {
         require(msg.sender == _addrRoot, 100);
@@ -15,9 +15,9 @@ contract IndexBasis {
 
     constructor() public onlyRoot {}
 
-    function getInfo() public view returns (address addrRoot, uint256 codeHashNft) {
+    function getInfo() public view returns (address addrRoot, uint256 codeHashData) {
         addrRoot = _addrRoot;
-        codeHashNft = _codeHashNft;
+        codeHashData = _codeHashData;
     }
 
     function destruct() public onlyRoot {

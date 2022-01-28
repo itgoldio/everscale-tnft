@@ -19,11 +19,11 @@ contract IndexResolver {
 
     function resolveIndex(
         address addrRoot,
-        address addrNft,
+        address addrData,
         address addrOwner
     ) public view returns (address addrIndex) {
         TvmCell code = _buildIndexCode(addrRoot, addrOwner);
-        TvmCell state = _buildIndexState(code, addrNft);
+        TvmCell state = _buildIndexState(code, addrData);
         uint256 hashState = tvm.hash(state);
         addrIndex = address.makeAddrStd(0, hashState);
     }
@@ -40,11 +40,11 @@ contract IndexResolver {
 
     function _buildIndexState(
         TvmCell code,
-        address addrNft
+        address addrData
     ) internal virtual pure returns (TvmCell) {
         return tvm.buildStateInit({
             contr: Index,
-            varInit: {_addrNft: addrNft},
+            varInit: {_addrData: addrData},
             code: code
         });
     }

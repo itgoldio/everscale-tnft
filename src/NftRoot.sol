@@ -22,9 +22,6 @@ contract NftRoot is NftResolver, IndexResolver {
 
     /// _indexDeployValue will be spent on the Index deployment in the Nft contract
     uint128 _indexDeployValue = 0.4 ton;
-    /// _processingValue - will be spent on executing the mint method
-    /// if you want to earn on the remainder, remove the rawReserve
-    uint128 _processingValue = 0.9 ton;
     /// _remainOnNft - the number of crystals that will remain after the entire mint 
     /// process is completed on the Nft contract
     uint128 _remainOnNft = 0.3 ton;
@@ -71,11 +68,11 @@ contract NftRoot is NftResolver, IndexResolver {
 
     function deployIndexBasis(TvmCell codeIndexBasis) public onlyOwner {
         require(address(this).balance > _deployIndexBasisValue + 0.1 ton, NftRootErrors.value_less_than_required); /// 0.1 ton this is freeze protection
-        uint256 codeHashNft = resolveCodeHashNft();
+        uint256 codeHashData = resolveCodeHashNft();
         TvmCell state = tvm.buildStateInit({
             contr: IndexBasis,
             varInit: {
-                _codeHashNft: codeHashNft,
+                _codeHashData: codeHashData,
                 _addrRoot: address(this)
             },
             code: codeIndexBasis
@@ -98,11 +95,6 @@ contract NftRoot is NftResolver, IndexResolver {
         tvm.accept();
         _indexDeployValue = indexDeployValue;
     }
-    
-    function setProcessingValue(uint128 processingValue) public onlyOwner {
-        tvm.accept();
-        _processingValue = processingValue;
-    }
 
     function setRemainOnNft(uint128 remainOnNft) public onlyOwner {
         tvm.accept();
@@ -116,10 +108,6 @@ contract NftRoot is NftResolver, IndexResolver {
 
     function getIndexDeployValue() public view returns(uint128) {
         return _indexDeployValue;
-    }
-
-    function getProcessingValue() public view returns(uint128) {
-        return _processingValue;
     }
 
     function getRemainOnNft() public view returns(uint128) {

@@ -5,10 +5,12 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import '../tnft-interfaces/NftInterfaces/INftBase/INftBase.sol';
-import '../tnft-interfaces/NftInterfaces/IGetInfo/IGetInfo.sol';
-import '../tnft-interfaces/NftInterfaces/INftBaseApproval/INftBaseApproval.sol';
+import '../tnft-interfaces/NftInterfaces/IGetInfoTnft1/IGetInfoTnft1.sol';
+import '../tnft-interfaces/NftInterfaces/ITransfer/ITransfer.sol';
+import '../tnft-interfaces/NftInterfaces/IRequiredInterfaces/IRequiredInterfaces.sol';
+import '../tnft-interfaces/NftInterfaces/IName/IName.sol';
 
-contract Nft is NftBase, GetInfo, NftBaseApproval {
+contract Nft is NftBase, GetInfoTnft1, Transfer, RequiredInterfaces, Name {
 
     constructor(
         address addrOwner, 
@@ -26,19 +28,15 @@ contract Nft is NftBase, GetInfo, NftBaseApproval {
         _codeIndex = codeIndex;
         _indexDeployValue = indexDeployValue;
 
-        /// simple royalty, 5 percent will be received by the creator (NftRoot)
+        /// demo royalty, 5 percent will be received by the creator (NftRoot)
         _royalty[msg.sender] = 5;
 
-        // _requiredInterfaces = [RequiredInterfacesLib.ID, NftBaseLib.ID, TransferLib.ID, GetInfoLib.ID];
+        /// It's deprecated, it is planned to use TIP-6
+        _requiredInterfaces = [RequiredInterfacesLib.ID, NftBaseLib.ID, TransferLib.ID, GetInfoTnft1Lib.ID, NameLib.ID];
 
         emit tokenWasMinted(addrOwner);
 
         deployIndex(addrOwner);
-    }
-
-    modifier onlyOwner override(NftBase, NftBaseApproval) {
-        require((msg.sender == _addrOwner && !_approval.hasValue()) || (_approval.hasValue() && msg.sender == _approval.get()));
-        _;
     }
 
 }

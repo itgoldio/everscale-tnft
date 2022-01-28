@@ -52,14 +52,6 @@
 			]
 		},
 		{
-			"name": "setProcessingValue",
-			"inputs": [
-				{"name":"processingValue","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "setRemainOnNft",
 			"inputs": [
 				{"name":"remainOnNft","type":"uint128"}
@@ -77,14 +69,6 @@
 		},
 		{
 			"name": "getIndexDeployValue",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"uint128"}
-			]
-		},
-		{
-			"name": "getProcessingValue",
 			"inputs": [
 			],
 			"outputs": [
@@ -129,7 +113,7 @@
 			"name": "resolveIndex",
 			"inputs": [
 				{"name":"addrRoot","type":"address"},
-				{"name":"addrNft","type":"address"},
+				{"name":"addrData","type":"address"},
 				{"name":"addrOwner","type":"address"}
 			],
 			"outputs": [

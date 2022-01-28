@@ -13,27 +13,45 @@
 			]
 		},
 		{
-			"name": "setApproval",
+			"name": "getName",
 			"inputs": [
-				{"name":"approval","type":"address"},
-				{"name":"payload","type":"cell"}
 			],
 			"outputs": [
+				{"name":"dataName","type":"bytes"}
 			]
 		},
 		{
-			"name": "returnOwnership",
+			"name": "getNameResponsible",
 			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
+				{"name":"dataName","type":"bytes"}
 			]
 		},
 		{
-			"name": "getApproval",
+			"name": "getRequiredInterfaces",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"approval","type":"address"}
+				{"name":"requiredInterfaces","type":"int256[]"}
+			]
+		},
+		{
+			"name": "getRequiredInterfacesResponsible",
+			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"requiredInterfaces","type":"int256[]"}
+			]
+		},
+		{
+			"name": "transferOwnership",
+			"inputs": [
+				{"name":"addrTo","type":"address"}
+			],
+			"outputs": [
 			]
 		},
 		{
@@ -58,21 +76,6 @@
 			]
 		},
 		{
-			"name": "redeployIndex",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setIndexCode",
-			"inputs": [
-				{"name":"codeIndex","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "setIndexDeployValue",
 			"inputs": [
 				{"name":"indexDeployValue","type":"uint128"}
@@ -83,6 +86,7 @@
 		{
 			"name": "getSummaryRoyalty",
 			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
 				{"name":"royaltyValue","type":"uint128"}
@@ -91,6 +95,7 @@
 		{
 			"name": "getRoyalty",
 			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
 				{"name":"royalty","type":"map(address,uint128)"}
@@ -99,6 +104,7 @@
 		{
 			"name": "getIndexDeployValue",
 			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
 				{"name":"value0","type":"uint128"}
@@ -107,6 +113,7 @@
 		{
 			"name": "getOwner",
 			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
 				{"name":"addrOwner","type":"address"}
@@ -126,7 +133,7 @@
 			"name": "resolveIndex",
 			"inputs": [
 				{"name":"addrRoot","type":"address"},
-				{"name":"addrNft","type":"address"},
+				{"name":"addrData","type":"address"},
 				{"name":"addrOwner","type":"address"}
 			],
 			"outputs": [
@@ -138,6 +145,15 @@
 		{"key":1,"name":"_id","type":"uint256"}
 	],
 	"events": [
+		{
+			"name": "ownershipTransferred",
+			"inputs": [
+				{"name":"oldOwner","type":"address"},
+				{"name":"newOwner","type":"address"}
+			],
+			"outputs": [
+			]
+		},
 		{
 			"name": "tokenWasMinted",
 			"inputs": [
