@@ -7,14 +7,11 @@ import '../../../src/resolvers/IndexResolver.sol';
 import '../../../src/errors/NftErrors.sol';
 
 interface INftBase {
-    function redeployIndex() external;
-    function setIndexCode(TvmCell codeIndex) external;
     function setIndexDeployValue(uint128 indexDeployValue) external;
-    function getSummaryRoyalty() external returns(uint128 royaltyValue);
-    function getRoyalty() external returns(mapping(address => uint128) royalty);
-    function getRoyaltyResponsible() external returns(mapping(address => uint128) royalty);
-    function getIndexDeployValue() external returns(uint128);
-    function getOwner() external returns(address addrOwner);
+    function getSummaryRoyalty() external responsible returns(uint128 royaltyValue);
+    function getRoyalty() external responsible returns(mapping(address => uint128) royalty);
+    function getIndexDeployValue() external responsible returns(uint128);
+    function getOwner() external responsible returns(address addrOwner);
 }
 
 library NftBaseLib {
@@ -53,41 +50,30 @@ abstract contract NftBase is INftBase, IndexResolver {
         IIndex(oldIndexOwnerRoot).destruct();
     }
 
-    function redeployIndex() public override onlyOwner {
-        require (msg.value >= (_indexDeployValue * 2), NftErrors.value_less_than_required);
-        tvm.accept();
-
-        destructIndex();
-        deployIndex(_addrOwner);
-    }
-
-    function setIndexCode(TvmCell codeIndex) public override onlyOwner {
-        tvm.accept();
-        _codeIndex = codeIndex;
-    }
-
     function setIndexDeployValue(uint128 indexDeployValue) public override onlyOwner {
         tvm.accept();
         _indexDeployValue = indexDeployValue;
     }
 
-    function getSummaryRoyalty() public override returns(uint128 royaltyValue) {
+    function getSummaryRoyalty() public responsible override returns(uint128 royaltyValue) {
         for ((address key, uint128 value) : _royalty) { // iteration over mapping 
             key; // disable warnings
             royaltyValue += value;
         }
+
+        return {value: 0, flag: 64} royaltyValue;
     }
 
-    function getRoyalty() public override returns(mapping(address => uint128) royalty) {
-        return _royalty;
+    function getRoyalty() public responsible override returns(mapping(address => uint128) royalty) {
+        return {value: 0, flag: 64} _royalty;
     }
 
-    function getIndexDeployValue() public override returns(uint128) {
-        return _indexDeployValue;
+    function getIndexDeployValue() public responsible override returns(uint128) {
+        return {value: 0, flag: 64} _indexDeployValue;
     }
 
-    function getOwner() public override returns(address addrOwner) {
-        addrOwner = _addrOwner;
+    function getOwner() public responsible override returns(address addrOwner) {
+        return {value: 0, flag: 64} _addrOwner;
     }
 
     modifier onlyOwner virtual {

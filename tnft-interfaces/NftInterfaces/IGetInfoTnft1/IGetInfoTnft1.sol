@@ -5,7 +5,7 @@ pragma AbiHeader time;
 
 import '../INftBase/INftBase.sol';
 
-interface IGetInfo {
+interface IGetInfoTnft1 {
     function getInfo() external view returns (
         address addrRoot,
         address addrOwner,
@@ -19,11 +19,11 @@ interface IGetInfo {
     );
 }
 
-library GetInfoLib {
+library GetInfoTnft1Lib {
     int constant ID = 11;        
 }
 
-abstract contract GetInfo is IGetInfo, NftBase {
+abstract contract GetInfoTnft1 is IGetInfoTnft1, NftBase {
 
      /// @return addrRoot address NftRoot
     /// @return addrOwner address contract owner ( _addrOwner )
