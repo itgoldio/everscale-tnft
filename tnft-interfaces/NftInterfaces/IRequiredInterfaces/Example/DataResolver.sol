@@ -3,7 +3,7 @@ pragma ton-solidity >= 0.43.0;
 pragma AbiHeader expire;
 pragma AbiHeader time;
 
-import '../Data.sol';
+import 'Data.sol';
 
 // TODO: Test the hypothesis that inline will be more profitable in a given situation
 

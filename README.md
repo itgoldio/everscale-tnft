@@ -58,7 +58,7 @@ function deployIndexBasis(TvmCell codeIndexBasis) public onlyOwner
 
 <h2 id="interfaces">Система интерфейсов</h2>
 Так как в данном репозитории представлена стандартная реализация True-NFT - была разработана система интерфесов, которая позволяет с помощью модулей (интерфейсов) доработать контракты под необходимую бизнес-логику.
-Подробнее <a href="https://gitlab.itglobal.com/everscale/tnft-interfaces">по ссылке.</a>
+Подробнее <a href="./tnft-interfaces/README.md">по ссылке.</a>
 <br>
 <br>
 

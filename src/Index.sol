@@ -8,7 +8,7 @@ import './interfaces/IIndex.sol';
 contract Index is IIndex {
     address _addrRoot;
     address _addrOwner;
-    address static _addrData;
+    address static _addrNft;
 
     constructor(address root) public {
         optional(TvmCell) optSalt = tvm.codeSalt(tvm.code());
@@ -17,7 +17,7 @@ contract Index is IIndex {
             .get()
             .toSlice()
             .decode(address, address);
-        require(msg.sender == _addrData);
+        require(msg.sender == _addrNft);
         tvm.accept();
         _addrRoot = addrRoot;
         _addrOwner = addrOwner;
@@ -29,15 +29,15 @@ contract Index is IIndex {
     function getInfo() public view override returns (
         address addrRoot,
         address addrOwner,
-        address addrData
+        address addrNft
     ) {
         addrRoot = _addrRoot;
         addrOwner = _addrOwner;
-        addrData = _addrData;
+        addrNft = _addrNft;
     }
 
     function destruct() public override {
-        require(msg.sender == _addrData);
-        selfdestruct(_addrData);
+        require(msg.sender == _addrNft);
+        selfdestruct(_addrNft);
     }
 }

@@ -15,7 +15,7 @@
 			],
 			"outputs": [
 				{"name":"addrRoot","type":"address"},
-				{"name":"codeHashData","type":"uint256"}
+				{"name":"codeHashNft","type":"uint256"}
 			]
 		},
 		{
@@ -28,7 +28,7 @@
 	],
 	"data": [
 		{"key":1,"name":"_addrRoot","type":"address"},
-		{"key":2,"name":"_codeHashData","type":"uint256"}
+		{"key":2,"name":"_codeHashNft","type":"uint256"}
 	],
 	"events": [
 	]

@@ -5,30 +5,29 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import './resolvers/IndexResolver.sol';
-import './resolvers/DataResolver.sol';
+import './resolvers/NftResolver.sol';
 
 import './IndexBasis.sol';
 
-import './interfaces/IData.sol';
 import './interfaces/IIndexBasis.sol';
 
 import './errors/NftRootErrors.sol';
 
 
-contract NftRoot is DataResolver, IndexResolver {
+contract NftRoot is NftResolver, IndexResolver {
 
     uint256 _ownerPubkey;
     uint256 _totalMinted;
     address _addrIndexBasis;
 
-    /// _indexDeployValue will be spent on the Index deployment in the Data contract
+    /// _indexDeployValue will be spent on the Index deployment in the Nft contract
     uint128 _indexDeployValue = 0.4 ton;
     /// _processingValue - will be spent on executing the mint method
     /// if you want to earn on the remainder, remove the rawReserve
     uint128 _processingValue = 0.9 ton;
-    /// _remainOnData - the number of crystals that will remain after the entire mint 
-    /// process is completed on the Data contract
-    uint128 _remainOnData = 0.3 ton;
+    /// _remainOnNft - the number of crystals that will remain after the entire mint 
+    /// process is completed on the Nft contract
+    uint128 _remainOnNft = 0.3 ton;
     /// _deployIndexValue - the number of tokens that will be sent for the
     /// IndexBasic deployment and will remain on the IndexBasic contract after the deployment
     uint128 _deployIndexBasisValue = 0.4 ton;
@@ -37,33 +36,33 @@ contract NftRoot is DataResolver, IndexResolver {
 
     constructor(
         TvmCell codeIndex, 
-        TvmCell codeData, 
+        TvmCell codeNft, 
         uint256 ownerPubkey
     ) public {
         require(ownerPubkey != 0, NftRootErrors.pubkey_is_empty);
         tvm.accept();
         _codeIndex = codeIndex;
-        _codeData = codeData;
+        _codeNft = codeNft;
         _ownerPubkey = ownerPubkey;
     }
 
     function mintNft() public {
-        require(msg.value >= (_indexDeployValue * 2) + _remainOnData, NftRootErrors.value_less_than_required);
+        require(msg.value >= (_indexDeployValue * 2) + _remainOnNft, NftRootErrors.value_less_than_required);
         tvm.accept();
         tvm.rawReserve(msg.value, 1);
 
-        TvmCell codeData = _buildDataCode(address(this));
-        TvmCell stateData = _buildDataState(codeData, _totalMinted);
-        address dataAddr = new Data{
-            stateInit: stateData,
-            value: (_indexDeployValue * 2) + _remainOnData
+        TvmCell codeNft = _buildNftCode(address(this));
+        TvmCell stateNft = _buildNftState(codeNft, _totalMinted);
+        address nftAddr = new Nft{
+            stateInit: stateNft,
+            value: (_indexDeployValue * 2) + _remainOnNft
             }(
                 msg.sender, 
                 _codeIndex,
                 _indexDeployValue
             ); 
 
-        emit tokenWasMinted(dataAddr, msg.sender);
+        emit tokenWasMinted(nftAddr, msg.sender);
 
         _totalMinted++;
 
@@ -72,11 +71,11 @@ contract NftRoot is DataResolver, IndexResolver {
 
     function deployIndexBasis(TvmCell codeIndexBasis) public onlyOwner {
         require(address(this).balance > _deployIndexBasisValue + 0.1 ton, NftRootErrors.value_less_than_required); /// 0.1 ton this is freeze protection
-        uint256 codeHashData = resolveCodeHashData();
+        uint256 codeHashNft = resolveCodeHashNft();
         TvmCell state = tvm.buildStateInit({
             contr: IndexBasis,
             varInit: {
-                _codeHashData: codeHashData,
+                _codeHashNft: codeHashNft,
                 _addrRoot: address(this)
             },
             code: codeIndexBasis
@@ -105,9 +104,9 @@ contract NftRoot is DataResolver, IndexResolver {
         _processingValue = processingValue;
     }
 
-    function setRemainOnData(uint128 remainOnData) public onlyOwner {
+    function setRemainOnNft(uint128 remainOnNft) public onlyOwner {
         tvm.accept();
-        _remainOnData = remainOnData;
+        _remainOnNft = remainOnNft;
     }   
 
     function setDeployIndexValue(uint128 deployIndexValue) public onlyOwner {
@@ -123,13 +122,17 @@ contract NftRoot is DataResolver, IndexResolver {
         return _processingValue;
     }
 
-    function getRemainOnData() public view returns(uint128) {
-        return _remainOnData;
+    function getRemainOnNft() public view returns(uint128) {
+        return _remainOnNft;
     }
 
     function getDeployIndexValue() public view returns(uint128) {
         return _deployIndexBasisValue;
-    }   
+    }  
+
+    function getIndexBasisAddress() public view returns(address) {
+        return _addrIndexBasis;
+    } 
 
     modifier onlyOwner {
         require(msg.pubkey() == _ownerPubkey, NftRootErrors.not_my_pubkey);

@@ -13,18 +13,27 @@
 			]
 		},
 		{
-			"name": "transferOwnership",
+			"name": "setApproval",
 			"inputs": [
-				{"name":"addrTo","type":"address"}
+				{"name":"approval","type":"address"},
+				{"name":"payload","type":"cell"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "redeployIndex",
+			"name": "returnOwnership",
 			"inputs": [
 			],
 			"outputs": [
+			]
+		},
+		{
+			"name": "getApproval",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"approval","type":"address"}
 			]
 		},
 		{
@@ -34,7 +43,7 @@
 			"outputs": [
 				{"name":"addrRoot","type":"address"},
 				{"name":"addrOwner","type":"address"},
-				{"name":"addrData","type":"address"}
+				{"name":"addrNft","type":"address"}
 			]
 		},
 		{
@@ -45,23 +54,22 @@
 			"outputs": [
 				{"name":"addrRoot","type":"address"},
 				{"name":"addrOwner","type":"address"},
-				{"name":"addrData","type":"address"}
+				{"name":"addrNft","type":"address"}
 			]
 		},
 		{
-			"name": "getOwner",
+			"name": "redeployIndex",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"addrOwner","type":"address"}
 			]
 		},
 		{
-			"name": "getIndexDeployValue",
+			"name": "setIndexCode",
 			"inputs": [
+				{"name":"codeIndex","type":"cell"}
 			],
 			"outputs": [
-				{"name":"value0","type":"uint128"}
 			]
 		},
 		{
@@ -73,11 +81,35 @@
 			]
 		},
 		{
-			"name": "setIndexCode",
+			"name": "getSummaryRoyalty",
 			"inputs": [
-				{"name":"codeIndex","type":"cell"}
 			],
 			"outputs": [
+				{"name":"royaltyValue","type":"uint128"}
+			]
+		},
+		{
+			"name": "getRoyalty",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"royalty","type":"map(address,uint128)"}
+			]
+		},
+		{
+			"name": "getIndexDeployValue",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint128"}
+			]
+		},
+		{
+			"name": "getOwner",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"addrOwner","type":"address"}
 			]
 		},
 		{
@@ -94,7 +126,7 @@
 			"name": "resolveIndex",
 			"inputs": [
 				{"name":"addrRoot","type":"address"},
-				{"name":"addrData","type":"address"},
+				{"name":"addrNft","type":"address"},
 				{"name":"addrOwner","type":"address"}
 			],
 			"outputs": [
@@ -110,15 +142,6 @@
 			"name": "tokenWasMinted",
 			"inputs": [
 				{"name":"owner","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "ownershipTransferred",
-			"inputs": [
-				{"name":"oldOwner","type":"address"},
-				{"name":"newOwner","type":"address"}
 			],
 			"outputs": [
 			]

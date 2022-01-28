@@ -1,0 +1,95 @@
+{
+	"ABI version": 2,
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "redeployIndex",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setIndexCode",
+			"inputs": [
+				{"name":"codeIndex","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setIndexDeployValue",
+			"inputs": [
+				{"name":"indexDeployValue","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getSummaryRoyalty",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"royaltyValue","type":"uint128"}
+			]
+		},
+		{
+			"name": "getRoyalty",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"royalty","type":"map(address,uint128)"}
+			]
+		},
+		{
+			"name": "getIndexDeployValue",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint128"}
+			]
+		},
+		{
+			"name": "getOwner",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"addrOwner","type":"address"}
+			]
+		},
+		{
+			"name": "resolveCodeHashIndex",
+			"inputs": [
+				{"name":"addrRoot","type":"address"},
+				{"name":"addrOwner","type":"address"}
+			],
+			"outputs": [
+				{"name":"codeHashIndex","type":"uint256"}
+			]
+		},
+		{
+			"name": "resolveIndex",
+			"inputs": [
+				{"name":"addrRoot","type":"address"},
+				{"name":"addrNft","type":"address"},
+				{"name":"addrOwner","type":"address"}
+			],
+			"outputs": [
+				{"name":"addrIndex","type":"address"}
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"_id","type":"uint256"}
+	],
+	"events": [
+		{
+			"name": "tokenWasMinted",
+			"inputs": [
+				{"name":"owner","type":"address"}
+			],
+			"outputs": [
+			]
+		}
+	]
+}
