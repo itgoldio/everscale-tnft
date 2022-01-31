@@ -1,7 +1,5 @@
 pragma ton-solidity = 0.47.0;
 
-pragma ton-solidity >= 0.43.0;
-
 struct Meta {
     uint128 height;
     uint128 width;
