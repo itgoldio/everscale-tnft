@@ -1,4 +1,4 @@
-pragma ton-solidity ^0.47.0;
+pragma ton-solidity >= 0.43.0;
 
 /**
     Reserved codes - 100-199
