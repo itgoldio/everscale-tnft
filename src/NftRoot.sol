@@ -1,4 +1,4 @@
-pragma ton-solidity >=0.43.0;
+pragma ton-solidity = 0.47.0;
 
 pragma AbiHeader expire;
 pragma AbiHeader time;
@@ -36,8 +36,12 @@ contract NftRoot is NftResolver, IndexResolver {
         TvmCell codeNft, 
         uint256 ownerPubkey
     ) public {
+        TvmCell empty;
         require(ownerPubkey != 0, NftRootErrors.pubkey_is_empty);
+        require(codeIndex != empty, NftRootErrors.value_is_empty);
+        require(codeNft != empty, NftRootErrors.value_is_empty);
         tvm.accept();
+
         _codeIndex = codeIndex;
         _codeNft = codeNft;
         _ownerPubkey = ownerPubkey;
@@ -58,7 +62,7 @@ contract NftRoot is NftResolver, IndexResolver {
                 _indexDeployValue
             ); 
 
-        emit tokenWasMinted(nftAddr, msg.sender);
+        emit TokenWasMinted(nftAddr, msg.sender);
 
         _totalMinted++;
 
@@ -81,7 +85,7 @@ contract NftRoot is NftResolver, IndexResolver {
     }
 
     function destructIndexBasis() public view onlyOwner {
-        require(_addrIndexBasis != address(0), NftRootErrors.index_not_deployed);
+        require(_addrIndexBasis.value != 0, NftRootErrors.index_not_deployed);
         IIndexBasis(_addrIndexBasis).destruct();
     }
 
