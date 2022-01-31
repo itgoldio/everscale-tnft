@@ -15,14 +15,6 @@
 		{
 			"name": "getName",
 			"inputs": [
-			],
-			"outputs": [
-				{"name":"dataName","type":"bytes"}
-			]
-		},
-		{
-			"name": "getNameResponsible",
-			"inputs": [
 				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
@@ -146,7 +138,7 @@
 	],
 	"events": [
 		{
-			"name": "ownershipTransferred",
+			"name": "OwnershipTransferred",
 			"inputs": [
 				{"name":"oldOwner","type":"address"},
 				{"name":"newOwner","type":"address"}
@@ -155,7 +147,7 @@
 			]
 		},
 		{
-			"name": "tokenWasMinted",
+			"name": "TokenWasMinted",
 			"inputs": [
 				{"name":"owner","type":"address"}
 			],

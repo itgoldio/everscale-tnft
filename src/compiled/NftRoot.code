@@ -1,0 +1,1915 @@
+.version sol 0.47.0
+
+.macro constructor
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7_with_init_storage$
+}
+;; constructor protection
+GETGLOB 6
+THROWIF 51
+TRUE
+SETGLOB 6
+;; end constructor protection
+;; decode TvmCell
+LDREF
+;; decode TvmCell
+LDREF
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+ENDS
+;; param: codeIndex
+;; param: codeNft
+;; param: ownerPubkey
+; constructor NftRoot
+PUSHREF {
+}
+;; decl: empty
+;; push identifier ownerPubkey
+PUSH S1
+THROWIFNOT 100
+;; push identifier codeIndex
+PUSH S3
+HASHCU
+;; push identifier empty
+PUSH S1
+HASHCU
+NEQ
+THROWIFNOT 105
+;; push identifier codeNft
+PUSH S2
+HASHCU
+;; push identifier empty
+PUSH S1
+HASHCU
+NEQ
+THROWIFNOT 105
+ACCEPT
+; expValue
+; end expValue
+;; push identifier codeIndex
+; colValue
+; end colValue
+; expValue
+; end expValue
+;; push identifier codeNft
+; colValue
+; end colValue
+; expValue
+; end expValue
+;; push identifier ownerPubkey
+; colValue
+; end colValue
+DROP
+PUSH S2
+SETGLOB 11
+; end constructor NftRoot
+SWAP
+SETGLOB 10
+SETGLOB 12
+DROP
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.macro mintNft
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $mintNft_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	mintNft_internal
+.type	mintNft_internal, @function
+CALL $mintNft_internal_macro$
+
+.macro mintNft_internal_macro
+; function mintNft
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+;; >=
+;; push identifier _indexDeployValue
+GETGLOB 15
+;; *
+MULCONST 2
+UFITS 128
+;; +
+;; push identifier _remainOnNft
+GETGLOB 16
+ADD
+UFITS 128
+GEQ
+THROWIFNOT 102
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+PUSHINT 1
+RAWRESERVE
+MYADDR
+CALLREF {
+	CALL $_buildNftCode_internal_macro$
+}
+;; decl: codeNft
+;; push identifier codeNft
+DUP
+;; push identifier _totalMinted
+GETGLOB 13
+CALLREF {
+	CALL $_buildNftState_internal_macro$
+}
+;; decl: stateNft
+;; push identifier _indexDeployValue
+GETGLOB 15
+;; push identifier _codeIndex
+GETGLOB 11
+;; get member sender
+GETGLOB 9
+;; push identifier stateNft
+PUSH2 S3, S3
+HASHCU
+NEWC
+STSLICECONST x801_
+STU 256
+ENDC
+CTOS
+BLKSWAP 4, 1
+;; push identifier _indexDeployValue
+GETGLOB 15
+;; *
+MULCONST 2
+UFITS 128
+;; +
+;; push identifier _remainOnNft
+GETGLOB 16
+ADD
+UFITS 128
+PUSH S5
+NEWC
+STSLICECONST x62_
+STSLICE
+SWAP
+STGRAMS
+PUSHSLICE x000000000000000000000000007_
+STSLICER
+STREF
+STSLICECONST 1
+BLKSWAP 3, 1
+NEWC
+STSLICECONST x681afa6d
+STSLICE
+STREF
+STU 128
+STBREFR
+ENDC
+PUSHINT 0
+SENDRAWMSG
+;; decl: nftAddr
+;; get member sender
+GETGLOB 9
+;; push identifier nftAddr
+PUSH S1
+;; emit TokenWasMinted
+PUSHSLICE xc0000000000000000000000001
+NEWC
+STSLICE
+ROTREV
+NEWC
+STSLICECONST x5b619125
+STSLICE
+SWAP
+NEWC
+STSLICE
+STBREFR
+STBREFR
+ENDC
+PUSHINT 0
+SENDRAWMSG
+;; ++
+; expValue
+;; fetch _totalMinted
+GETGLOB 13
+; end expValue
+INC
+; colValue
+SETGLOB 13
+; end colValue
+;; transfer()
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 111
+STZEROES
+ENDC
+PUSHINT 128
+SENDRAWMSG
+BLKDROP 3
+; end function mintNft
+
+.macro deployIndexBasis
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+;; decode TvmCell
+LDREF
+ENDS
+;; param: codeIndexBasis
+CALLREF {
+	CALL $deployIndexBasis_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	deployIndexBasis_internal
+.type	deployIndexBasis_internal, @function
+CALL $deployIndexBasis_internal_macro$
+
+.macro deployIndexBasis_internal_macro
+;; param: codeIndexBasis
+; modifier onlyOwner
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; ==
+;; push identifier _ownerPubkey
+GETGLOB 12
+EQUAL
+THROWIFNOT 101
+; function deployIndexBasis
+;; get member balance
+GETPARAM 7
+INDEX 0
+;; >
+;; push identifier _deployIndexBasisValue
+GETGLOB 17
+;; +
+PUSHINT 100000000
+ADD
+UFITS 128
+GREATER
+THROWIFNOT 102
+ACCEPT
+CALLREF {
+	CALL $resolveCodeHashNft_internal_macro$
+}
+;; decl: codeHashData
+NEWDICT
+PUSHINT 0
+NEWC
+STU 256
+PUSHINT 0
+ROT
+PUSHINT 64
+DICTUSETB
+;; push identifier codeHashData
+PUSH S1
+NEWC
+STU 256
+PUSHINT 2
+ROT
+PUSHINT 64
+DICTUSETB
+MYADDR
+PUSHINT 1
+ROT
+PUSHINT 64
+DICTUSET
+NEWC
+STDICT
+ENDC
+;; push identifier codeIndexBasis
+PUSH S2
+NEWC
+STSLICECONST x2_
+STOPTREF
+STOPTREF
+STZERO
+ENDC
+;; decl: state
+;; push identifier state
+BLKPUSH 2, 0
+HASHCU
+NEWC
+STSLICECONST x801_
+STU 256
+ENDC
+CTOS
+SWAP
+;; push identifier _deployIndexBasisValue
+GETGLOB 17
+PUSH S2
+NEWC
+STSLICECONST x62_
+STSLICE
+SWAP
+STGRAMS
+PUSHSLICE x000000000000000000000000007_
+STSLICER
+STREF
+STSLICECONST x345aaf9fc_
+ENDC
+PUSHINT 0
+SENDRAWMSG
+; expValue
+; end expValue
+; colValue
+SETGLOB 14
+; end colValue
+; end function deployIndexBasis
+; end modifier onlyOwner
+BLKDROP 3
+
+.macro destructIndexBasis
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $destructIndexBasis_internal_macro$
+}
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	destructIndexBasis_internal
+.type	destructIndexBasis_internal, @function
+CALL $destructIndexBasis_internal_macro$
+
+.macro destructIndexBasis_internal_macro
+; modifier onlyOwner
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; ==
+;; push identifier _ownerPubkey
+GETGLOB 12
+EQUAL
+THROWIFNOT 101
+; function destructIndexBasis
+;; get member value
+;; push identifier _addrIndexBasis
+GETGLOB 14
+PARSEMSGADDR
+INDEX 3
+PLDU 256
+THROWIFNOT 103
+;; Remote call IIndexBasis.destruct
+;; push identifier _addrIndexBasis
+GETGLOB 14
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHSLICE x39896800000000000000000000000000008f8c5bb5_
+STSLICER
+ENDC
+PUSHINT 0
+SENDRAWMSG
+; end function destructIndexBasis
+; end modifier onlyOwner
+
+.macro withdraw
+DROP
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+ENDS
+;; param: to
+;; param: value
+CALLREF {
+	CALL $withdraw_internal_macro$
+}
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	withdraw_internal
+.type	withdraw_internal, @function
+CALL $withdraw_internal_macro$
+
+.macro withdraw_internal_macro
+;; param: to
+;; param: value
+; modifier onlyOwner
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; ==
+;; push identifier _ownerPubkey
+GETGLOB 12
+EQUAL
+THROWIFNOT 101
+; function withdraw
+;; get member balance
+GETPARAM 7
+INDEX 0
+;; >
+;; push identifier value
+PUSH S1
+GREATER
+THROWIFNOT 104
+ACCEPT
+;; transfer()
+;; push identifier value
+;; push identifier to
+PUSH2 S0, S1
+NEWC
+STSLICECONST x62_
+STSLICE
+SWAP
+STGRAMS
+PUSHINT 107
+STZEROES
+ENDC
+PUSHINT 0
+SENDRAWMSG
+; end function withdraw
+; end modifier onlyOwner
+DROP2
+
+.macro setIndexDeployValue
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+ENDS
+;; param: indexDeployValue
+CALLREF {
+	CALL $setIndexDeployValue_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	setIndexDeployValue_internal
+.type	setIndexDeployValue_internal, @function
+CALL $setIndexDeployValue_internal_macro$
+
+.macro setIndexDeployValue_internal_macro
+;; param: indexDeployValue
+; modifier onlyOwner
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; ==
+;; push identifier _ownerPubkey
+GETGLOB 12
+EQUAL
+THROWIFNOT 101
+; function setIndexDeployValue
+ACCEPT
+; expValue
+; end expValue
+;; push identifier indexDeployValue
+; colValue
+; end colValue
+; end function setIndexDeployValue
+; end modifier onlyOwner
+SETGLOB 15
+
+.macro setRemainOnNft
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+ENDS
+;; param: remainOnNft
+CALLREF {
+	CALL $setRemainOnNft_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	setRemainOnNft_internal
+.type	setRemainOnNft_internal, @function
+CALL $setRemainOnNft_internal_macro$
+
+.macro setRemainOnNft_internal_macro
+;; param: remainOnNft
+; modifier onlyOwner
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; ==
+;; push identifier _ownerPubkey
+GETGLOB 12
+EQUAL
+THROWIFNOT 101
+; function setRemainOnNft
+ACCEPT
+; expValue
+; end expValue
+;; push identifier remainOnNft
+; colValue
+; end colValue
+; end function setRemainOnNft
+; end modifier onlyOwner
+SETGLOB 16
+
+.macro setDeployIndexValue
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+ENDS
+;; param: deployIndexValue
+CALLREF {
+	CALL $setDeployIndexValue_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	setDeployIndexValue_internal
+.type	setDeployIndexValue_internal, @function
+CALL $setDeployIndexValue_internal_macro$
+
+.macro setDeployIndexValue_internal_macro
+;; param: deployIndexValue
+; modifier onlyOwner
+GETGLOB 5
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	PUSHINT 0
+}
+IF
+;; ==
+;; push identifier _ownerPubkey
+GETGLOB 12
+EQUAL
+THROWIFNOT 101
+; function setDeployIndexValue
+ACCEPT
+; expValue
+; end expValue
+;; push identifier deployIndexValue
+; colValue
+; end colValue
+; end function setDeployIndexValue
+; end modifier onlyOwner
+SETGLOB 17
+
+.macro getIndexDeployValue
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $getIndexDeployValue_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHSLICE x00000000000000000000000021500f6be_
+	STSLICER
+	STU 128
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getIndexDeployValue_internal
+.type	getIndexDeployValue_internal, @function
+CALL $getIndexDeployValue_internal_macro$
+
+.macro getIndexDeployValue_internal_macro
+; function getIndexDeployValue
+;; return
+;; push identifier _indexDeployValue
+GETGLOB 15
+; end function getIndexDeployValue
+
+.macro getRemainOnNft
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $getRemainOnNft_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHSLICE x0000000000000000000000002218b1dd6_
+	STSLICER
+	STU 128
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getRemainOnNft_internal
+.type	getRemainOnNft_internal, @function
+CALL $getRemainOnNft_internal_macro$
+
+.macro getRemainOnNft_internal_macro
+; function getRemainOnNft
+;; return
+;; push identifier _remainOnNft
+GETGLOB 16
+; end function getRemainOnNft
+
+.macro getDeployIndexValue
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $getDeployIndexValue_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHSLICE x0000000000000000000000003d4fba106_
+	STSLICER
+	STU 128
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getDeployIndexValue_internal
+.type	getDeployIndexValue_internal, @function
+CALL $getDeployIndexValue_internal_macro$
+
+.macro getDeployIndexValue_internal_macro
+; function getDeployIndexValue
+;; return
+;; push identifier _deployIndexBasisValue
+GETGLOB 17
+; end function getDeployIndexValue
+
+.macro getIndexBasisAddress
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $getIndexBasisAddress_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	SWAP
+	NEWC
+	STSLICECONST xc836d31d
+	STSLICE
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getIndexBasisAddress_internal
+.type	getIndexBasisAddress_internal, @function
+CALL $getIndexBasisAddress_internal_macro$
+
+.macro getIndexBasisAddress_internal_macro
+; function getIndexBasisAddress
+;; return
+;; push identifier _addrIndexBasis
+GETGLOB 14
+; end function getIndexBasisAddress
+
+.macro resolveCodeHashIndex
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+ENDS
+;; param: addrRoot
+;; param: addrOwner
+CALLREF {
+	CALL $resolveCodeHashIndex_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHSLICE x0000000000000000000000003ddae6a02_
+	STSLICER
+	STU 256
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	resolveCodeHashIndex_internal
+.type	resolveCodeHashIndex_internal, @function
+CALL $resolveCodeHashIndex_internal_macro$
+
+.macro resolveCodeHashIndex_internal_macro
+;; param: addrRoot
+;; param: addrOwner
+;; ret param: codeHashIndex
+PUSHINT 0
+; function resolveCodeHashIndex
+;; return
+;; push identifier addrRoot
+;; push identifier addrOwner
+BLKPUSH 2, 2
+CALLREF {
+	CALL $_buildIndexCode_internal_macro$
+}
+HASHCU
+NIP
+; end function resolveCodeHashIndex
+BLKDROP2 2, 1
+
+.macro resolveIndex
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+ENDS
+;; param: addrRoot
+;; param: addrData
+;; param: addrOwner
+CALLREF {
+	CALL $resolveIndex_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	SWAP
+	NEWC
+	STSLICECONST x9d7864c9
+	STSLICE
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	resolveIndex_internal
+.type	resolveIndex_internal, @function
+CALL $resolveIndex_internal_macro$
+
+.macro resolveIndex_internal_macro
+;; param: addrRoot
+;; param: addrData
+;; param: addrOwner
+;; ret param: addrIndex
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+; function resolveIndex
+;; push identifier addrRoot
+;; push identifier addrOwner
+PUSH2 S3, S1
+CALLREF {
+	CALL $_buildIndexCode_internal_macro$
+}
+;; decl: code
+;; push identifier code
+;; push identifier addrData
+PUSH2 S0, S3
+CALLREF {
+	CALL $_buildIndexState_internal_macro$
+}
+;; decl: state
+;; push identifier state
+;; decl: hashState
+;; address.makeAddrStd()
+;; push identifier hashState
+; expValue
+; end expValue
+; colValue
+; end colValue
+HASHCU
+PUSHINT 0
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+POP S2
+DROP
+; end function resolveIndex
+BLKDROP2 3, 1
+
+.globl	_buildIndexCode_internal
+.type	_buildIndexCode_internal, @function
+CALL $_buildIndexCode_internal_macro$
+
+.macro _buildIndexCode_internal_macro
+;; param: addrRoot
+;; param: addrOwner
+; function _buildIndexCode
+;; decl: salt
+; expValue
+; end expValue
+;; push identifier addrRoot
+; colValue
+PUSH S1
+NEWC
+STSLICE
+; end colValue
+; expValue
+; end expValue
+;; push identifier addrOwner
+DUP2
+STSLICE
+; colValue
+NIP
+; end colValue
+;; return
+;; push identifier _codeIndex
+GETGLOB 11
+CTOS
+;; push identifier salt
+PUSH S1
+ENDC
+CALLREF {
+	PUSH S1
+	PUSHSLICE x8adb35
+	SDEQ
+	PUSHREFCONT {
+		SWAP      ; salt sliceCode
+		LDREF
+		LDREF
+		DROP         ; salt selfCallCode usualSelector
+		XCHG S1, S2  ; selfCallCode salt usualSelector
+		CTOS         ; selfCallCode salt usualSelector
+		CALLREF {
+			
+			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
+			PUSHSLICE xF4A4_
+			SDBEGINSX
+			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
+			LDU 10
+			NIP
+			DUP
+			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
+			PUSHCONT {
+				LDREF
+			}
+			PUSHCONT {
+				PUSHREF {
+				}
+				SWAP
+			}
+			IFELSE
+		                ; selfCallCode salt restUsualSelector dict version intSelector
+			PUSHSLICE xF4A1
+			SDBEGINSX
+			DROP
+			            ; selfCallCode salt restUsualSelector dict version
+			SWAP        ; selfCallCode salt restUsualSelector version dict
+			NEWC        ; selfCallCode salt restUsualSelector version dict builder
+			STSLICECONST xF4A4_ ; DICTPUSHCONST
+			STDICT
+			PUSHINT 32
+			STUR 10
+			STSLICECONST xF4A1 ; DICTUGETJMP
+			STREF       ; selfCallCode salt restUsualSelector builder
+			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
+			STREF       ; selfCallCode restUsualSelector builder
+			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
+			STBREF      ; selfCallCode restUsualSelector usualBuilder
+			STSLICE     ; selfCallCode usualBuilder
+		}
+		NEWC        ; selfCallCode usualBuilder mainBuilder
+		STSLICECONST x8adb35
+		XCHG S1, S2 ; usualBuilder selfCallCode mainBuilder
+		STREF
+		STBREF
+		ENDC
+	}
+	PUSHREFCONT {
+		SWAP
+		CALLREF {
+			
+			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
+			PUSHSLICE xF4A4_
+			SDBEGINSX
+			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
+			LDU 10
+			NIP
+			DUP
+			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
+			PUSHCONT {
+				LDREF
+			}
+			PUSHCONT {
+				PUSHREF {
+				}
+				SWAP
+			}
+			IFELSE
+		                ; selfCallCode salt restUsualSelector dict version intSelector
+			PUSHSLICE xF4A1
+			SDBEGINSX
+			DROP
+			            ; selfCallCode salt restUsualSelector dict version
+			SWAP        ; selfCallCode salt restUsualSelector version dict
+			NEWC        ; selfCallCode salt restUsualSelector version dict builder
+			STSLICECONST xF4A4_ ; DICTPUSHCONST
+			STDICT
+			PUSHINT 32
+			STUR 10
+			STSLICECONST xF4A1 ; DICTUGETJMP
+			STREF       ; selfCallCode salt restUsualSelector builder
+			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
+			STREF       ; selfCallCode restUsualSelector builder
+			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
+			STBREF      ; selfCallCode restUsualSelector usualBuilder
+			STSLICE     ; selfCallCode usualBuilder
+		}
+		ENDC
+	}
+	IFELSE
+}
+NIP
+; end function _buildIndexCode
+BLKDROP2 2, 1
+
+.globl	_buildIndexState_internal
+.type	_buildIndexState_internal, @function
+CALL $_buildIndexState_internal_macro$
+
+.macro _buildIndexState_internal_macro
+;; param: code
+;; param: addrData
+; function _buildIndexState
+;; return
+NEWDICT
+PUSHINT 0
+NEWC
+STU 256
+PUSHINT 0
+ROT
+PUSHINT 64
+DICTUSETB
+;; push identifier addrData
+PUSH S1
+PUSHINT 1
+ROT
+PUSHINT 64
+DICTUSET
+NEWC
+STDICT
+ENDC
+;; push identifier code
+PUSH S2
+NEWC
+STSLICECONST x2_
+STOPTREF
+STOPTREF
+STZERO
+ENDC
+; end function _buildIndexState
+BLKDROP2 2, 1
+
+.macro resolveCodeHashNft
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $resolveCodeHashNft_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHSLICE x0000000000000000000000002d78aad3e_
+	STSLICER
+	STU 256
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	resolveCodeHashNft_internal
+.type	resolveCodeHashNft_internal, @function
+CALL $resolveCodeHashNft_internal_macro$
+
+.macro resolveCodeHashNft_internal_macro
+;; ret param: codeHashData
+PUSHINT 0
+; function resolveCodeHashNft
+;; return
+MYADDR
+CALLREF {
+	CALL $_buildNftCode_internal_macro$
+}
+HASHCU
+NIP
+; end function resolveCodeHashNft
+
+.macro resolveNft
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDUQ 256
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 256
+}
+IFNOT
+ENDS
+;; param: addrRoot
+;; param: id
+CALLREF {
+	CALL $resolveNft_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	SWAP
+	NEWC
+	STSLICECONST xb77b1e9f
+	STSLICE
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	resolveNft_internal
+.type	resolveNft_internal, @function
+CALL $resolveNft_internal_macro$
+
+.macro resolveNft_internal_macro
+;; param: addrRoot
+;; param: id
+;; ret param: addrNft
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+; function resolveNft
+;; push identifier addrRoot
+PUSH S2
+CALLREF {
+	CALL $_buildNftCode_internal_macro$
+}
+;; decl: code
+;; push identifier code
+;; push identifier id
+PUSH2 S0, S2
+CALLREF {
+	CALL $_buildNftState_internal_macro$
+}
+;; decl: state
+;; push identifier state
+;; decl: hashState
+;; address.makeAddrStd()
+;; push identifier hashState
+; expValue
+; end expValue
+; colValue
+; end colValue
+HASHCU
+PUSHINT 0
+NEWC
+STSLICECONST x9_
+STI 8
+STU 256
+ENDC
+CTOS
+POP S2
+DROP
+; end function resolveNft
+BLKDROP2 2, 1
+
+.globl	_buildNftCode_internal
+.type	_buildNftCode_internal, @function
+CALL $_buildNftCode_internal_macro$
+
+.macro _buildNftCode_internal_macro
+;; param: addrRoot
+; function _buildNftCode
+NEWC
+;; decl: salt
+; expValue
+; end expValue
+;; push identifier addrRoot
+DUP2
+STSLICE
+; colValue
+NIP
+; end colValue
+;; return
+;; push identifier _codeNft
+GETGLOB 10
+CTOS
+;; push identifier salt
+PUSH S1
+ENDC
+CALLREF {
+	PUSH S1
+	PUSHSLICE x8adb35
+	SDEQ
+	PUSHREFCONT {
+		SWAP      ; salt sliceCode
+		LDREF
+		LDREF
+		DROP         ; salt selfCallCode usualSelector
+		XCHG S1, S2  ; selfCallCode salt usualSelector
+		CTOS         ; selfCallCode salt usualSelector
+		CALLREF {
+			
+			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
+			PUSHSLICE xF4A4_
+			SDBEGINSX
+			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
+			LDU 10
+			NIP
+			DUP
+			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
+			PUSHCONT {
+				LDREF
+			}
+			PUSHCONT {
+				PUSHREF {
+				}
+				SWAP
+			}
+			IFELSE
+		                ; selfCallCode salt restUsualSelector dict version intSelector
+			PUSHSLICE xF4A1
+			SDBEGINSX
+			DROP
+			            ; selfCallCode salt restUsualSelector dict version
+			SWAP        ; selfCallCode salt restUsualSelector version dict
+			NEWC        ; selfCallCode salt restUsualSelector version dict builder
+			STSLICECONST xF4A4_ ; DICTPUSHCONST
+			STDICT
+			PUSHINT 32
+			STUR 10
+			STSLICECONST xF4A1 ; DICTUGETJMP
+			STREF       ; selfCallCode salt restUsualSelector builder
+			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
+			STREF       ; selfCallCode restUsualSelector builder
+			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
+			STBREF      ; selfCallCode restUsualSelector usualBuilder
+			STSLICE     ; selfCallCode usualBuilder
+		}
+		NEWC        ; selfCallCode usualBuilder mainBuilder
+		STSLICECONST x8adb35
+		XCHG S1, S2 ; usualBuilder selfCallCode mainBuilder
+		STREF
+		STBREF
+		ENDC
+	}
+	PUSHREFCONT {
+		SWAP
+		CALLREF {
+			
+			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
+			PUSHSLICE xF4A4_
+			SDBEGINSX
+			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
+			LDU 10
+			NIP
+			DUP
+			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
+			PUSHCONT {
+				LDREF
+			}
+			PUSHCONT {
+				PUSHREF {
+				}
+				SWAP
+			}
+			IFELSE
+		                ; selfCallCode salt restUsualSelector dict version intSelector
+			PUSHSLICE xF4A1
+			SDBEGINSX
+			DROP
+			            ; selfCallCode salt restUsualSelector dict version
+			SWAP        ; selfCallCode salt restUsualSelector version dict
+			NEWC        ; selfCallCode salt restUsualSelector version dict builder
+			STSLICECONST xF4A4_ ; DICTPUSHCONST
+			STDICT
+			PUSHINT 32
+			STUR 10
+			STSLICECONST xF4A1 ; DICTUGETJMP
+			STREF       ; selfCallCode salt restUsualSelector builder
+			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
+			STREF       ; selfCallCode restUsualSelector builder
+			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
+			STBREF      ; selfCallCode restUsualSelector usualBuilder
+			STSLICE     ; selfCallCode usualBuilder
+		}
+		ENDC
+	}
+	IFELSE
+}
+NIP
+; end function _buildNftCode
+NIP
+
+.globl	_buildNftState_internal
+.type	_buildNftState_internal, @function
+CALL $_buildNftState_internal_macro$
+
+.macro _buildNftState_internal_macro
+;; param: code
+;; param: id
+; function _buildNftState
+;; return
+NEWDICT
+PUSHINT 0
+NEWC
+STU 256
+PUSHINT 0
+ROT
+PUSHINT 64
+DICTUSETB
+;; push identifier id
+PUSH S1
+NEWC
+STU 256
+PUSHINT 1
+ROT
+PUSHINT 64
+DICTUSETB
+NEWC
+STDICT
+ENDC
+;; push identifier code
+PUSH S2
+NEWC
+STSLICECONST x2_
+STOPTREF
+STOPTREF
+STZERO
+ENDC
+; end function _buildNftState
+BLKDROP2 2, 1
+
+.macro c7_to_c4
+GETGLOB 17
+GETGLOB 16
+GETGLOB 15
+GETGLOB 14
+GETGLOB 13
+GETGLOB 12
+GETGLOB 11
+GETGLOB 10
+GETGLOB 6
+GETGLOB 3
+GETGLOB 2
+NEWC
+STU 256
+STU 64
+STI 1
+STREF
+STREF
+STU 256
+STU 256
+BLKSWAP 4, 1
+NEWC
+STSLICE
+STU 128
+STU 128
+STU 128
+STBREFR
+ENDC
+POP C4
+
+.macro c4_to_c7
+PUSHROOT
+CTOS
+LDU 256      ; pubkey c4
+LDU 64      ; pubkey timestamp c4
+LDI 1       ; pubkey [timestamp] constructor_flag memory
+;; decode TvmCell
+LDREF
+;; decode TvmCell
+LDREF
+LDU 256
+LDU 256
+;; load next cell
+LDREF
+ENDS
+CTOS
+LDMSGADDR
+LDU 128
+LDU 128
+LDU 128
+ENDS
+SETGLOB 17
+SETGLOB 16
+SETGLOB 15
+SETGLOB 14
+SETGLOB 13
+SETGLOB 12
+SETGLOB 11
+SETGLOB 10
+; pubkey [timestamp] constructor_flag
+SETGLOB 6   ; pubkey [timestamp]
+SETGLOB 3   ; pubkey
+SETGLOB 2
+
+.macro c4_to_c7_with_init_storage
+PUSHROOT
+CTOS
+SBITS
+GTINT 1
+PUSHREFCONT {
+	CALL $c4_to_c7$
+}
+PUSHCONT {
+	PUSHINT 0
+	PUSHROOT
+	CTOS
+	PLDDICT   ; D
+	; init _codeNft
+	PUSHREF {
+	}
+	SETGLOB 10
+	; init _codeIndex
+	PUSHREF {
+	}
+	SETGLOB 11
+	; init _ownerPubkey
+	PUSHINT 0
+	SETGLOB 12
+	; init _totalMinted
+	PUSHINT 0
+	SETGLOB 13
+	; init _addrIndexBasis
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SETGLOB 14
+	; init _indexDeployValue
+	PUSHINT 0
+	SETGLOB 15
+	; init _remainOnNft
+	PUSHINT 0
+	SETGLOB 16
+	; init _deployIndexBasisValue
+	PUSHINT 0
+	SETGLOB 17
+	PUSHINT 64
+	DICTUGET
+	THROWIFNOT 61
+	PLDU 256
+	SETGLOB 2
+	PUSHINT 0 ; timestamp
+	SETGLOB 3
+	PUSHINT 0 ; constructor_flag
+	SETGLOB 6
+	;; init state var: _indexDeployValue
+	PUSHINT 400000000
+	SETGLOB 15
+	;; init state var: _remainOnNft
+	PUSHINT 300000000
+	SETGLOB 16
+	;; init state var: _deployIndexBasisValue
+	PUSHINT 400000000
+	SETGLOB 17
+}
+IFELSE
+
+.internal-alias :main_internal, 0
+.internal :main_internal
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Function: main_internal
+;; param: contract_balance
+;; param: msg_balance
+;; param: int_msg_info
+;; param: msg_body_slice
+;; param: transaction_type
+PUSH S2
+CTOS
+LDU 4       ; bounced tail
+LDMSGADDR   ; bounced src tail
+DROP
+SETGLOB 9
+MODPOW2 1
+IFRET
+PUSH S1    ; body
+SEMPTY     ; isEmpty
+IFRET
+PUSH S1 ; body
+LDUQ 32  ; [funcId] body' ok
+THROWIFNOT 60 ; funcId body'
+PUSH S1 ; funcId body' funcId
+IFNOTRET
+SWAP
+CALLREF {
+	CALL $public_function_selector$
+}
+GETGLOB 7
+ISNULL
+THROWIF 60
+
+.internal-alias :main_external, -1
+.internal :main_external
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+SETGLOB 9
+PUSH S1
+CALLREF {
+	CALL $c4_to_c7_with_init_storage$
+}
+LDU 1 ; haveSign msgSlice
+SWAP
+PUSHCONT {
+	PUSHINT 512
+	LDSLICEX ; signatureSlice msgSlice
+	DUP      ; signatureSlice msgSlice msgSlice
+	HASHSU   ; signatureSlice msgSlice hashMsgSlice
+	SWAP  ; signatureSlice hashMsgSlice msgSlice
+	LDU 1 ; signatureSlice hashMsgSlice havePubkey msgSlice
+	SWAP  ; signatureSlice hashMsgSlice msgSlice havePubkey
+	PUSHCONT {
+		LDU 256       ; signatureSlice hashMsgSlice pubkey msgSlice
+		XCHG s3
+		SWAP
+	}
+	PUSHCONT {
+		XCHG s2
+		GETGLOB 2
+	}
+	IFELSE
+	DUP
+	SETGLOB 5
+	CHKSIGNU      ; msgSlice isSigned
+	THROWIFNOT 40 ; msgSlice
+}
+PUSHCONT {
+	LDU 1      ; havePubkey msgSlice
+	SWAP       ; msgSlice havePubkey
+	THROWIF 58 ; msgSlice
+}
+IFELSE
+LDU 64                         ; timestamp msgSlice
+SWAP                           ; msgSlice timestamp
+CALL $replay_protection_macro$ ; msgSlice
+LDU 32  ; expireAt msgSlice
+SWAP    ; msgSlice expireAt
+NOW     ; msgSlice expireAt now
+GREATER ; msgSlice expireAt>now
+THROWIFNOT 57
+LDU  32 ; funcId body
+SWAP    ; body funcId
+CALLREF {
+	CALL $public_function_selector$
+}
+GETGLOB 7
+ISNULL
+THROWIF 60
+
+.macro public_function_selector
+DUP
+PUSHINT 153116852
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 88096175
+	EQUAL
+	IFJMPREF {
+		CALL $getIndexDeployValue$
+	}
+	DUP
+	PUSHINT 140691317
+	EQUAL
+	IFJMPREF {
+		CALL $getRemainOnNft$
+	}
+	DUP
+	PUSHINT 141807997
+	EQUAL
+	IFJMPREF {
+		CALL $withdraw$
+	}
+	DUP
+	PUSHINT 153116852
+	EQUAL
+	IFJMPREF {
+		CALL $constructor$
+	}
+}
+DUP
+PUSHINT 930815647
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 494429385
+	EQUAL
+	IFJMPREF {
+		CALL $resolveIndex$
+	}
+	DUP
+	PUSHINT 852767119
+	EQUAL
+	IFJMPREF {
+		CALL $setRemainOnNft$
+	}
+	DUP
+	PUSHINT 904047439
+	EQUAL
+	IFJMPREF {
+		CALL $resolveCodeHashNft$
+	}
+	DUP
+	PUSHINT 930815647
+	EQUAL
+	IFJMPREF {
+		CALL $resolveNft$
+	}
+}
+DUP
+PUSHINT 1795764025
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 1058986941
+	EQUAL
+	IFJMPREF {
+		CALL $destructIndexBasis$
+	}
+	DUP
+	PUSHINT 1079203788
+	EQUAL
+	IFJMPREF {
+		CALL $setDeployIndexValue$
+	}
+	DUP
+	PUSHINT 1211552541
+	EQUAL
+	IFJMPREF {
+		CALL $getIndexBasisAddress$
+	}
+	DUP
+	PUSHINT 1795764025
+	EQUAL
+	IFJMPREF {
+		CALL $setIndexDeployValue$
+	}
+}
+DUP
+PUSHINT 2082711571
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 1806040174
+	EQUAL
+	IFJMPREF {
+		CALL $mintNft$
+	}
+	DUP
+	PUSHINT 1967056961
+	EQUAL
+	IFJMPREF {
+		CALL $getDeployIndexValue$
+	}
+	DUP
+	PUSHINT 2003540608
+	EQUAL
+	IFJMPREF {
+		CALL $resolveCodeHashIndex$
+	}
+	DUP
+	PUSHINT 2082711571
+	EQUAL
+	IFJMPREF {
+		CALL $deployIndexBasis$
+	}
+}
