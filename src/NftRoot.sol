@@ -126,6 +126,10 @@ contract NftRoot is NftResolver, IndexResolver {
         return _addrIndexBasis;
     } 
 
+    function getTotalMinted() public view returns(uint256) {
+        return _totalMinted;
+    }
+
     modifier onlyOwner {
         require(msg.pubkey() == _ownerPubkey, NftRootErrors.not_my_pubkey);
         _;

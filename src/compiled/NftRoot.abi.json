@@ -100,6 +100,14 @@
 			]
 		},
 		{
+			"name": "getTotalMinted",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint256"}
+			]
+		},
+		{
 			"name": "resolveCodeHashIndex",
 			"inputs": [
 				{"name":"addrRoot","type":"address"},

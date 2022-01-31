@@ -876,6 +876,57 @@ CALL $getIndexBasisAddress_internal_macro$
 GETGLOB 14
 ; end function getIndexBasisAddress
 
+.macro getTotalMinted
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $getTotalMinted_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHSLICE x00000000000000000000000026c719a5e_
+	STSLICER
+	STU 256
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+IFREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getTotalMinted_internal
+.type	getTotalMinted_internal, @function
+CALL $getTotalMinted_internal_macro$
+
+.macro getTotalMinted_internal_macro
+; function getTotalMinted
+;; return
+;; push identifier _totalMinted
+GETGLOB 13
+; end function getTotalMinted
+
 .macro resolveCodeHashIndex
 DROP
 GETGLOB 2
@@ -1798,118 +1849,129 @@ THROWIF 60
 
 .macro public_function_selector
 DUP
-PUSHINT 153116852
+PUSHINT 2003540608
 LEQ
 IFJMPREF {
-	DUP
-	PUSHINT 88096175
-	EQUAL
-	IFJMPREF {
-		CALL $getIndexDeployValue$
-	}
-	DUP
-	PUSHINT 140691317
-	EQUAL
-	IFJMPREF {
-		CALL $getRemainOnNft$
-	}
-	DUP
-	PUSHINT 141807997
-	EQUAL
-	IFJMPREF {
-		CALL $withdraw$
-	}
 	DUP
 	PUSHINT 153116852
-	EQUAL
+	LEQ
 	IFJMPREF {
-		CALL $constructor$
-	}
-}
-DUP
-PUSHINT 930815647
-LEQ
-IFJMPREF {
-	DUP
-	PUSHINT 494429385
-	EQUAL
-	IFJMPREF {
-		CALL $resolveIndex$
-	}
-	DUP
-	PUSHINT 852767119
-	EQUAL
-	IFJMPREF {
-		CALL $setRemainOnNft$
+		DUP
+		PUSHINT 88096175
+		EQUAL
+		IFJMPREF {
+			CALL $getIndexDeployValue$
+		}
+		DUP
+		PUSHINT 140691317
+		EQUAL
+		IFJMPREF {
+			CALL $getRemainOnNft$
+		}
+		DUP
+		PUSHINT 141807997
+		EQUAL
+		IFJMPREF {
+			CALL $withdraw$
+		}
+		DUP
+		PUSHINT 153116852
+		EQUAL
+		IFJMPREF {
+			CALL $constructor$
+		}
 	}
 	DUP
 	PUSHINT 904047439
-	EQUAL
+	LEQ
 	IFJMPREF {
-		CALL $resolveCodeHashNft$
-	}
-	DUP
-	PUSHINT 930815647
-	EQUAL
-	IFJMPREF {
-		CALL $resolveNft$
-	}
-}
-DUP
-PUSHINT 1795764025
-LEQ
-IFJMPREF {
-	DUP
-	PUSHINT 1058986941
-	EQUAL
-	IFJMPREF {
-		CALL $destructIndexBasis$
-	}
-	DUP
-	PUSHINT 1079203788
-	EQUAL
-	IFJMPREF {
-		CALL $setDeployIndexValue$
+		DUP
+		PUSHINT 454846103
+		EQUAL
+		IFJMPREF {
+			CALL $getTotalMinted$
+		}
+		DUP
+		PUSHINT 494429385
+		EQUAL
+		IFJMPREF {
+			CALL $resolveIndex$
+		}
+		DUP
+		PUSHINT 852767119
+		EQUAL
+		IFJMPREF {
+			CALL $setRemainOnNft$
+		}
+		DUP
+		PUSHINT 904047439
+		EQUAL
+		IFJMPREF {
+			CALL $resolveCodeHashNft$
+		}
 	}
 	DUP
 	PUSHINT 1211552541
-	EQUAL
+	LEQ
 	IFJMPREF {
-		CALL $getIndexBasisAddress$
+		DUP
+		PUSHINT 930815647
+		EQUAL
+		IFJMPREF {
+			CALL $resolveNft$
+		}
+		DUP
+		PUSHINT 1058986941
+		EQUAL
+		IFJMPREF {
+			CALL $destructIndexBasis$
+		}
+		DUP
+		PUSHINT 1079203788
+		EQUAL
+		IFJMPREF {
+			CALL $setDeployIndexValue$
+		}
+		DUP
+		PUSHINT 1211552541
+		EQUAL
+		IFJMPREF {
+			CALL $getIndexBasisAddress$
+		}
 	}
 	DUP
-	PUSHINT 1795764025
-	EQUAL
+	PUSHINT 2003540608
+	LEQ
 	IFJMPREF {
-		CALL $setIndexDeployValue$
+		DUP
+		PUSHINT 1795764025
+		EQUAL
+		IFJMPREF {
+			CALL $setIndexDeployValue$
+		}
+		DUP
+		PUSHINT 1806040174
+		EQUAL
+		IFJMPREF {
+			CALL $mintNft$
+		}
+		DUP
+		PUSHINT 1967056961
+		EQUAL
+		IFJMPREF {
+			CALL $getDeployIndexValue$
+		}
+		DUP
+		PUSHINT 2003540608
+		EQUAL
+		IFJMPREF {
+			CALL $resolveCodeHashIndex$
+		}
 	}
 }
 DUP
 PUSHINT 2082711571
-LEQ
+EQUAL
 IFJMPREF {
-	DUP
-	PUSHINT 1806040174
-	EQUAL
-	IFJMPREF {
-		CALL $mintNft$
-	}
-	DUP
-	PUSHINT 1967056961
-	EQUAL
-	IFJMPREF {
-		CALL $getDeployIndexValue$
-	}
-	DUP
-	PUSHINT 2003540608
-	EQUAL
-	IFJMPREF {
-		CALL $resolveCodeHashIndex$
-	}
-	DUP
-	PUSHINT 2082711571
-	EQUAL
-	IFJMPREF {
-		CALL $deployIndexBasis$
-	}
+	CALL $deployIndexBasis$
 }
