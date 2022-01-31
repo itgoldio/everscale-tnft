@@ -15,11 +15,13 @@ library TransferLib {
 
 abstract contract Transfer is ITransfer, NftBase {
 
-    event ownershipTransferred(address oldOwner, address newOwner);
+    event OwnershipTransferred(address oldOwner, address newOwner);
 
     function transferOwnership(address addrTo) public override onlyOwner {
         require(msg.value >= (_indexDeployValue * 2), NftErrors.value_less_than_required);
-        require(addrTo != address(0), NftErrors.value_is_empty);
+        require(addrTo.value != 0, NftErrors.value_is_empty);
+
+        tvm.rawReserve(msg.value, 1);
 
         destructIndex();
 

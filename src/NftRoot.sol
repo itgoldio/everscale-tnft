@@ -29,7 +29,7 @@ contract NftRoot is NftResolver, IndexResolver {
     /// IndexBasic deployment and will remain on the IndexBasic contract after the deployment
     uint128 _deployIndexBasisValue = 0.4 ton;
 
-    event tokenWasMinted(address nftAddr, address creatorAddr);
+    event TokenWasMinted(address nftAddr, address creatorAddr);
 
     constructor(
         TvmCell codeIndex, 
@@ -45,7 +45,6 @@ contract NftRoot is NftResolver, IndexResolver {
 
     function mintNft() public {
         require(msg.value >= (_indexDeployValue * 2) + _remainOnNft, NftRootErrors.value_less_than_required);
-        tvm.accept();
         tvm.rawReserve(msg.value, 1);
 
         TvmCell codeNft = _buildNftCode(address(this));
@@ -68,6 +67,7 @@ contract NftRoot is NftResolver, IndexResolver {
 
     function deployIndexBasis(TvmCell codeIndexBasis) public onlyOwner {
         require(address(this).balance > _deployIndexBasisValue + 0.1 ton, NftRootErrors.value_less_than_required); /// 0.1 ton this is freeze protection
+        tvm.accept();
         uint256 codeHashData = resolveCodeHashNft();
         TvmCell state = tvm.buildStateInit({
             contr: IndexBasis,

@@ -29,7 +29,7 @@ abstract contract NftBase is INftBase, IndexResolver {
 
     mapping(address => uint128) _royalty;
 
-    event tokenWasMinted(address owner);
+    event TokenWasMinted(address owner);
 
     function deployIndex(address owner) internal view {
         TvmCell codeIndexOwner = _buildIndexCode(_addrRoot, owner);
@@ -42,8 +42,6 @@ abstract contract NftBase is INftBase, IndexResolver {
     }
 
     function destructIndex() internal view {
-        tvm.accept();
-
         address oldIndexOwner = resolveIndex(address(0), address(this), _addrOwner);
         IIndex(oldIndexOwner).destruct();
         address oldIndexOwnerRoot = resolveIndex(_addrRoot, address(this), _addrOwner);
@@ -51,7 +49,7 @@ abstract contract NftBase is INftBase, IndexResolver {
     }
 
     function setIndexDeployValue(uint128 indexDeployValue) public override onlyOwner {
-        tvm.accept();
+        tvm.rawReserve(msg.value, 1);
         _indexDeployValue = indexDeployValue;
     }
 
@@ -77,7 +75,7 @@ abstract contract NftBase is INftBase, IndexResolver {
     }
 
     modifier onlyOwner virtual {
-        require(msg.sender == _addrOwner);
+        require(msg.sender == _addrOwner, NftErrors.sender_is_not_owner);
         _;
     }
 
