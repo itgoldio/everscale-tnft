@@ -1,14 +1,14 @@
-pragma ton-solidity >=0.43.0;
+pragma ton-solidity = 0.47.0;
 
 pragma AbiHeader expire;
 pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
-import '../tnft-interfaces/NftInterfaces/INftBase/INftBase.sol';
-import '../tnft-interfaces/NftInterfaces/IGetInfoTnft1/IGetInfoTnft1.sol';
-import '../tnft-interfaces/NftInterfaces/ITransfer/ITransfer.sol';
-import '../tnft-interfaces/NftInterfaces/IRequiredInterfaces/IRequiredInterfaces.sol';
-import '../tnft-interfaces/NftInterfaces/IName/IName.sol';
+import '../tnft-interfaces/NftInterfaces/INftBase/NftBase.sol';
+import '../tnft-interfaces/NftInterfaces/IGetInfoTnft1/GetInfoTnft1.sol';
+import '../tnft-interfaces/NftInterfaces/ITransfer/Transfer.sol';
+import '../tnft-interfaces/NftInterfaces/IRequiredInterfaces/RequiredInterfaces.sol';
+import '../tnft-interfaces/NftInterfaces/IName/Name.sol';
 
 contract Nft is NftBase, GetInfoTnft1, Transfer, RequiredInterfaces, Name {
 
@@ -34,7 +34,7 @@ contract Nft is NftBase, GetInfoTnft1, Transfer, RequiredInterfaces, Name {
         /// It's deprecated, it is planned to use TIP-6
         _requiredInterfaces = [RequiredInterfacesLib.ID, NftBaseLib.ID, TransferLib.ID, GetInfoTnft1Lib.ID, NameLib.ID];
 
-        emit tokenWasMinted(addrOwner);
+        emit TokenWasMinted(addrOwner);
 
         deployIndex(addrOwner);
     }
