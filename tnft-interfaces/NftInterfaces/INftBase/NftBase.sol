@@ -37,10 +37,11 @@ abstract contract NftBase is INftBase, IndexResolver {
         tvm.rawReserve(msg.value, 1);
 
         address addrOwner = _addrOwner;
-        _transfer(addrOwner, addrTo);
+        sendGasToAddr = sendGasToAddr.value != 0 ? sendGasToAddr : msg.sender;
+
+        _transfer(addrTo, sendGasToAddr);
         emit OwnershipTransferred(addrOwner, addrTo);
 
-        sendGasToAddr = sendGasToAddr.value != 0 ? sendGasToAddr : msg.sender;
         if (callbackAddr.value != 0) {
             ITokenTransferCallback(callbackAddr).tokenTransferCallback{value: 0, flag: 128}(
                 addrOwner, 
@@ -63,15 +64,15 @@ abstract contract NftBase is INftBase, IndexResolver {
 
         _destructIndex(sendGasToAddr);
         _addrOwner = to;
-        _deployIndex(to);
+        _deployIndex();
     }
 
-    function _deployIndex(address owner) internal view {
-        TvmCell codeIndexOwner = _buildIndexCode(_addrRoot, owner);
+    function _deployIndex() internal view {
+        TvmCell codeIndexOwner = _buildIndexCode(_addrRoot, _addrOwner);
         TvmCell stateIndexOwner = _buildIndexState(codeIndexOwner, address(this));
         new Index{stateInit: stateIndexOwner, value: _indexDeployValue}(_addrRoot);
 
-        TvmCell codeIndexOwnerRoot = _buildIndexCode(address(0), owner);
+        TvmCell codeIndexOwnerRoot = _buildIndexCode(address(0), _addrOwner);
         TvmCell stateIndexOwnerRoot = _buildIndexState(codeIndexOwnerRoot, address(this));
         new Index{stateInit: stateIndexOwnerRoot, value: _indexDeployValue}(_addrRoot);
     }
