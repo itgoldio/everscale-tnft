@@ -5,12 +5,10 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import '../tnft-interfaces/NftInterfaces/INftBase/NftBase.sol';
-import '../tnft-interfaces/NftInterfaces/IGetInfoTnft1/GetInfoTnft1.sol';
-import '../tnft-interfaces/NftInterfaces/ITransfer/Transfer.sol';
-import '../tnft-interfaces/NftInterfaces/IRequiredInterfaces/RequiredInterfaces.sol';
 import '../tnft-interfaces/NftInterfaces/IName/Name.sol';
+import '../tnft-interfaces/NftInterfaces/ITIP6/TIP6.sol';
 
-contract Nft is NftBase, GetInfoTnft1, Transfer, RequiredInterfaces, Name {
+contract Nft is NftBase, Name, TIP6 {
 
     constructor(
         address addrOwner, 
@@ -28,15 +26,13 @@ contract Nft is NftBase, GetInfoTnft1, Transfer, RequiredInterfaces, Name {
         _codeIndex = codeIndex;
         _indexDeployValue = indexDeployValue;
 
-        /// demo royalty, 5 percent will be received by the creator (NftRoot)
-        _royalty[msg.sender] = 5;
-
-        /// It's deprecated, it is planned to use TIP-6
-        _requiredInterfaces = [RequiredInterfacesLib.ID, NftBaseLib.ID, TransferLib.ID, GetInfoTnft1Lib.ID, NameLib.ID];
+        _supportedInterfaces[ calculateNftBaseSelector() ] = true;
+        _supportedInterfaces[ calculateNameSelector() ] = true;
+        _supportedInterfaces[ calculateTIP6Selector() ] = true;
 
         emit TokenWasMinted(addrOwner);
 
-        deployIndex(addrOwner);
+        _deployIndex(addrOwner);
     }
 
 }

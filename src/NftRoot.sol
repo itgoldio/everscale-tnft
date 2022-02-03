@@ -86,6 +86,8 @@ contract NftRoot is NftResolver, IndexResolver {
 
     function destructIndexBasis() public view onlyOwner {
         require(_addrIndexBasis.value != 0, NftRootErrors.index_not_deployed);
+        tvm.accept();
+        
         IIndexBasis(_addrIndexBasis).destruct();
     }
 

@@ -36,8 +36,13 @@ contract Index is IIndex {
         addrData = _addrData;
     }
 
-    function destruct() public override {
+    function destruct(address sendGasToAddr) public override {
         require(msg.sender == _addrData);
-        selfdestruct(_addrData);
+        
+        if (sendGasToAddr.value != 0) {
+            selfdestruct(sendGasToAddr);
+        } else {
+            selfdestruct(_addrData);
+        }
     }
 }

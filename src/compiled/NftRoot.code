@@ -399,6 +399,7 @@ PARSEMSGADDR
 INDEX 3
 PLDU 256
 THROWIFNOT 103
+ACCEPT
 ;; Remote call IIndexBasis.destruct
 ;; push identifier _addrIndexBasis
 GETGLOB 14

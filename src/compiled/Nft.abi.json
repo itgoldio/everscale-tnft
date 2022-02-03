@@ -13,6 +13,24 @@
 			]
 		},
 		{
+			"name": "supportsInterface",
+			"inputs": [
+				{"name":"_answer_id","type":"uint32"},
+				{"name":"interfaceID","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"value0","type":"bool"}
+			]
+		},
+		{
+			"name": "calculateTIP6Selector",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint32"}
+			]
+		},
+		{
 			"name": "getName",
 			"inputs": [
 				{"name":"_answer_id","type":"uint32"}
@@ -22,49 +40,22 @@
 			]
 		},
 		{
-			"name": "getRequiredInterfaces",
+			"name": "calculateNameSelector",
 			"inputs": [
 			],
 			"outputs": [
-				{"name":"requiredInterfaces","type":"int256[]"}
-			]
-		},
-		{
-			"name": "getRequiredInterfacesResponsible",
-			"inputs": [
-				{"name":"_answer_id","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"requiredInterfaces","type":"int256[]"}
+				{"name":"value0","type":"uint32"}
 			]
 		},
 		{
 			"name": "transferOwnership",
 			"inputs": [
-				{"name":"addrTo","type":"address"}
+				{"name":"callbackAddr","type":"address"},
+				{"name":"sendGasToAddr","type":"address"},
+				{"name":"addrTo","type":"address"},
+				{"name":"payload","type":"cell"}
 			],
 			"outputs": [
-			]
-		},
-		{
-			"name": "getInfo",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"addrRoot","type":"address"},
-				{"name":"addrOwner","type":"address"},
-				{"name":"addrNft","type":"address"}
-			]
-		},
-		{
-			"name": "getInfoResponsible",
-			"inputs": [
-				{"name":"_answer_id","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"addrRoot","type":"address"},
-				{"name":"addrOwner","type":"address"},
-				{"name":"addrNft","type":"address"}
 			]
 		},
 		{
@@ -73,24 +64,6 @@
 				{"name":"indexDeployValue","type":"uint128"}
 			],
 			"outputs": [
-			]
-		},
-		{
-			"name": "getSummaryRoyalty",
-			"inputs": [
-				{"name":"_answer_id","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"royaltyValue","type":"uint128"}
-			]
-		},
-		{
-			"name": "getRoyalty",
-			"inputs": [
-				{"name":"_answer_id","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"royalty","type":"map(address,uint128)"}
 			]
 		},
 		{
@@ -109,6 +82,14 @@
 			],
 			"outputs": [
 				{"name":"addrOwner","type":"address"}
+			]
+		},
+		{
+			"name": "calculateNftBaseSelector",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint32"}
 			]
 		},
 		{
@@ -138,18 +119,18 @@
 	],
 	"events": [
 		{
-			"name": "OwnershipTransferred",
+			"name": "TokenWasMinted",
 			"inputs": [
-				{"name":"oldOwner","type":"address"},
-				{"name":"newOwner","type":"address"}
+				{"name":"owner","type":"address"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "TokenWasMinted",
+			"name": "OwnershipTransferred",
 			"inputs": [
-				{"name":"owner","type":"address"}
+				{"name":"oldOwner","type":"address"},
+				{"name":"newOwner","type":"address"}
 			],
 			"outputs": [
 			]
