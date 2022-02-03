@@ -13,7 +13,8 @@ contract Nft is NftBase, Name, TIP6 {
     constructor(
         address addrOwner, 
         TvmCell codeIndex,
-        uint128 indexDeployValue
+        uint128 indexDeployValue, 
+        string dataName
     ) public {
         optional(TvmCell) optSalt = tvm.codeSalt(tvm.code());
         require(optSalt.hasValue(), NftErrors.value_is_empty);
@@ -25,6 +26,7 @@ contract Nft is NftBase, Name, TIP6 {
         _addrOwner = addrOwner;
         _codeIndex = codeIndex;
         _indexDeployValue = indexDeployValue;
+        _dataName = dataName;
 
         _supportedInterfaces[ calculateNftBaseSelector() ] = true;
         _supportedInterfaces[ calculateNameSelector() ] = true;
@@ -32,7 +34,7 @@ contract Nft is NftBase, Name, TIP6 {
 
         emit TokenWasMinted(addrOwner);
 
-        _deployIndex(addrOwner);
+        _deployIndex();
     }
 
 }

@@ -7,7 +7,8 @@
 			"inputs": [
 				{"name":"addrOwner","type":"address"},
 				{"name":"codeIndex","type":"cell"},
-				{"name":"indexDeployValue","type":"uint128"}
+				{"name":"indexDeployValue","type":"uint128"},
+				{"name":"dataName","type":"bytes"}
 			],
 			"outputs": [
 			]
