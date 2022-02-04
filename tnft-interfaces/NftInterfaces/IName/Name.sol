@@ -14,9 +14,4 @@ abstract contract Name is IName {
         return {value: 0, flag: 64}(_dataName);
     }
 
-    function calculateNameSelector() public pure returns (bytes4) {
-        IName name;
-        return bytes4(tvm.functionId(name.getName));
-    } 
-
 }

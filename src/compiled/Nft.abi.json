@@ -24,28 +24,12 @@
 			]
 		},
 		{
-			"name": "calculateTIP6Selector",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"uint32"}
-			]
-		},
-		{
 			"name": "getName",
 			"inputs": [
 				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
 				{"name":"dataName","type":"bytes"}
-			]
-		},
-		{
-			"name": "calculateNameSelector",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"uint32"}
 			]
 		},
 		{
@@ -83,14 +67,6 @@
 			],
 			"outputs": [
 				{"name":"addrOwner","type":"address"}
-			]
-		},
-		{
-			"name": "calculateNftBaseSelector",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"uint32"}
 			]
 		},
 		{

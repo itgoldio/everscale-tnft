@@ -98,16 +98,6 @@ abstract contract NftBase is INftBase, IndexResolver {
         return {value: 0, flag: 64} _addrOwner;
     }
 
-    function calculateNftBaseSelector() public pure returns(bytes4) {
-        INftBase nftBase;
-        return bytes4(
-            tvm.functionId(nftBase.setIndexDeployValue) ^ 
-            tvm.functionId(nftBase.transferOwnership) ^
-            tvm.functionId(nftBase.getIndexDeployValue) ^
-            tvm.functionId(nftBase.getOwner)
-        );
-    }
-
     modifier onlyOwner virtual {
         require(msg.sender == _addrOwner, NftErrors.sender_is_not_owner);
         _;

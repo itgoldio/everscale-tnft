@@ -194,9 +194,17 @@ TRUE
 ; expValue
 ;; fetch _supportedInterfaces
 GETGLOB 16
-CALLREF {
-	CALL $calculateNftBaseSelector_internal_macro$
-}
+PUSHINT 1795764025
+;; ^
+PUSHINT 1627574419
+XOR
+;; ^
+PUSHINT 1643665857
+XOR
+;; ^
+PUSHINT 1656985116
+XOR
+;; bytes4
 ; end expValue
 XCHG S2
 ; colValue
@@ -210,12 +218,11 @@ SETGLOB 16
 TRUE
 ; expValue
 ;; fetch _supportedInterfaces
+;; bytes4
+PUSHINT 1118824496
 GETGLOB 16
-CALLREF {
-	CALL $calculateNameSelector_internal_macro$
-}
 ; end expValue
-XCHG S2
+ROT
 ; colValue
 NEWC
 STI 1
@@ -227,12 +234,11 @@ SETGLOB 16
 TRUE
 ; expValue
 ;; fetch _supportedInterfaces
+;; bytes4
+PUSHINT 839183401
 GETGLOB 16
-CALLREF {
-	CALL $calculateTIP6Selector_internal_macro$
-}
 ; end expValue
-XCHG S2
+ROT
 ; colValue
 NEWC
 STI 1
@@ -351,53 +357,6 @@ IFREF {
 TRUE
 SETGLOB 7
 
-.macro calculateTIP6Selector
-DROP
-ENDS
-CALLREF {
-	CALL $calculateTIP6Selector_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHSLICE x0000000000000000000000003da43c962_
-	STSLICER
-	STU 32
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	DROP
-}
-IFELSE
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	calculateTIP6Selector_internal
-.type	calculateTIP6Selector_internal, @function
-CALL $calculateTIP6Selector_internal_macro$
-
-.macro calculateTIP6Selector_internal_macro
-; function calculateTIP6Selector
-;; decl: tip6
-;; return
-;; bytes4
-PUSHINT 839183401
-; end function calculateTIP6Selector
-
 .macro getName
 DROP
 GETGLOB 2
@@ -490,53 +449,6 @@ SETGLOB 4
 DROP
 GETGLOB 15
 ; end function getName
-
-.macro calculateNameSelector
-DROP
-ENDS
-CALLREF {
-	CALL $calculateNameSelector_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHSLICE x0000000000000000000000002b54ae40a_
-	STSLICER
-	STU 32
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	DROP
-}
-IFELSE
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	calculateNameSelector_internal
-.type	calculateNameSelector_internal, @function
-CALL $calculateNameSelector_internal_macro$
-
-.macro calculateNameSelector_internal_macro
-; function calculateNameSelector
-;; decl: name
-;; return
-;; bytes4
-PUSHINT 1118824496
-; end function calculateNameSelector
 
 .macro transferOwnership
 DROP
@@ -1192,64 +1104,6 @@ DROP
 GETGLOB 13
 ; end function getOwner
 
-.macro calculateNftBaseSelector
-DROP
-ENDS
-CALLREF {
-	CALL $calculateNftBaseSelector_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHSLICE x00000000000000000000000023210ee32_
-	STSLICER
-	STU 32
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	DROP
-}
-IFELSE
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	calculateNftBaseSelector_internal
-.type	calculateNftBaseSelector_internal, @function
-CALL $calculateNftBaseSelector_internal_macro$
-
-.macro calculateNftBaseSelector_internal_macro
-; function calculateNftBaseSelector
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-;; decl: nftBase
-;; return
-PUSHINT 1795764025
-;; ^
-PUSHINT 1627574419
-XOR
-;; ^
-PUSHINT 1643665857
-XOR
-;; ^
-PUSHINT 1656985116
-XOR
-;; bytes4
-NIP
-; end function calculateNftBaseSelector
-
 .macro resolveCodeHashIndex
 DROP
 GETGLOB 2
@@ -1854,7 +1708,7 @@ THROWIF 60
 
 .macro public_function_selector
 DUP
-PUSHINT 760396034
+PUSHINT 1118824496
 LEQ
 IFJMPREF {
 	DUP
@@ -1864,28 +1718,11 @@ IFJMPREF {
 		CALL $constructor$
 	}
 	DUP
-	PUSHINT 209992588
-	EQUAL
-	IFJMPREF {
-		CALL $calculateNftBaseSelector$
-	}
-	DUP
 	PUSHINT 494429385
 	EQUAL
 	IFJMPREF {
 		CALL $resolveIndex$
 	}
-	DUP
-	PUSHINT 760396034
-	EQUAL
-	IFJMPREF {
-		CALL $calculateNameSelector$
-	}
-}
-DUP
-PUSHINT 1643665857
-LEQ
-IFJMPREF {
 	DUP
 	PUSHINT 839183401
 	EQUAL
@@ -1898,6 +1735,11 @@ IFJMPREF {
 	IFJMPREF {
 		CALL $getName$
 	}
+}
+DUP
+PUSHINT 1795764025
+LEQ
+IFJMPREF {
 	DUP
 	PUSHINT 1627574419
 	EQUAL
@@ -1910,11 +1752,6 @@ IFJMPREF {
 	IFJMPREF {
 		CALL $getIndexDeployValue$
 	}
-}
-DUP
-PUSHINT 2003540608
-LEQ
-IFJMPREF {
 	DUP
 	PUSHINT 1656985116
 	EQUAL
@@ -1927,16 +1764,10 @@ IFJMPREF {
 	IFJMPREF {
 		CALL $setIndexDeployValue$
 	}
-	DUP
-	PUSHINT 1989210712
-	EQUAL
-	IFJMPREF {
-		CALL $calculateTIP6Selector$
-	}
-	DUP
-	PUSHINT 2003540608
-	EQUAL
-	IFJMPREF {
-		CALL $resolveCodeHashIndex$
-	}
+}
+DUP
+PUSHINT 2003540608
+EQUAL
+IFJMPREF {
+	CALL $resolveCodeHashIndex$
 }

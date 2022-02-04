@@ -28,9 +28,17 @@ contract Nft is NftBase, Name, TIP6 {
         _indexDeployValue = indexDeployValue;
         _dataName = dataName;
 
-        _supportedInterfaces[ calculateNftBaseSelector() ] = true;
-        _supportedInterfaces[ calculateNameSelector() ] = true;
-        _supportedInterfaces[ calculateTIP6Selector() ] = true;
+        _supportedInterfaces[ 
+            bytes4(
+            tvm.functionId(INftBase.setIndexDeployValue) ^ 
+            tvm.functionId(INftBase.transferOwnership) ^
+            tvm.functionId(INftBase.getIndexDeployValue) ^
+            tvm.functionId(INftBase.getOwner)
+            )
+        ] = true;
+
+        _supportedInterfaces[ bytes4(tvm.functionId(IName.getName)) ] = true;
+        _supportedInterfaces[ bytes4(tvm.functionId(ITIP6.supportsInterface)) ] = true;
 
         emit TokenWasMinted(addrOwner);
 

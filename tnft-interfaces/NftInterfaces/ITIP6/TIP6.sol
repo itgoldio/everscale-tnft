@@ -14,9 +14,4 @@ abstract contract TIP6 is ITIP6 {
         return _supportedInterfaces[interfaceID];
     }
 
-    function calculateTIP6Selector() public pure returns (bytes4) {
-        ITIP6 tip6;
-        return bytes4(tvm.functionId(tip6.supportsInterface));
-    }
-
 }
