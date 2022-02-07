@@ -6,10 +6,6 @@ pragma AbiHeader time;
 
 import './IName.sol';
 
-library NameLib {
-    int constant ID = 2;        
-}
-
 abstract contract Name is IName {
 
     string _dataName;
@@ -17,4 +13,5 @@ abstract contract Name is IName {
     function getName() public override responsible returns (string dataName) {
         return {value: 0, flag: 64}(_dataName);
     }
+
 }

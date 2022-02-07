@@ -7,8 +7,12 @@ pragma AbiHeader time;
 
 interface INftBase {
     function setIndexDeployValue(uint128 indexDeployValue) external;
-    function getSummaryRoyalty() external responsible returns(uint128 royaltyValue);
-    function getRoyalty() external responsible returns(mapping(address => uint128) royalty);
+    function transferOwnership(
+        address callbackAddr, 
+        address sendGasToAddr, 
+        address addrTo, 
+        TvmCell payload
+    ) external;
     function getIndexDeployValue() external responsible returns(uint128);
     function getOwner() external responsible returns(address addrOwner);
 }

@@ -5,17 +5,16 @@ pragma AbiHeader time;
 pragma AbiHeader pubkey;
 
 import '../tnft-interfaces/NftInterfaces/INftBase/NftBase.sol';
-import '../tnft-interfaces/NftInterfaces/IGetInfoTnft1/GetInfoTnft1.sol';
-import '../tnft-interfaces/NftInterfaces/ITransfer/Transfer.sol';
-import '../tnft-interfaces/NftInterfaces/IRequiredInterfaces/RequiredInterfaces.sol';
 import '../tnft-interfaces/NftInterfaces/IName/Name.sol';
+import '../tnft-interfaces/NftInterfaces/ITIP6/TIP6.sol';
 
-contract Nft is NftBase, GetInfoTnft1, Transfer, RequiredInterfaces, Name {
+contract Nft is NftBase, Name, TIP6 {
 
     constructor(
         address addrOwner, 
         TvmCell codeIndex,
-        uint128 indexDeployValue
+        uint128 indexDeployValue, 
+        string dataName
     ) public {
         optional(TvmCell) optSalt = tvm.codeSalt(tvm.code());
         require(optSalt.hasValue(), NftErrors.value_is_empty);
@@ -27,16 +26,23 @@ contract Nft is NftBase, GetInfoTnft1, Transfer, RequiredInterfaces, Name {
         _addrOwner = addrOwner;
         _codeIndex = codeIndex;
         _indexDeployValue = indexDeployValue;
+        _dataName = dataName;
 
-        /// demo royalty, 5 percent will be received by the creator (NftRoot)
-        _royalty[msg.sender] = 5;
+        _supportedInterfaces[ 
+            bytes4(
+            tvm.functionId(INftBase.setIndexDeployValue) ^ 
+            tvm.functionId(INftBase.transferOwnership) ^
+            tvm.functionId(INftBase.getIndexDeployValue) ^
+            tvm.functionId(INftBase.getOwner)
+            )
+        ] = true;
 
-        /// It's deprecated, it is planned to use TIP-6
-        _requiredInterfaces = [RequiredInterfacesLib.ID, NftBaseLib.ID, TransferLib.ID, GetInfoTnft1Lib.ID, NameLib.ID];
+        _supportedInterfaces[ bytes4(tvm.functionId(IName.getName)) ] = true;
+        _supportedInterfaces[ bytes4(tvm.functionId(ITIP6.supportsInterface)) ] = true;
 
         emit TokenWasMinted(addrOwner);
 
-        deployIndex(addrOwner);
+        _deployIndex();
     }
 
 }
