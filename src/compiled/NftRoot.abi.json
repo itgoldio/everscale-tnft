@@ -6,7 +6,7 @@
 			"name": "constructor",
 			"inputs": [
 				{"name":"codeIndex","type":"cell"},
-				{"name":"codeData","type":"cell"},
+				{"name":"codeNft","type":"cell"},
 				{"name":"ownerPubkey","type":"uint256"}
 			],
 			"outputs": [
@@ -15,6 +15,7 @@
 		{
 			"name": "mintNft",
 			"inputs": [
+				{"name":"dataName","type":"bytes"}
 			],
 			"outputs": [
 			]
@@ -52,17 +53,9 @@
 			]
 		},
 		{
-			"name": "setProcessingValue",
+			"name": "setRemainOnNft",
 			"inputs": [
-				{"name":"processingValue","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setRemainOnData",
-			"inputs": [
-				{"name":"remainOnData","type":"uint128"}
+				{"name":"remainOnNft","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -84,15 +77,7 @@
 			]
 		},
 		{
-			"name": "getProcessingValue",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"uint128"}
-			]
-		},
-		{
-			"name": "getRemainOnData",
+			"name": "getRemainOnNft",
 			"inputs": [
 			],
 			"outputs": [
@@ -113,6 +98,14 @@
 			],
 			"outputs": [
 				{"name":"value0","type":"address"}
+			]
+		},
+		{
+			"name": "getTotalMinted",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"value0","type":"uint256"}
 			]
 		},
 		{
@@ -137,7 +130,7 @@
 			]
 		},
 		{
-			"name": "resolveCodeHashData",
+			"name": "resolveCodeHashNft",
 			"inputs": [
 			],
 			"outputs": [
@@ -145,13 +138,13 @@
 			]
 		},
 		{
-			"name": "resolveData",
+			"name": "resolveNft",
 			"inputs": [
 				{"name":"addrRoot","type":"address"},
 				{"name":"id","type":"uint256"}
 			],
 			"outputs": [
-				{"name":"addrData","type":"address"}
+				{"name":"addrNft","type":"address"}
 			]
 		}
 	],
@@ -159,7 +152,7 @@
 	],
 	"events": [
 		{
-			"name": "tokenWasMinted",
+			"name": "TokenWasMinted",
 			"inputs": [
 				{"name":"nftAddr","type":"address"},
 				{"name":"creatorAddr","type":"address"}

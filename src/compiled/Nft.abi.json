@@ -7,68 +7,38 @@
 			"inputs": [
 				{"name":"addrOwner","type":"address"},
 				{"name":"codeIndex","type":"cell"},
-				{"name":"indexDeployValue","type":"uint128"}
+				{"name":"indexDeployValue","type":"uint128"},
+				{"name":"dataName","type":"bytes"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "getInfo",
+			"name": "supportsInterface",
 			"inputs": [
+				{"name":"_answer_id","type":"uint32"},
+				{"name":"interfaceID","type":"uint32"}
 			],
 			"outputs": [
-				{"name":"addrRoot","type":"address"},
-				{"name":"addrOwner","type":"address"},
-				{"name":"addrData","type":"address"}
+				{"name":"value0","type":"bool"}
 			]
 		},
 		{
-			"name": "getInfoResponsible",
+			"name": "getName",
 			"inputs": [
 				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
-				{"name":"addrRoot","type":"address"},
-				{"name":"addrOwner","type":"address"},
-				{"name":"addrData","type":"address"}
+				{"name":"dataName","type":"bytes"}
 			]
 		},
 		{
 			"name": "transferOwnership",
 			"inputs": [
-				{"name":"addrTo","type":"address"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "getRequiredInterfaces",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"requiredInterfaces","type":"int256[]"}
-			]
-		},
-		{
-			"name": "getRequiredInterfacesResponsible",
-			"inputs": [
-				{"name":"_answer_id","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"requiredInterfaces","type":"int256[]"}
-			]
-		},
-		{
-			"name": "redeployIndex",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setIndexCode",
-			"inputs": [
-				{"name":"codeIndex","type":"cell"}
+				{"name":"callbackAddr","type":"address"},
+				{"name":"sendGasToAddr","type":"address"},
+				{"name":"addrTo","type":"address"},
+				{"name":"payload","type":"cell"}
 			],
 			"outputs": [
 			]
@@ -82,24 +52,9 @@
 			]
 		},
 		{
-			"name": "getSummaryRoyalty",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"royaltyValue","type":"uint128"}
-			]
-		},
-		{
-			"name": "getRoyalty",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"royalty","type":"map(address,uint128)"}
-			]
-		},
-		{
 			"name": "getIndexDeployValue",
 			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
 				{"name":"value0","type":"uint128"}
@@ -108,6 +63,7 @@
 		{
 			"name": "getOwner",
 			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
 				{"name":"addrOwner","type":"address"}
@@ -140,18 +96,18 @@
 	],
 	"events": [
 		{
-			"name": "ownershipTransferred",
+			"name": "TokenWasMinted",
 			"inputs": [
-				{"name":"oldOwner","type":"address"},
-				{"name":"newOwner","type":"address"}
+				{"name":"owner","type":"address"}
 			],
 			"outputs": [
 			]
 		},
 		{
-			"name": "tokenWasMinted",
+			"name": "OwnershipTransferred",
 			"inputs": [
-				{"name":"owner","type":"address"}
+				{"name":"oldOwner","type":"address"},
+				{"name":"newOwner","type":"address"}
 			],
 			"outputs": [
 			]

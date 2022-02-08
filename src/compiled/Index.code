@@ -248,7 +248,17 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
 ENDS
+;; param: sendGasToAddr
 CALLREF {
 	CALL $destruct_internal_macro$
 }
@@ -263,6 +273,7 @@ SETGLOB 7
 CALL $destruct_internal_macro$
 
 .macro destruct_internal_macro
+;; param: sendGasToAddr
 ; function destruct
 ;; get member sender
 GETGLOB 9
@@ -270,17 +281,42 @@ GETGLOB 9
 GETGLOB 12
 SDEQ
 THROWIFNOT 100
-;; push identifier _addrData
-GETGLOB 12
-NEWC
-STSLICECONST x42_
-STSLICE
-PUSHINT 111
-STZEROES
-ENDC
-PUSHINT 160
-SENDRAWMSG
+;; if
+;; get member value
+;; push identifier sendGasToAddr
+DUP
+PARSEMSGADDR
+INDEX 3
+PLDU 256
+NEQINT 0
+PUSHCONT {
+	;; push identifier sendGasToAddr
+	DUP
+	NEWC
+	STSLICECONST x42_
+	STSLICE
+	PUSHINT 111
+	STZEROES
+	ENDC
+	PUSHINT 160
+	SENDRAWMSG
+}
+PUSHCONT {
+	;; push identifier _addrData
+	GETGLOB 12
+	NEWC
+	STSLICECONST x42_
+	STSLICE
+	PUSHINT 111
+	STZEROES
+	ENDC
+	PUSHINT 160
+	SENDRAWMSG
+}
+IFELSE
+;; end if
 ; end function destruct
+DROP
 
 .macro c7_to_c4
 GETGLOB 12
@@ -445,6 +481,12 @@ THROWIF 60
 
 .macro public_function_selector
 DUP
+PUSHINT 61058519
+EQUAL
+IFJMPREF {
+	CALL $destruct$
+}
+DUP
 PUSHINT 368034010
 EQUAL
 IFJMPREF {
@@ -455,10 +497,4 @@ PUSHINT 1196840156
 EQUAL
 IFJMPREF {
 	CALL $constructor$
-}
-DUP
-PUSHINT 1204170202
-EQUAL
-IFJMPREF {
-	CALL $destruct$
 }
