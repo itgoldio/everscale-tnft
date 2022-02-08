@@ -1,0 +1,109 @@
+{
+	"ABI version": 2,
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"tokenRootAddr","type":"address"},
+				{"name":"addrOwner","type":"address"},
+				{"name":"marketFeeValue","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "onGetRoyalty",
+			"inputs": [
+				{"name":"royalty","type":"map(address,uint128)"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "buyToken",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "cancelOrder",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setApprovalCallback",
+			"inputs": [
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "tokenTransferCallback",
+			"inputs": [
+				{"name":"oldOwner","type":"address"},
+				{"name":"newOwner","type":"address"},
+				{"name":"tokenRoot","type":"address"},
+				{"name":"sendGasToAddr","type":"address"},
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "resetApprovalCallback",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getOfferInfo",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"price","type":"uint128"},
+				{"name":"addrNft","type":"address"},
+				{"name":"marketRootAddr","type":"address"},
+				{"name":"tokenRootAddr","type":"address"},
+				{"name":"addrOwner","type":"address"}
+			]
+		},
+		{
+			"name": "_paused",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"_paused","type":"bool"}
+			]
+		},
+		{
+			"name": "_steps",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"_steps","type":"uint256"}
+			]
+		}
+	],
+	"data": [
+		{"key":1,"name":"_price","type":"uint128"},
+		{"key":2,"name":"_addrNft","type":"address"},
+		{"key":3,"name":"_marketRootAddr","type":"address"}
+	],
+	"events": [
+		{
+			"name": "sellConfirmed",
+			"inputs": [
+				{"name":"nftAddr","type":"address"},
+				{"name":"buyerAddr","type":"address"}
+			],
+			"outputs": [
+			]
+		}
+	]
+}

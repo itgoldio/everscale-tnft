@@ -91,8 +91,28 @@ IFREF {
 	CALL $c4_to_c7$
 }
 LDREF
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
 ENDS
 ;; param: dataName
+;; param: authorAddr
+;; param: authorRoyalty
 CALLREF {
 	CALL $mintNft_internal_macro$
 }
@@ -108,6 +128,8 @@ CALL $mintNft_internal_macro$
 
 .macro mintNft_internal_macro
 ;; param: dataName
+;; param: authorAddr
+;; param: authorRoyalty
 ; function mintNft
 ;; get member value
 DEPTH
@@ -145,8 +167,10 @@ CALLREF {
 	CALL $_buildNftState_internal_macro$
 }
 ;; decl: stateNft
+;; push identifier authorRoyalty
+;; push identifier authorAddr
 ;; push identifier dataName
-PUSH S2
+PUSH3 S2, S3, S4
 ;; push identifier _indexDeployValue
 GETGLOB 15
 ;; push identifier _codeIndex
@@ -154,14 +178,14 @@ GETGLOB 11
 ;; get member sender
 GETGLOB 9
 ;; push identifier stateNft
-PUSH2 S4, S4
+PUSH2 S6, S6
 HASHCU
 NEWC
 STSLICECONST x801_
 STU 256
 ENDC
 CTOS
-BLKSWAP 5, 1
+BLKSWAP 7, 1
 ;; push identifier _indexDeployValue
 GETGLOB 15
 ;; *
@@ -172,7 +196,7 @@ UFITS 128
 GETGLOB 16
 ADD
 UFITS 128
-PUSH S6
+PUSH S8
 NEWC
 STSLICECONST x62_
 STSLICE
@@ -182,13 +206,18 @@ PUSHSLICE x000000000000000000000000007_
 STSLICER
 STREF
 STSLICECONST 1
-BLKSWAP 4, 1
+BLKSWAP 6, 1
 NEWC
-STSLICECONST x05ffdad4
+STSLICECONST x4f373ebf
 STSLICE
 STREF
 STU 128
 STREF
+ROTREV
+NEWC
+STSLICE
+STU 128
+STBREFR
 STBREFR
 ENDC
 PUSHINT 0
@@ -235,7 +264,7 @@ ENDC
 PUSHINT 128
 SENDRAWMSG
 ; end function mintNft
-BLKDROP 4
+BLKDROP 6
 
 .macro deployIndexBasis
 DROP
@@ -1918,7 +1947,7 @@ IFJMPREF {
 		}
 	}
 	DUP
-	PUSHINT 1119196584
+	PUSHINT 1211552541
 	LEQ
 	IFJMPREF {
 		DUP
@@ -1940,10 +1969,10 @@ IFJMPREF {
 			CALL $setDeployIndexValue$
 		}
 		DUP
-		PUSHINT 1119196584
+		PUSHINT 1211552541
 		EQUAL
 		IFJMPREF {
-			CALL $mintNft$
+			CALL $getIndexBasisAddress$
 		}
 	}
 	DUP
@@ -1951,16 +1980,16 @@ IFJMPREF {
 	LEQ
 	IFJMPREF {
 		DUP
-		PUSHINT 1211552541
-		EQUAL
-		IFJMPREF {
-			CALL $getIndexBasisAddress$
-		}
-		DUP
 		PUSHINT 1795764025
 		EQUAL
 		IFJMPREF {
 			CALL $setIndexDeployValue$
+		}
+		DUP
+		PUSHINT 1824971212
+		EQUAL
+		IFJMPREF {
+			CALL $mintNft$
 		}
 		DUP
 		PUSHINT 1967056961

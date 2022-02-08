@@ -44,12 +44,44 @@ PUSHCONT {
 	LDU 128
 }
 IFNOT
+DUP
+SBITREFS
+EQINT 1
+SWAP
+EQINT 0
+AND
+PUSHCONT {
+	LDREF
+	ENDS
+	CTOS
+}
+IF
 LDREF
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
 ENDS
 ;; param: addrOwner
 ;; param: codeIndex
 ;; param: indexDeployValue
 ;; param: dataName
+;; param: authorAddr
+;; param: authorRoyalty
 ; constructor Nft
 GETGLOB 1
 PUSHREF {
@@ -165,30 +197,52 @@ SETGLOB 12
 ; expValue
 ; end expValue
 ;; push identifier addrOwner
-PUSH S5
+PUSH S7
 ; colValue
 SETGLOB 13
 ; end colValue
 ; expValue
 ; end expValue
 ;; push identifier codeIndex
-PUSH S4
+PUSH S6
 ; colValue
 SETGLOB 10
 ; end colValue
 ; expValue
 ; end expValue
 ;; push identifier indexDeployValue
-PUSH S3
+PUSH S5
 ; colValue
 SETGLOB 14
 ; end colValue
 ; expValue
 ; end expValue
 ;; push identifier dataName
-PUSH S2
+PUSH S4
 ; colValue
 SETGLOB 15
+; end colValue
+; expValue
+; end expValue
+;; push identifier authorAddr
+; colValue
+; end colValue
+; expValue
+;; fetch _royalty
+;; push identifier _authorAddr
+PUSH2 S3, S3
+SETGLOB 19
+GETGLOB 18
+; end expValue
+;; push identifier authorRoyalty
+PUSH S4
+; colValue
+NEWC
+STU 128
+ROTREV
+PUSHINT 267
+DICTSETB
+SETGLOB 18
 ; end colValue
 TRUE
 ; expValue
@@ -203,6 +257,28 @@ PUSHINT 1643665857
 XOR
 ;; ^
 PUSHINT 1656985116
+XOR
+;; bytes4
+; end expValue
+XCHG S2
+; colValue
+NEWC
+STI 1
+ROTREV
+PUSHINT 32
+DICTUSETB
+SETGLOB 16
+; end colValue
+TRUE
+; expValue
+;; fetch _supportedInterfaces
+GETGLOB 16
+PUSHINT 1568580398
+;; ^
+PUSHINT 790177674
+XOR
+;; ^
+PUSHINT 971759680
 XOR
 ;; bytes4
 ; end expValue
@@ -247,8 +323,40 @@ PUSHINT 32
 DICTUSETB
 SETGLOB 16
 ; end colValue
+TRUE
+; expValue
+;; fetch _supportedInterfaces
+;; bytes4
+PUSHINT 1703675675
+GETGLOB 16
+; end expValue
+ROT
+; colValue
+NEWC
+STI 1
+ROTREV
+PUSHINT 32
+DICTUSETB
+SETGLOB 16
+; end colValue
+TRUE
+; expValue
+;; fetch _supportedInterfaces
+;; bytes4
+PUSHINT 1075523976
+GETGLOB 16
+; end expValue
+ROT
+; colValue
+NEWC
+STI 1
+ROTREV
+PUSHINT 32
+DICTUSETB
+SETGLOB 16
+; end colValue
 ;; push identifier addrOwner
-PUSH S5
+PUSH S7
 ;; emit TokenWasMinted
 PUSHSLICE xc00000000000000000000000001240b639
 NEWC
@@ -261,12 +369,457 @@ CALLREF {
 	CALL $_deployIndex_internal_macro$
 }
 ; end constructor Nft
-BLKDROP 6
+BLKDROP 8
 CALLREF {
 	CALL $c7_to_c4$
 }
 TRUE
 SETGLOB 7
+
+.macro getAuthor
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDU 32
+GETGLOB 4
+ROT
+SETINDEXQ 5
+SETGLOB 4
+ENDS
+CALLREF {
+	CALL $getAuthor_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	SWAP
+	NEWC
+	STSLICECONST xe58c071b
+	STSLICE
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	GETGLOB 4
+	DUP
+	INDEX 3
+	PUSH S1
+	INDEX 2
+	GETGLOB 9
+	BLKSWAP 1, 3
+	INDEX 1
+	NEWC
+	PUSHINT 2
+	STZEROES
+	STI 1
+	PUSHINT 3
+	STZEROES
+	STSLICE
+	SWAP
+	STGRAMS
+	STDICT
+	PUSHINT 1
+	STUR 106
+	SWAP
+	NEWC
+	GETGLOB 4
+	INDEX 5
+	STUR 32
+	STSLICE
+	STBREFR
+	ENDC
+	GETGLOB 4
+	INDEX 4
+	SENDRAWMSG
+}
+IFELSE
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getAuthor_internal
+.type	getAuthor_internal, @function
+CALL $getAuthor_internal_macro$
+
+.macro getAuthor_internal_macro
+;; ret param: authorAddr
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+; function getAuthor
+;; return
+GETGLOB 4
+PUSHINT 0
+SETINDEXQ 2
+PUSHINT 64
+SETINDEXQ 4
+SETGLOB 4
+;; push identifier _authorAddr
+DROP
+GETGLOB 19
+; end function getAuthor
+
+.macro getRoyalty
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDU 32
+GETGLOB 4
+ROT
+SETINDEXQ 5
+SETGLOB 4
+ENDS
+;; ret param: royalty
+NEWDICT
+; function getRoyalty
+;; return
+GETGLOB 4
+PUSHINT 0
+SETINDEXQ 2
+PUSHINT 64
+SETINDEXQ 4
+SETGLOB 4
+;; push identifier _royalty
+DROP
+GETGLOB 18
+; end function getRoyalty
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHSLICE x0000000000000000000000003006cc622_
+	STSLICER
+	STDICT
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	GETGLOB 4
+	DUP
+	INDEX 3
+	PUSH S1
+	INDEX 2
+	GETGLOB 9
+	BLKSWAP 1, 3
+	INDEX 1
+	NEWC
+	PUSHINT 2
+	STZEROES
+	STI 1
+	PUSHINT 3
+	STZEROES
+	STSLICE
+	SWAP
+	STGRAMS
+	STDICT
+	PUSHINT 106
+	STZEROES
+	GETGLOB 4
+	INDEX 5
+	STUR 32
+	STDICT
+	ENDC
+	GETGLOB 4
+	INDEX 4
+	SENDRAWMSG
+}
+IFELSE
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.macro setApproval
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+;; decode TvmCell
+LDREF
+ENDS
+;; param: approval
+;; param: payload
+CALLREF {
+	CALL $setApproval_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	setApproval_internal
+.type	setApproval_internal, @function
+CALL $setApproval_internal_macro$
+
+.macro setApproval_internal_macro
+;; param: approval
+;; param: payload
+; modifier onlyOwner
+;; get member sender
+GETGLOB 9
+;; push identifier _addrOwner
+GETGLOB 13
+SDEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; !
+	;; push identifier _approval
+	GETGLOB 17
+	ISNULL
+}
+IF
+;; short-circuiting ||
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier _approval
+	GETGLOB 17
+	ISNULL
+	NOT
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; get member sender
+		GETGLOB 9
+		;; push identifier _approval
+		GETGLOB 17
+		DUP
+		ISNULL
+		THROWIF 63
+		SDEQ
+	}
+	IF
+}
+IFNOT
+THROWIFNOT 100
+; function setApproval
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+THROWIFNOT 100
+ACCEPT
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+PUSHINT 1
+RAWRESERVE
+; expValue
+; end expValue
+;; push identifier approval
+PUSH S1
+; colValue
+SETGLOB 17
+; end colValue
+;; Remote call IApproval.setApprovalCallback
+;; push identifier payload
+;; push identifier approval
+PUSH2 S0, S1
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHSLICE x0000000000000000000000000000b5ddff99_
+STSLICER
+STREF
+ENDC
+PUSHINT 128
+SENDRAWMSG
+; end function setApproval
+; end modifier onlyOwner
+DROP2
+
+.macro returnOwnership
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $returnOwnership_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	returnOwnership_internal
+.type	returnOwnership_internal, @function
+CALL $returnOwnership_internal_macro$
+
+.macro returnOwnership_internal_macro
+; modifier onlyApproval
+;; get member sender
+GETGLOB 9
+;; push identifier _approval
+GETGLOB 17
+SDEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier _approval
+	GETGLOB 17
+	ISNULL
+	NOT
+}
+IF
+THROWIFNOT 100
+; function returnOwnership
+ACCEPT
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+PUSHINT 1
+RAWRESERVE
+;; push identifier _approval
+GETGLOB 17
+DUP
+ISNULL
+THROWIF 63
+;; decl: approval
+; expValue
+; end expValue
+NULL
+; colValue
+SETGLOB 17
+; end colValue
+;; Remote call IApproval.resetApprovalCallback
+;; push identifier approval
+DUP
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHSLICE x0000000000000000000000000000a6f34859_
+STSLICER
+ENDC
+PUSHINT 128
+SENDRAWMSG
+DROP
+; end function returnOwnership
+; end modifier onlyApproval
+
+.macro getApproval
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $getApproval_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	SWAP
+	NEWC
+	STSLICECONST xb9ebe040
+	STSLICE
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getApproval_internal
+.type	getApproval_internal, @function
+CALL $getApproval_internal_macro$
+
+.macro getApproval_internal_macro
+;; ret param: approval
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+; function getApproval
+;; push identifier _approval
+GETGLOB 17
+ISNULL
+NOT
+PUSHCONT {
+	;; push identifier _approval
+	GETGLOB 17
+	DUP
+	ISNULL
+	THROWIF 63
+}
+PUSHCONT {
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+}
+IFELSE
+; expValue
+; end expValue
+; colValue
+NIP
+; end colValue
+; end function getApproval
 
 .macro supportsInterface
 DROP
@@ -1480,6 +2033,9 @@ ENDC
 BLKDROP2 2, 1
 
 .macro c7_to_c4
+GETGLOB 19
+GETGLOB 18
+GETGLOB 17
 GETGLOB 16
 GETGLOB 15
 GETGLOB 14
@@ -1496,15 +2052,35 @@ STU 64
 STI 1
 STREF
 STU 256
-BLKSWAP 5, 1
+BLKSWAP 8, 1
 NEWC
 STSLICE
-BLKSWAP 4, 1
+BLKSWAP 7, 1
 NEWC
 STSLICE
 STU 128
 STREF
 STDICT
+SWAP
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	STSLICECONST 0
+}
+PUSHCONT {
+	NEWC
+	STSLICE
+	SWAP
+	STSLICECONST 1
+	STBREF
+}
+IFELSE
+ROTREV
+NEWC
+STDICT
+STSLICE
+STBREFR
 STBREFR
 STBREFR
 ENDC
@@ -1532,7 +2108,27 @@ LDMSGADDR
 LDU 128
 LDREF
 LDDICT
+LDOPTREF
+SWAP
+DUP
+ISNULL
+PUSHCONT {
+	CTOS
+	LDMSGADDR
+	DROP
+}
+IFNOT
+SWAP
+;; load next cell
+LDREF
 ENDS
+CTOS
+LDDICT
+LDMSGADDR
+ENDS
+SETGLOB 19
+SETGLOB 18
+SETGLOB 17
 SETGLOB 16
 SETGLOB 15
 SETGLOB 14
@@ -1591,6 +2187,15 @@ PUSHCONT {
 	; init _supportedInterfaces
 	NEWDICT
 	SETGLOB 16
+	; init _approval
+	NULL
+	SETGLOB 17
+	; init _royalty
+	NEWDICT
+	SETGLOB 18
+	; init _authorAddr
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+	SETGLOB 19
 	PUSHINT 64
 	DICTUGET
 	THROWIFNOT 61
@@ -1708,20 +2313,20 @@ THROWIF 60
 
 .macro public_function_selector
 DUP
-PUSHINT 1118824496
+PUSHINT 971759680
 LEQ
 IFJMPREF {
-	DUP
-	PUSHINT 100653780
-	EQUAL
-	IFJMPREF {
-		CALL $constructor$
-	}
 	DUP
 	PUSHINT 494429385
 	EQUAL
 	IFJMPREF {
 		CALL $resolveIndex$
+	}
+	DUP
+	PUSHINT 790177674
+	EQUAL
+	IFJMPREF {
+		CALL $returnOwnership$
 	}
 	DUP
 	PUSHINT 839183401
@@ -1730,14 +2335,43 @@ IFJMPREF {
 		CALL $supportsInterface$
 	}
 	DUP
+	PUSHINT 971759680
+	EQUAL
+	IFJMPREF {
+		CALL $getApproval$
+	}
+}
+DUP
+PUSHINT 1568580398
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 1075523976
+	EQUAL
+	IFJMPREF {
+		CALL $getRoyalty$
+	}
+	DUP
 	PUSHINT 1118824496
 	EQUAL
 	IFJMPREF {
 		CALL $getName$
 	}
+	DUP
+	PUSHINT 1329020607
+	EQUAL
+	IFJMPREF {
+		CALL $constructor$
+	}
+	DUP
+	PUSHINT 1568580398
+	EQUAL
+	IFJMPREF {
+		CALL $setApproval$
+	}
 }
 DUP
-PUSHINT 1795764025
+PUSHINT 1703675675
 LEQ
 IFJMPREF {
 	DUP
@@ -1759,15 +2393,26 @@ IFJMPREF {
 		CALL $getOwner$
 	}
 	DUP
+	PUSHINT 1703675675
+	EQUAL
+	IFJMPREF {
+		CALL $getAuthor$
+	}
+}
+DUP
+PUSHINT 2003540608
+LEQ
+IFJMPREF {
+	DUP
 	PUSHINT 1795764025
 	EQUAL
 	IFJMPREF {
 		CALL $setIndexDeployValue$
 	}
-}
-DUP
-PUSHINT 2003540608
-EQUAL
-IFJMPREF {
-	CALL $resolveCodeHashIndex$
+	DUP
+	PUSHINT 2003540608
+	EQUAL
+	IFJMPREF {
+		CALL $resolveCodeHashIndex$
+	}
 }

@@ -8,9 +8,53 @@
 				{"name":"addrOwner","type":"address"},
 				{"name":"codeIndex","type":"cell"},
 				{"name":"indexDeployValue","type":"uint128"},
-				{"name":"dataName","type":"bytes"}
+				{"name":"dataName","type":"bytes"},
+				{"name":"authorAddr","type":"address"},
+				{"name":"authorRoyalty","type":"uint128"}
 			],
 			"outputs": [
+			]
+		},
+		{
+			"name": "getAuthor",
+			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"authorAddr","type":"address"}
+			]
+		},
+		{
+			"name": "getRoyalty",
+			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"royalty","type":"map(address,uint128)"}
+			]
+		},
+		{
+			"name": "setApproval",
+			"inputs": [
+				{"name":"approval","type":"address"},
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "returnOwnership",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getApproval",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"approval","type":"address"}
 			]
 		},
 		{
