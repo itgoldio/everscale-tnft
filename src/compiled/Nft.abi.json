@@ -14,6 +14,30 @@
 			]
 		},
 		{
+			"name": "setApproval",
+			"inputs": [
+				{"name":"approval","type":"address"},
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "returnOwnership",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getApproval",
+			"inputs": [
+			],
+			"outputs": [
+				{"name":"approval","type":"address"}
+			]
+		},
+		{
 			"name": "supportsInterface",
 			"inputs": [
 				{"name":"_answer_id","type":"uint32"},

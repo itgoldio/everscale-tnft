@@ -7,8 +7,10 @@ pragma AbiHeader pubkey;
 import '../tnft-interfaces/NftInterfaces/INftBase/NftBase.sol';
 import '../tnft-interfaces/NftInterfaces/IName/Name.sol';
 import '../tnft-interfaces/NftInterfaces/ITIP6/TIP6.sol';
+import '../tnft-interfaces/NftInterfaces/INftBaseApproval/NftBaseApproval.sol';
 
-contract Nft is NftBase, Name, TIP6 {
+
+contract Nft is NftBase, Name, TIP6, NftBaseApproval {
 
     constructor(
         address addrOwner, 
@@ -37,12 +39,25 @@ contract Nft is NftBase, Name, TIP6 {
             )
         ] = true;
 
+        _supportedInterfaces[
+            bytes4(
+                tvm.functionId(INftBaseApproval.setApproval) ^
+                tvm.functionId(INftBaseApproval.returnOwnership) ^                 
+                tvm.functionId(INftBaseApproval.getApproval)
+            )
+        ] = true;
+
         _supportedInterfaces[ bytes4(tvm.functionId(IName.getName)) ] = true;
         _supportedInterfaces[ bytes4(tvm.functionId(ITIP6.supportsInterface)) ] = true;
 
         emit TokenWasMinted(addrOwner);
 
         _deployIndex();
+    }
+
+    modifier onlyOwner override(NftBase, NftBaseApproval) {
+        require((msg.sender == _addrOwner && !_approval.hasValue()) || (_approval.hasValue() && msg.sender == _approval.get()));
+        _;
     }
 
 }

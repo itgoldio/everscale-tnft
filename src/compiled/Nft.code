@@ -218,6 +218,28 @@ SETGLOB 16
 TRUE
 ; expValue
 ;; fetch _supportedInterfaces
+GETGLOB 16
+PUSHINT 1568580398
+;; ^
+PUSHINT 790177674
+XOR
+;; ^
+PUSHINT 971759680
+XOR
+;; bytes4
+; end expValue
+XCHG S2
+; colValue
+NEWC
+STI 1
+ROTREV
+PUSHINT 32
+DICTUSETB
+SETGLOB 16
+; end colValue
+TRUE
+; expValue
+;; fetch _supportedInterfaces
 ;; bytes4
 PUSHINT 1118824496
 GETGLOB 16
@@ -267,6 +289,263 @@ CALLREF {
 }
 TRUE
 SETGLOB 7
+
+.macro setApproval
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+;; decode TvmCell
+LDREF
+ENDS
+;; param: approval
+;; param: payload
+CALLREF {
+	CALL $setApproval_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	setApproval_internal
+.type	setApproval_internal, @function
+CALL $setApproval_internal_macro$
+
+.macro setApproval_internal_macro
+;; param: approval
+;; param: payload
+; modifier onlyOwner
+;; get member sender
+GETGLOB 9
+;; push identifier _addrOwner
+GETGLOB 13
+SDEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; !
+	;; push identifier _approval
+	GETGLOB 17
+	ISNULL
+}
+IF
+;; short-circuiting ||
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier _approval
+	GETGLOB 17
+	ISNULL
+	NOT
+	;; short-circuiting &&
+	DUP
+	PUSHCONT {
+		DROP
+		;; get member sender
+		GETGLOB 9
+		;; push identifier _approval
+		GETGLOB 17
+		DUP
+		ISNULL
+		THROWIF 63
+		SDEQ
+	}
+	IF
+}
+IFNOT
+THROWIFNOT 100
+; function setApproval
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+THROWIFNOT 100
+ACCEPT
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+PUSHINT 1
+RAWRESERVE
+; expValue
+; end expValue
+;; push identifier approval
+PUSH S1
+; colValue
+SETGLOB 17
+; end colValue
+;; Remote call IApproval.setApprovalCallback
+;; push identifier payload
+;; push identifier approval
+PUSH2 S0, S1
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHSLICE x0000000000000000000000000000b5ddff99_
+STSLICER
+STREF
+ENDC
+PUSHINT 128
+SENDRAWMSG
+; end function setApproval
+; end modifier onlyOwner
+DROP2
+
+.macro returnOwnership
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $returnOwnership_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	returnOwnership_internal
+.type	returnOwnership_internal, @function
+CALL $returnOwnership_internal_macro$
+
+.macro returnOwnership_internal_macro
+; modifier onlyApproval
+;; get member sender
+GETGLOB 9
+;; push identifier _approval
+GETGLOB 17
+SDEQ
+THROWIFNOT 100
+; function returnOwnership
+;; push identifier _approval
+GETGLOB 17
+ISNULL
+THROWIF 100
+ACCEPT
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+PUSHINT 1
+RAWRESERVE
+;; push identifier _approval
+GETGLOB 17
+DUP
+ISNULL
+THROWIF 63
+;; decl: approval
+; expValue
+; end expValue
+NULL
+; colValue
+SETGLOB 17
+; end colValue
+;; Remote call IApproval.resetApprovalCallback
+;; push identifier approval
+DUP
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHSLICE x0000000000000000000000000000a6f34859_
+STSLICER
+ENDC
+PUSHINT 128
+SENDRAWMSG
+DROP
+; end function returnOwnership
+; end modifier onlyApproval
+
+.macro getApproval
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+ENDS
+CALLREF {
+	CALL $getApproval_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHINT 1
+	STUR 98
+	SWAP
+	NEWC
+	STSLICECONST xb9ebe040
+	STSLICE
+	STBREFR
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	DROP
+}
+IFELSE
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getApproval_internal
+.type	getApproval_internal, @function
+CALL $getApproval_internal_macro$
+
+.macro getApproval_internal_macro
+;; ret param: approval
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+; function getApproval
+;; push identifier _approval
+GETGLOB 17
+ISNULL
+NOT
+PUSHCONT {
+	;; push identifier _approval
+	GETGLOB 17
+	DUP
+	ISNULL
+	THROWIF 63
+}
+PUSHCONT {
+	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+}
+IFELSE
+; expValue
+; end expValue
+; colValue
+NIP
+; end colValue
+; end function getApproval
 
 .macro supportsInterface
 DROP
@@ -1480,6 +1759,7 @@ ENDC
 BLKDROP2 2, 1
 
 .macro c7_to_c4
+GETGLOB 17
 GETGLOB 16
 GETGLOB 15
 GETGLOB 14
@@ -1496,15 +1776,30 @@ STU 64
 STI 1
 STREF
 STU 256
-BLKSWAP 5, 1
+BLKSWAP 6, 1
 NEWC
 STSLICE
-BLKSWAP 4, 1
+BLKSWAP 5, 1
 NEWC
 STSLICE
 STU 128
 STREF
 STDICT
+SWAP
+DUP
+ISNULL
+PUSHCONT {
+	DROP
+	STSLICECONST 0
+}
+PUSHCONT {
+	NEWC
+	STSLICE
+	SWAP
+	STSLICECONST 1
+	STBREF
+}
+IFELSE
 STBREFR
 STBREFR
 ENDC
@@ -1532,7 +1827,19 @@ LDMSGADDR
 LDU 128
 LDREF
 LDDICT
+LDOPTREF
+SWAP
+DUP
+ISNULL
+PUSHCONT {
+	CTOS
+	LDMSGADDR
+	DROP
+}
+IFNOT
+SWAP
 ENDS
+SETGLOB 17
 SETGLOB 16
 SETGLOB 15
 SETGLOB 14
@@ -1591,6 +1898,9 @@ PUSHCONT {
 	; init _supportedInterfaces
 	NEWDICT
 	SETGLOB 16
+	; init _approval
+	NULL
+	SETGLOB 17
 	PUSHINT 64
 	DICTUGET
 	THROWIFNOT 61
@@ -1708,7 +2018,7 @@ THROWIF 60
 
 .macro public_function_selector
 DUP
-PUSHINT 1118824496
+PUSHINT 839183401
 LEQ
 IFJMPREF {
 	DUP
@@ -1724,10 +2034,27 @@ IFJMPREF {
 		CALL $resolveIndex$
 	}
 	DUP
+	PUSHINT 790177674
+	EQUAL
+	IFJMPREF {
+		CALL $returnOwnership$
+	}
+	DUP
 	PUSHINT 839183401
 	EQUAL
 	IFJMPREF {
 		CALL $supportsInterface$
+	}
+}
+DUP
+PUSHINT 1627574419
+LEQ
+IFJMPREF {
+	DUP
+	PUSHINT 971759680
+	EQUAL
+	IFJMPREF {
+		CALL $getApproval$
 	}
 	DUP
 	PUSHINT 1118824496
@@ -1735,17 +2062,23 @@ IFJMPREF {
 	IFJMPREF {
 		CALL $getName$
 	}
-}
-DUP
-PUSHINT 1795764025
-LEQ
-IFJMPREF {
+	DUP
+	PUSHINT 1568580398
+	EQUAL
+	IFJMPREF {
+		CALL $setApproval$
+	}
 	DUP
 	PUSHINT 1627574419
 	EQUAL
 	IFJMPREF {
 		CALL $transferOwnership$
 	}
+}
+DUP
+PUSHINT 2003540608
+LEQ
+IFJMPREF {
 	DUP
 	PUSHINT 1643665857
 	EQUAL
@@ -1764,10 +2097,10 @@ IFJMPREF {
 	IFJMPREF {
 		CALL $setIndexDeployValue$
 	}
-}
-DUP
-PUSHINT 2003540608
-EQUAL
-IFJMPREF {
-	CALL $resolveCodeHashIndex$
+	DUP
+	PUSHINT 2003540608
+	EQUAL
+	IFJMPREF {
+		CALL $resolveCodeHashIndex$
+	}
 }
