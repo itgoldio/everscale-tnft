@@ -15,7 +15,9 @@
 		{
 			"name": "mintNft",
 			"inputs": [
-				{"name":"dataName","type":"bytes"}
+				{"name":"dataName","type":"bytes"},
+				{"name":"authorAddr","type":"address"},
+				{"name":"authorRoyalty","type":"uint128"}
 			],
 			"outputs": [
 			]

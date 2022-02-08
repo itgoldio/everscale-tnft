@@ -1,0 +1,104 @@
+{
+	"ABI version": 2,
+	"header": ["pubkey", "time", "expire"],
+	"functions": [
+		{
+			"name": "constructor",
+			"inputs": [
+				{"name":"codeIndex","type":"cell"},
+				{"name":"offerCode","type":"cell"},
+				{"name":"ownerPubkey","type":"uint256"},
+				{"name":"deploymentFee","type":"uint128"},
+				{"name":"marketFee","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "generatePayload",
+			"inputs": [
+				{"name":"_answer_id","type":"uint32"},
+				{"name":"addrOwner","type":"address"},
+				{"name":"addrRoot","type":"address"},
+				{"name":"price","type":"uint128"}
+			],
+			"outputs": [
+				{"name":"payload","type":"cell"}
+			]
+		},
+		{
+			"name": "setApprovalCallback",
+			"inputs": [
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "resetApprovalCallback",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "getOfferAddress",
+			"inputs": [
+				{"name":"addrNft","type":"address"},
+				{"name":"price","type":"uint128"}
+			],
+			"outputs": [
+				{"name":"offerAddress","type":"address"}
+			]
+		},
+		{
+			"name": "changeDeploymentFee",
+			"inputs": [
+				{"name":"deploymentFee","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "changeMarketFee",
+			"inputs": [
+				{"name":"marketFee","type":"uint128"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "setOfferCode",
+			"inputs": [
+				{"name":"offerCode","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "withdraw",
+			"inputs": [
+				{"name":"dest","type":"address"},
+				{"name":"value","type":"uint128"}
+			],
+			"outputs": [
+			]
+		}
+	],
+	"data": [
+	],
+	"events": [
+		{
+			"name": "SellDeployed",
+			"inputs": [
+				{"name":"offerAddress","type":"address"},
+				{"name":"addrRoot","type":"address"},
+				{"name":"addrIndex","type":"address"},
+				{"name":"addrNft","type":"address"},
+				{"name":"price","type":"uint128"}
+			],
+			"outputs": [
+			]
+		}
+	]
+}

@@ -22,7 +22,7 @@ contract SellRoot is IOffersRoot, IApproval {
         address offerAddress, 
         address addrRoot, 
         address addrIndex, 
-        address addrData, 
+        address addrNft, 
         uint128 price
     );
 
@@ -43,7 +43,7 @@ contract SellRoot is IOffersRoot, IApproval {
     
     function _deployOffer(
         address addrRoot,
-        address addrData,
+        address addrNft,
         address addrOwner,
         uint128 price
     ) private view {
@@ -52,7 +52,7 @@ contract SellRoot is IOffersRoot, IApproval {
             code: _offerCode,
             varInit: {
                 _price: price,
-                _addrData: addrData,
+                _addrNft: addrNft,
                 _marketRootAddr: address(this)
             }
         }(
@@ -62,8 +62,8 @@ contract SellRoot is IOffersRoot, IApproval {
         );
 
         TvmCell empty;
-        emit SellDeployed(offerAddr, addrRoot, addrData, addrOwner, price);
-        IDataBaseApproval(addrData).setApproval{value: 0, flag: 128}(offerAddr, empty);
+        emit SellDeployed(offerAddr, addrRoot, addrNft, addrOwner, price);
+        INftBaseApproval(addrNft).setApproval{value: 0, flag: 128}(offerAddr, empty);
     }
 
     function generatePayload(
@@ -110,7 +110,7 @@ contract SellRoot is IOffersRoot, IApproval {
     }
 
     function getOfferAddress(
-        address addrData,
+        address addrNft,
         uint128 price
     ) public view returns (address offerAddress) {
         TvmCell stateInit = tvm.buildStateInit({
@@ -118,7 +118,7 @@ contract SellRoot is IOffersRoot, IApproval {
             code: _offerCode,
             varInit: {
                 _price: price,
-                _addrData: addrData,
+                _addrNft: addrNft,
                 _marketRootAddr: address(this)
             }
         });

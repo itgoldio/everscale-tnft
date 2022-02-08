@@ -47,7 +47,11 @@ contract NftRoot is NftResolver, IndexResolver {
         _ownerPubkey = ownerPubkey;
     }
 
-    function mintNft(string dataName) public {
+    function mintNft(
+        string dataName,
+        address authorAddr,
+        uint128 authorRoyalty
+    ) public {
         require(msg.value >= (_indexDeployValue * 2) + _remainOnNft, NftRootErrors.value_less_than_required);
         tvm.rawReserve(msg.value, 1);
 
@@ -60,7 +64,9 @@ contract NftRoot is NftResolver, IndexResolver {
                 msg.sender, 
                 _codeIndex,
                 _indexDeployValue,
-                dataName
+                dataName,
+                authorAddr,
+                authorRoyalty
             ); 
 
         emit TokenWasMinted(nftAddr, msg.sender);
