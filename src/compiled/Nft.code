@@ -701,12 +701,18 @@ GETGLOB 9
 ;; push identifier _approval
 GETGLOB 17
 SDEQ
+;; short-circuiting &&
+DUP
+PUSHCONT {
+	DROP
+	;; push identifier _approval
+	GETGLOB 17
+	ISNULL
+	NOT
+}
+IF
 THROWIFNOT 100
 ; function returnOwnership
-;; push identifier _approval
-GETGLOB 17
-ISNULL
-THROWIF 100
 ACCEPT
 ;; get member value
 DEPTH

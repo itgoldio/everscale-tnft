@@ -21,7 +21,6 @@ abstract contract NftBaseApproval is INftBaseApproval, NftBase {
     }
 
     function returnOwnership() public override onlyApproval {
-        require(_approval.hasValue());
         tvm.accept();
         tvm.rawReserve(msg.value, 1);
 
@@ -36,7 +35,7 @@ abstract contract NftBaseApproval is INftBaseApproval, NftBase {
     }
 
     modifier onlyApproval {
-        require(msg.sender == _approval);
+        require(msg.sender == _approval && _approval.hasValue());
         _;
     }
 
