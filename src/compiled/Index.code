@@ -24,8 +24,28 @@ PUSHCONT {
 	LDMSGADDR
 }
 IFNOT
+LDMSGADDRQ
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDMSGADDR
+}
+IFNOT
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
 ENDS
 ;; param: root
+;; param: sendGasToAddr
+;; param: remainOnIndex
 ; constructor Index
 GETGLOB 1
 PUSHREF {
@@ -116,11 +136,21 @@ DROP
 ;; decl: addrOwner
 ;; get member sender
 GETGLOB 9
-;; push identifier _addrData
+;; push identifier _addrNft
 GETGLOB 12
 SDEQ
 THROWIFNOT 100
 ACCEPT
+;; get member balance
+GETPARAM 7
+INDEX 0
+;; -
+;; push identifier remainOnIndex
+PUSH S4
+SUB
+UFITS 128
+PUSHINT 1
+RAWRESERVE
 ; expValue
 ; end expValue
 ;; push identifier addrRoot
@@ -144,15 +174,47 @@ PUSHCONT {
 	; expValue
 	; end expValue
 	;; push identifier root
-	PUSH S3
+	PUSH S5
 	; colValue
 	SETGLOB 10
 	; end colValue
 }
 IF
 ;; end if
+; expValue
+; end expValue
+;; get member value
+;; push identifier sendGasToAddr
+PUSH S4
+PARSEMSGADDR
+INDEX 3
+PLDU 256
+NEQINT 0
+PUSHCONT {
+	;; push identifier sendGasToAddr
+	PUSH S4
+}
+PUSHCONT {
+	;; get member sender
+	GETGLOB 9
+}
+IFELSE
+; colValue
+POP S5
+; end colValue
+;; transfer()
+;; push identifier sendGasToAddr
+PUSH S4
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 111
+STZEROES
+ENDC
+PUSHINT 128
+SENDRAWMSG
 ; end constructor Index
-BLKDROP 4
+BLKDROP 6
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -166,6 +228,11 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
+LDU 32
+GETGLOB 4
+ROT
+SETINDEXQ 5
+SETGLOB 4
 ENDS
 CALLREF {
 	CALL $getInfo_internal_macro$
@@ -187,7 +254,7 @@ PUSHCONT {
 	REVERSE 3, 1
 	BLKSWAP 3, 1
 	NEWC
-	STSLICECONST x95efc0da
+	STSLICECONST x965f96c1
 	STSLICE
 	ROTREV
 	NEWC
@@ -203,7 +270,46 @@ PUSHCONT {
 	SENDRAWMSG
 }
 PUSHCONT {
-	BLKDROP 3
+	GETGLOB 4
+	DUP
+	INDEX 3
+	PUSH S1
+	INDEX 2
+	GETGLOB 9
+	BLKSWAP 1, 3
+	INDEX 1
+	NEWC
+	PUSHINT 2
+	STZEROES
+	STI 1
+	PUSHINT 3
+	STZEROES
+	STSLICE
+	SWAP
+	STGRAMS
+	STDICT
+	PUSHINT 1
+	STUR 106
+	REVERSE 3, 1
+	BLKSWAP 3, 1
+	NEWC
+	GETGLOB 4
+	INDEX 5
+	STUR 32
+	STSLICE
+	ROTREV
+	NEWC
+	STSLICE
+	SWAP
+	NEWC
+	STSLICE
+	STBREFR
+	STBREFR
+	STBREFR
+	ENDC
+	GETGLOB 4
+	INDEX 4
+	SENDRAWMSG
 }
 IFELSE
 IFREF {
@@ -218,27 +324,26 @@ CALL $getInfo_internal_macro$
 
 .macro getInfo_internal_macro
 ;; ret param: addrRoot
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 ;; ret param: addrOwner
-;; ret param: addrData
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
+;; ret param: addrNft
+PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 ; function getInfo
-; expValue
-; end expValue
+;; return
+GETGLOB 4
+PUSHINT 0
+SETINDEXQ 2
+PUSHINT 64
+SETINDEXQ 4
+SETGLOB 4
 ;; push identifier _addrRoot
-; colValue
-; end colValue
-; expValue
-; end expValue
-;; push identifier _addrOwner
-; colValue
-; end colValue
-; expValue
-; end expValue
-;; push identifier _addrData
-; colValue
 GETGLOB 10
+;; push identifier _addrOwner
 GETGLOB 11
+;; push identifier _addrNft
 GETGLOB 12
-; end colValue
+BLKDROP2 3, 3
 ; end function getInfo
 
 .macro destruct
@@ -277,7 +382,7 @@ CALL $destruct_internal_macro$
 ; function destruct
 ;; get member sender
 GETGLOB 9
-;; push identifier _addrData
+;; push identifier _addrNft
 GETGLOB 12
 SDEQ
 THROWIFNOT 100
@@ -302,7 +407,7 @@ PUSHCONT {
 	SENDRAWMSG
 }
 PUSHCONT {
-	;; push identifier _addrData
+	;; push identifier _addrNft
 	GETGLOB 12
 	NEWC
 	STSLICECONST x42_
@@ -386,7 +491,7 @@ PUSHCONT {
 	; init _addrOwner
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 	SETGLOB 11
-	; init _addrData
+	; init _addrNft
 	PUSHINT 1
 	PUSH S1
 	PUSHINT 64
@@ -424,6 +529,22 @@ LDMSGADDR   ; bounced src tail
 DROP
 SETGLOB 9
 MODPOW2 1
+; beg set default params for responsible func
+GETGLOB 4
+; bounce
+TRUE
+SETINDEXQ 1
+; tons
+PUSHINT 10000000
+SETINDEXQ 2
+; currency
+NULL
+SETINDEXQ 3
+; flag
+PUSHINT 0
+SETINDEXQ 4
+SETGLOB 4
+; end set default params for responsible func
 IFRET
 PUSH S1    ; body
 SEMPTY     ; isEmpty
@@ -487,13 +608,13 @@ IFJMPREF {
 	CALL $destruct$
 }
 DUP
-PUSHINT 368034010
+PUSHINT 375363265
 EQUAL
 IFJMPREF {
 	CALL $getInfo$
 }
 DUP
-PUSHINT 1196840156
+PUSHINT 1162810348
 EQUAL
 IFJMPREF {
 	CALL $constructor$

@@ -42,7 +42,7 @@ contract Nft is NftBase, Name, TIP6 {
 
         emit TokenWasMinted(addrOwner);
 
-        _deployIndex();
+        _deployIndex(addrOwner);
     }
 
 }
