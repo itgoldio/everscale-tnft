@@ -4,15 +4,20 @@ pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 pragma AbiHeader time;
 
+import './structures/ICallbackParamsStructure.sol';
 
-interface INftBase {
+
+interface INftBase is ICallbackParamsStructure {
+    
+    function setIndexDestroyValue(uint128 indexDestroyValue) external;
     function setIndexDeployValue(uint128 indexDeployValue) external;
     function transferOwnership(
-        address callbackAddr, 
         address sendGasToAddr, 
         address addrTo, 
-        TvmCell payload
+        mapping(address => CallbackParams) callbacks
     ) external;
     function getIndexDeployValue() external responsible returns(uint128);
     function getOwner() external responsible returns(address addrOwner);
+    function getIndexDestroyValue() external responsible returns(uint128);
+ 
 }
