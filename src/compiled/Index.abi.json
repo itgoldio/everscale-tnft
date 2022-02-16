@@ -5,7 +5,9 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"root","type":"address"}
+				{"name":"root","type":"address"},
+				{"name":"sendGasToAddr","type":"address"},
+				{"name":"remainOnIndex","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -13,11 +15,12 @@
 		{
 			"name": "getInfo",
 			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
 			],
 			"outputs": [
 				{"name":"addrRoot","type":"address"},
 				{"name":"addrOwner","type":"address"},
-				{"name":"addrData","type":"address"}
+				{"name":"addrNft","type":"address"}
 			]
 		},
 		{
@@ -30,7 +33,7 @@
 		}
 	],
 	"data": [
-		{"key":1,"name":"_addrData","type":"address"}
+		{"key":1,"name":"_addrNft","type":"address"}
 	],
 	"events": [
 	]

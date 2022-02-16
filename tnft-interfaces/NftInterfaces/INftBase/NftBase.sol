@@ -18,19 +18,18 @@ abstract contract NftBase is INftBase, IndexResolver {
     address _addrOwner;
 
     uint128 _indexDeployValue;
+    uint128 _indexDestroyValue;
     
     event TokenWasMinted(address owner);
     event OwnershipTransferred(address oldOwner, address newOwner);
 
-    /// @param callbackAddr can be empty. If callbackAddr is not empty - the transfer function will be called for an account with this address (callbackAddr)
     /// @param sendGasToAddr can be empty. If sendGasToAddr is not empty - remaining gas will be returned to the specified address, else gas will be transferred to sender
     /// @param addrTo can't be empty. After executing the method, the account with this address will become the owner
-    /// @param payload can be empty. It will be sent to the callback address if callbackAddr is not empty
+    /// @param callbacks for receiving callback
     function transferOwnership(
-        address callbackAddr, 
         address sendGasToAddr, 
         address addrTo, 
-        TvmCell payload
+        mapping(address => CallbackParams) callbacks
     ) public override onlyOwner {
         require(msg.value >= (_indexDeployValue * 2), NftErrors.value_less_than_required);
         require(addrTo.value != 0, NftErrors.value_is_empty);
@@ -42,16 +41,35 @@ abstract contract NftBase is INftBase, IndexResolver {
         _transfer(addrTo, sendGasToAddr);
         emit OwnershipTransferred(addrOwner, addrTo);
 
-        if (callbackAddr.value != 0) {
-            ITokenTransferCallback(callbackAddr).tokenTransferCallback{value: 0, flag: 128}(
-                addrOwner, 
-                addrTo,
-                _addrRoot, 
-                sendGasToAddr,
-                payload
-            );
-        } else {
-            sendGasToAddr.transfer({value: 0, flag: 128});
+        optional(TvmCell) callbackToGasOwner;
+        for ((address dest, CallbackParams p) : callbacks) {
+            if (dest.value != 0) {
+                if (sendGasToAddr != dest) {
+                    ITokenTransferCallback(dest).tokenTransferCallback{
+                        value: p.value,
+                        flag: 0,
+                        bounce: false
+                    }(addrOwner, addrTo, _addrRoot, sendGasToAddr, p.payload);
+                } else {
+                    callbackToGasOwner.set(p.payload);
+                }
+            }
+        }
+
+        if (sendGasToAddr.value != 0) {
+            if (callbackToGasOwner.hasValue()) {
+                ITokenTransferCallback(sendGasToAddr).tokenTransferCallback{
+                    value: 0,
+                    flag: 128,
+                    bounce: false
+                }(addrOwner, addrTo, _addrRoot, sendGasToAddr, callbackToGasOwner.get());
+            } else {
+                sendGasToAddr.transfer({
+                    value: 0,
+                    flag: 128,
+                    bounce: false
+                });
+            }
         }
 
     }
@@ -64,24 +82,24 @@ abstract contract NftBase is INftBase, IndexResolver {
 
         _destructIndex(sendGasToAddr);
         _addrOwner = to;
-        _deployIndex();
+        _deployIndex(sendGasToAddr);
     }
 
-    function _deployIndex() internal view {
+    function _deployIndex(address sendGasToAddr) internal view {
         TvmCell codeIndexOwner = _buildIndexCode(_addrRoot, _addrOwner);
         TvmCell stateIndexOwner = _buildIndexState(codeIndexOwner, address(this));
-        new Index{stateInit: stateIndexOwner, value: _indexDeployValue}(_addrRoot);
+        new Index{stateInit: stateIndexOwner, value: _indexDeployValue}(_addrRoot, sendGasToAddr, _indexDeployValue - 0.1 ton);
 
         TvmCell codeIndexOwnerRoot = _buildIndexCode(address(0), _addrOwner);
         TvmCell stateIndexOwnerRoot = _buildIndexState(codeIndexOwnerRoot, address(this));
-        new Index{stateInit: stateIndexOwnerRoot, value: _indexDeployValue}(_addrRoot);
+        new Index{stateInit: stateIndexOwnerRoot, value: _indexDeployValue}(_addrRoot, sendGasToAddr, _indexDeployValue - 0.1 ton);
     }
 
     function _destructIndex(address sendGasToAddr) internal view {
         address oldIndexOwner = resolveIndex(address(0), address(this), _addrOwner);
-        IIndex(oldIndexOwner).destruct(sendGasToAddr);
+        IIndex(oldIndexOwner).destruct{value: _indexDestroyValue}(sendGasToAddr);
         address oldIndexOwnerRoot = resolveIndex(_addrRoot, address(this), _addrOwner);
-        IIndex(oldIndexOwnerRoot).destruct(sendGasToAddr);
+        IIndex(oldIndexOwnerRoot).destruct{value: _indexDestroyValue}(sendGasToAddr);
     }
 
     function setIndexDeployValue(uint128 indexDeployValue) public override onlyOwner {
@@ -90,8 +108,18 @@ abstract contract NftBase is INftBase, IndexResolver {
         msg.sender.transfer({value: 0, flag: 128});
     }
 
+    function setIndexDestroyValue(uint128 indexDestroyValue) public override onlyOwner {
+        tvm.rawReserve(msg.value, 1);
+        _indexDestroyValue = indexDestroyValue;
+        msg.sender.transfer({value: 0, flag: 128});
+    }
+
     function getIndexDeployValue() public responsible override returns(uint128) {
         return {value: 0, flag: 64} _indexDeployValue;
+    }
+
+    function getIndexDestroyValue() public responsible override returns(uint128) {
+        return {value: 0, flag: 64} _indexDestroyValue;
     }
 
     function getOwner() public responsible override returns(address addrOwner) {

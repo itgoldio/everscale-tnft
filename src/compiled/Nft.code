@@ -188,15 +188,15 @@ SETGLOB 14
 ;; push identifier dataName
 PUSH S2
 ; colValue
-SETGLOB 15
+SETGLOB 16
 ; end colValue
 TRUE
 ; expValue
 ;; fetch _supportedInterfaces
-GETGLOB 16
+GETGLOB 17
 PUSHINT 1795764025
 ;; ^
-PUSHINT 1627574419
+PUSHINT 502498758
 XOR
 ;; ^
 PUSHINT 1643665857
@@ -213,14 +213,14 @@ STI 1
 ROTREV
 PUSHINT 32
 DICTUSETB
-SETGLOB 16
+SETGLOB 17
 ; end colValue
 TRUE
 ; expValue
 ;; fetch _supportedInterfaces
 ;; bytes4
 PUSHINT 1118824496
-GETGLOB 16
+GETGLOB 17
 ; end expValue
 ROT
 ; colValue
@@ -229,14 +229,14 @@ STI 1
 ROTREV
 PUSHINT 32
 DICTUSETB
-SETGLOB 16
+SETGLOB 17
 ; end colValue
 TRUE
 ; expValue
 ;; fetch _supportedInterfaces
 ;; bytes4
 PUSHINT 839183401
-GETGLOB 16
+GETGLOB 17
 ; end expValue
 ROT
 ; colValue
@@ -245,7 +245,7 @@ STI 1
 ROTREV
 PUSHINT 32
 DICTUSETB
-SETGLOB 16
+SETGLOB 17
 ; end colValue
 ;; push identifier addrOwner
 PUSH S5
@@ -257,6 +257,8 @@ STSLICE
 ENDC
 PUSHINT 0
 SENDRAWMSG
+;; push identifier addrOwner
+PUSH S5
 CALLREF {
 	CALL $_deployIndex_internal_macro$
 }
@@ -289,7 +291,7 @@ ENDS
 ;; push identifier interfaceID
 DUP
 ;; push identifier _supportedInterfaces
-GETGLOB 16
+GETGLOB 17
 PUSHINT 32
 DICTUGET
 PUSHCONT {
@@ -447,7 +449,7 @@ SETINDEXQ 4
 SETGLOB 4
 ;; push identifier _dataName
 DROP
-GETGLOB 15
+GETGLOB 16
 ; end function getName
 
 .macro transferOwnership
@@ -475,22 +477,19 @@ PUSHCONT {
 	LDMSGADDR
 }
 IFNOT
-LDMSGADDRQ
+LDDICTQ
 PUSHCONT {
 	;; load next cell
 	LDREF
 	ENDS
 	CTOS
-	LDMSGADDR
+	LDDICT
 }
 IFNOT
-;; decode TvmCell
-LDREF
 ENDS
-;; param: callbackAddr
 ;; param: sendGasToAddr
 ;; param: addrTo
-;; param: payload
+;; param: callbacks
 CALLREF {
 	CALL $transferOwnership_internal_macro$
 }
@@ -505,10 +504,9 @@ SETGLOB 7
 CALL $transferOwnership_internal_macro$
 
 .macro transferOwnership_internal_macro
-;; param: callbackAddr
 ;; param: sendGasToAddr
 ;; param: addrTo
-;; param: payload
+;; param: callbacks
 ; modifier onlyOwner
 ;; get member sender
 GETGLOB 9
@@ -591,66 +589,212 @@ STBREFR
 ENDC
 PUSHINT 0
 SENDRAWMSG
+NULL
+;; decl: callbackToGasOwner
+;; push identifier callbacks
+PUSH2 S2, S2
+PUSHINT 267
+DICTMIN
+PUSHREFCONT {
+	DUP
+	ROT
+	LDU 128
+	;; decode TvmCell
+	LDREF
+	ENDS
+	TUPLE 2
+}
+PUSHCONT {
+	NULL
+	NULL
+	NULL
+}
+IFELSE
+PUSHCONT {
+	PUSH S2
+	ISNULL
+	NOT
+}
+PUSHCONT {
+	;; if
+	;; get member value
+	;; push identifier dest
+	PUSH S1
+	PARSEMSGADDR
+	INDEX 3
+	PLDU 256
+	PUSHCONT {
+		;; if
+		;; push identifier sendGasToAddr
+		;; push identifier dest
+		PUSH2 S8, S1
+		SDEQ
+		NOT
+		PUSHCONT {
+			;; Remote call ITokenTransferCallback.tokenTransferCallback
+			;; get member payload
+			;; push identifier p
+			DUP
+			INDEX 1
+			;; push identifier sendGasToAddr
+			PUSH S9
+			;; push identifier _addrRoot
+			GETGLOB 12
+			;; push identifier addrTo
+			;; push identifier addrOwner
+			;; get member value
+			;; push identifier p
+			PUSH3 S10, S8, S3
+			INDEX 0
+			;; push identifier dest
+			PUSH S7
+			FALSE
+			NEWC
+			STSLICECONST x6_
+			STI 1
+			PUSHINT 3
+			STZEROES
+			STSLICE
+			SWAP
+			STGRAMS
+			PUSHINT 1
+			STUR 107
+			BLKSWAP 5, 1
+			NEWC
+			STSLICECONST x6d413798
+			STSLICE
+			BLKSWAP 4, 1
+			NEWC
+			STSLICE
+			BLKSWAP 3, 1
+			NEWC
+			STSLICE
+			ROTREV
+			NEWC
+			STSLICE
+			STREF
+			STBREFR
+			STBREFR
+			STBREFR
+			STBREFR
+			ENDC
+			PUSHINT 0
+			SENDRAWMSG
+		}
+		PUSHCONT {
+			; expValue
+			; end expValue
+			;; get member payload
+			;; push identifier p
+			DUP
+			INDEX 1
+			; colValue
+			POP S5
+			; end colValue
+		}
+		IFELSE
+		;; end if
+	}
+	IF
+	;; end if
+	PUSH2 S2, S3
+	PUSHINT 267
+	DICTGETNEXT
+	PUSHREFCONT {
+		DUP
+		ROT
+		LDU 128
+		;; decode TvmCell
+		LDREF
+		ENDS
+		TUPLE 2
+	}
+	PUSHCONT {
+		NULL
+		NULL
+		NULL
+	}
+	IFELSE
+	BLKDROP2 3, 3
+}
+WHILE
+BLKDROP 4
+; end for
 ;; if
 ;; get member value
-;; push identifier callbackAddr
+;; push identifier sendGasToAddr
 PUSH S4
 PARSEMSGADDR
 INDEX 3
 PLDU 256
-NEQINT 0
 PUSHCONT {
-	;; Remote call ITokenTransferCallback.tokenTransferCallback
-	;; push identifier payload
-	;; push identifier sendGasToAddr
-	PUSH2 S1, S3
-	;; push identifier _addrRoot
-	GETGLOB 12
-	;; push identifier addrTo
-	;; push identifier addrOwner
-	;; push identifier callbackAddr
-	PUSH3 S5, S3, S7
-	NEWC
-	STSLICECONST x62_
-	STSLICE
-	PUSHINT 1
-	STUR 111
-	BLKSWAP 5, 1
-	NEWC
-	STSLICECONST x6d413798
-	STSLICE
-	BLKSWAP 4, 1
-	NEWC
-	STSLICE
-	BLKSWAP 3, 1
-	NEWC
-	STSLICE
-	ROTREV
-	NEWC
-	STSLICE
-	STREF
-	STBREFR
-	STBREFR
-	STBREFR
-	STBREFR
-	ENDC
-	PUSHINT 128
-	SENDRAWMSG
+	;; if
+	;; push identifier callbackToGasOwner
+	DUP
+	ISNULL
+	NOT
+	PUSHCONT {
+		;; Remote call ITokenTransferCallback.tokenTransferCallback
+		;; push identifier callbackToGasOwner
+		BLKPUSH 2, 0
+		ISNULL
+		THROWIF 63
+		;; push identifier sendGasToAddr
+		PUSH S5
+		;; push identifier _addrRoot
+		GETGLOB 12
+		;; push identifier addrTo
+		;; push identifier addrOwner
+		;; push identifier sendGasToAddr
+		PUSH3 S6, S4, S7
+		FALSE
+		NEWC
+		STSLICECONST x6_
+		STI 1
+		PUSHINT 3
+		STZEROES
+		STSLICE
+		PUSHINT 1
+		STUR 111
+		BLKSWAP 5, 1
+		NEWC
+		STSLICECONST x6d413798
+		STSLICE
+		BLKSWAP 4, 1
+		NEWC
+		STSLICE
+		BLKSWAP 3, 1
+		NEWC
+		STSLICE
+		ROTREV
+		NEWC
+		STSLICE
+		STREF
+		STBREFR
+		STBREFR
+		STBREFR
+		STBREFR
+		ENDC
+		PUSHINT 128
+		SENDRAWMSG
+	}
+	PUSHCONT {
+		;; transfer()
+		;; push identifier sendGasToAddr
+		PUSH S4
+		NEWC
+		STSLICECONST x42_
+		STSLICE
+		PUSHINT 111
+		STZEROES
+		ENDC
+		PUSHINT 128
+		SENDRAWMSG
+	}
+	IFELSE
+	;; end if
 }
-PUSHCONT {
-	;; transfer()
-	;; push identifier sendGasToAddr
-	PUSH S3
-	NEWC
-	STSLICECONST x62_
-	STSLICE
-	PUSHINT 111
-	STZEROES
-	ENDC
-	PUSHINT 128
-	SENDRAWMSG
-}
-IFELSE
+IF
 ;; end if
 ; end function transferOwnership
 ; end modifier onlyOwner
@@ -683,6 +827,8 @@ PUSH S1
 ; colValue
 SETGLOB 13
 ; end colValue
+;; push identifier sendGasToAddr
+DUP
 CALLREF {
 	CALL $_deployIndex_internal_macro$
 }
@@ -694,6 +840,7 @@ DROP2
 CALL $_deployIndex_internal_macro$
 
 .macro _deployIndex_internal_macro
+;; param: sendGasToAddr
 ; function _deployIndex
 ;; push identifier _addrRoot
 GETGLOB 12
@@ -710,18 +857,26 @@ CALLREF {
 	CALL $_buildIndexState_internal_macro$
 }
 ;; decl: stateIndexOwner
+;; push identifier _indexDeployValue
+GETGLOB 14
+;; -
+PUSHINT 100000000
+SUB
+UFITS 128
+;; push identifier sendGasToAddr
+PUSH S3
 ;; push identifier _addrRoot
 GETGLOB 12
 ;; push identifier stateIndexOwner
-PUSH2 S1, S1
+PUSH2 S3, S3
 HASHCU
 NEWC
 STSLICECONST x801_
 STU 256
-ROTREV
+BLKSWAP 4, 1
 ;; push identifier _indexDeployValue
 GETGLOB 14
-PUSH S3
+PUSH S5
 NEWC
 STSLICECONST x62_
 STB
@@ -731,10 +886,15 @@ PUSHSLICE x000000000000000000000000007_
 STSLICER
 STREF
 STSLICECONST 1
-SWAP
+BLKSWAP 3, 1
 NEWC
-STSLICECONST x475654dc
+STSLICECONST x454f13ec
 STSLICE
+ROTREV
+NEWC
+STSLICE
+STU 128
+STBREFR
 STBREFR
 ENDC
 PUSHINT 0
@@ -754,18 +914,26 @@ CALLREF {
 	CALL $_buildIndexState_internal_macro$
 }
 ;; decl: stateIndexOwnerRoot
+;; push identifier _indexDeployValue
+GETGLOB 14
+;; -
+PUSHINT 100000000
+SUB
+UFITS 128
+;; push identifier sendGasToAddr
+PUSH S5
 ;; push identifier _addrRoot
 GETGLOB 12
 ;; push identifier stateIndexOwnerRoot
-PUSH2 S1, S1
+PUSH2 S3, S3
 HASHCU
 NEWC
 STSLICECONST x801_
 STU 256
-ROTREV
+BLKSWAP 4, 1
 ;; push identifier _indexDeployValue
 GETGLOB 14
-PUSH S3
+PUSH S5
 NEWC
 STSLICECONST x62_
 STB
@@ -775,16 +943,21 @@ PUSHSLICE x000000000000000000000000007_
 STSLICER
 STREF
 STSLICECONST 1
-SWAP
+BLKSWAP 3, 1
 NEWC
-STSLICECONST x475654dc
+STSLICECONST x454f13ec
 STSLICE
+ROTREV
+NEWC
+STSLICE
+STU 128
+STBREFR
 STBREFR
 ENDC
 PUSHINT 0
 SENDRAWMSG
-BLKDROP 5
 ; end function _deployIndex
+BLKDROP 6
 
 .globl	_destructIndex_internal
 .type	_destructIndex_internal, @function
@@ -803,13 +976,18 @@ CALLREF {
 ;; decl: oldIndexOwner
 ;; Remote call IIndex.destruct
 ;; push identifier sendGasToAddr
+PUSH S1
+;; push identifier _indexDestroyValue
+GETGLOB 15
 ;; push identifier oldIndexOwner
-DUP2
+PUSH S2
 NEWC
 STSLICECONST x62_
 STSLICE
-PUSHSLICE x3989680000000000000000000000000003_
-STSLICER
+SWAP
+STGRAMS
+PUSHINT 1
+STUR 107
 SWAP
 NEWC
 STSLICECONST x03a3add7
@@ -829,13 +1007,18 @@ CALLREF {
 ;; decl: oldIndexOwnerRoot
 ;; Remote call IIndex.destruct
 ;; push identifier sendGasToAddr
+PUSH S2
+;; push identifier _indexDestroyValue
+GETGLOB 15
 ;; push identifier oldIndexOwnerRoot
-PUSH2 S2, S0
+PUSH S2
 NEWC
 STSLICECONST x62_
 STSLICE
-PUSHSLICE x3989680000000000000000000000000003_
-STSLICER
+SWAP
+STGRAMS
+PUSHINT 1
+STUR 107
 SWAP
 NEWC
 STSLICECONST x03a3add7
@@ -913,6 +1096,75 @@ ENDC
 PUSHINT 128
 SENDRAWMSG
 ; end function setIndexDeployValue
+; end modifier onlyOwner
+DROP
+
+.macro setIndexDestroyValue
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDUQ 128
+PUSHCONT {
+	;; load next cell
+	LDREF
+	ENDS
+	CTOS
+	LDU 128
+}
+IFNOT
+ENDS
+;; param: indexDestroyValue
+CALLREF {
+	CALL $setIndexDestroyValue_internal_macro$
+}
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	setIndexDestroyValue_internal
+.type	setIndexDestroyValue_internal, @function
+CALL $setIndexDestroyValue_internal_macro$
+
+.macro setIndexDestroyValue_internal_macro
+;; param: indexDestroyValue
+; modifier onlyOwner
+;; get member sender
+GETGLOB 9
+;; push identifier _addrOwner
+GETGLOB 13
+SDEQ
+THROWIFNOT 104
+; function setIndexDestroyValue
+;; get member value
+DEPTH
+ADDCONST -2
+PICK
+PUSHINT 1
+RAWRESERVE
+; expValue
+; end expValue
+;; push identifier indexDestroyValue
+DUP
+; colValue
+SETGLOB 15
+; end colValue
+;; transfer()
+;; get member sender
+GETGLOB 9
+NEWC
+STSLICECONST x62_
+STSLICE
+PUSHINT 111
+STZEROES
+ENDC
+PUSHINT 128
+SENDRAWMSG
+; end function setIndexDestroyValue
 ; end modifier onlyOwner
 DROP
 
@@ -1004,6 +1256,95 @@ SETGLOB 4
 ;; push identifier _indexDeployValue
 GETGLOB 14
 ; end function getIndexDeployValue
+
+.macro getIndexDestroyValue
+DROP
+GETGLOB 2
+ISNULL
+IFREF {
+	CALL $c4_to_c7$
+}
+LDU 32
+GETGLOB 4
+ROT
+SETINDEXQ 5
+SETGLOB 4
+ENDS
+CALLREF {
+	CALL $getIndexDestroyValue_internal_macro$
+}
+;; emitting 1 value(s)
+PUSH S1
+PUSHCONT {
+	PUSH S3
+	CTOS
+	LDU 2
+	LDMSGADDR
+	DROP
+	NIP
+	NEWC
+	STSLICECONST xc
+	STSLICE
+	PUSHSLICE x00000000000000000000000024aac5f1e_
+	STSLICER
+	STU 128
+	ENDC
+	PUSHINT 0
+	SENDRAWMSG
+}
+PUSHCONT {
+	GETGLOB 4
+	DUP
+	INDEX 3
+	PUSH S1
+	INDEX 2
+	GETGLOB 9
+	BLKSWAP 1, 3
+	INDEX 1
+	NEWC
+	PUSHINT 2
+	STZEROES
+	STI 1
+	PUSHINT 3
+	STZEROES
+	STSLICE
+	SWAP
+	STGRAMS
+	STDICT
+	PUSHINT 106
+	STZEROES
+	GETGLOB 4
+	INDEX 5
+	STUR 32
+	STU 128
+	ENDC
+	GETGLOB 4
+	INDEX 4
+	SENDRAWMSG
+}
+IFELSE
+CALLREF {
+	CALL $c7_to_c4$
+}
+TRUE
+SETGLOB 7
+
+.globl	getIndexDestroyValue_internal
+.type	getIndexDestroyValue_internal, @function
+CALL $getIndexDestroyValue_internal_macro$
+
+.macro getIndexDestroyValue_internal_macro
+; function getIndexDestroyValue
+;; return
+GETGLOB 4
+PUSHINT 0
+SETINDEXQ 2
+PUSHINT 64
+SETINDEXQ 4
+SETGLOB 4
+;; push identifier _indexDestroyValue
+GETGLOB 15
+; end function getIndexDestroyValue
 
 .macro getOwner
 DROP
@@ -1222,7 +1563,7 @@ PUSHCONT {
 IFNOT
 ENDS
 ;; param: addrRoot
-;; param: addrData
+;; param: addrNft
 ;; param: addrOwner
 CALLREF {
 	CALL $resolveIndex_internal_macro$
@@ -1266,7 +1607,7 @@ CALL $resolveIndex_internal_macro$
 
 .macro resolveIndex_internal_macro
 ;; param: addrRoot
-;; param: addrData
+;; param: addrNft
 ;; param: addrOwner
 ;; ret param: addrIndex
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
@@ -1279,7 +1620,7 @@ CALLREF {
 }
 ;; decl: code
 ;; push identifier code
-;; push identifier addrData
+;; push identifier addrNft
 PUSH2 S0, S3
 CALLREF {
 	CALL $_buildIndexState_internal_macro$
@@ -1448,7 +1789,7 @@ CALL $_buildIndexState_internal_macro$
 
 .macro _buildIndexState_internal_macro
 ;; param: code
-;; param: addrData
+;; param: addrNft
 ; function _buildIndexState
 ;; return
 NEWDICT
@@ -1459,7 +1800,7 @@ PUSHINT 0
 ROT
 PUSHINT 64
 DICTUSETB
-;; push identifier addrData
+;; push identifier addrNft
 PUSH S1
 PUSHINT 1
 ROT
@@ -1480,6 +1821,7 @@ ENDC
 BLKDROP2 2, 1
 
 .macro c7_to_c4
+GETGLOB 17
 GETGLOB 16
 GETGLOB 15
 GETGLOB 14
@@ -1496,12 +1838,13 @@ STU 64
 STI 1
 STREF
 STU 256
+BLKSWAP 6, 1
+NEWC
+STSLICE
 BLKSWAP 5, 1
 NEWC
 STSLICE
-BLKSWAP 4, 1
-NEWC
-STSLICE
+STU 128
 STU 128
 STREF
 STDICT
@@ -1530,9 +1873,11 @@ ENDS
 CTOS
 LDMSGADDR
 LDU 128
+LDU 128
 LDREF
 LDDICT
 ENDS
+SETGLOB 17
 SETGLOB 16
 SETGLOB 15
 SETGLOB 14
@@ -1584,13 +1929,16 @@ PUSHCONT {
 	; init _indexDeployValue
 	PUSHINT 0
 	SETGLOB 14
+	; init _indexDestroyValue
+	PUSHINT 0
+	SETGLOB 15
 	; init _dataName
 	PUSHREF {
 	}
-	SETGLOB 15
+	SETGLOB 16
 	; init _supportedInterfaces
 	NEWDICT
-	SETGLOB 16
+	SETGLOB 17
 	PUSHINT 64
 	DICTUGET
 	THROWIFNOT 61
@@ -1708,7 +2056,7 @@ THROWIF 60
 
 .macro public_function_selector
 DUP
-PUSHINT 1118824496
+PUSHINT 502498758
 LEQ
 IFJMPREF {
 	DUP
@@ -1718,11 +2066,28 @@ IFJMPREF {
 		CALL $constructor$
 	}
 	DUP
+	PUSHINT 313202631
+	EQUAL
+	IFJMPREF {
+		CALL $getIndexDestroyValue$
+	}
+	DUP
 	PUSHINT 494429385
 	EQUAL
 	IFJMPREF {
 		CALL $resolveIndex$
 	}
+	DUP
+	PUSHINT 502498758
+	EQUAL
+	IFJMPREF {
+		CALL $transferOwnership$
+	}
+}
+DUP
+PUSHINT 1656985116
+LEQ
+IFJMPREF {
 	DUP
 	PUSHINT 839183401
 	EQUAL
@@ -1734,17 +2099,6 @@ IFJMPREF {
 	EQUAL
 	IFJMPREF {
 		CALL $getName$
-	}
-}
-DUP
-PUSHINT 1795764025
-LEQ
-IFJMPREF {
-	DUP
-	PUSHINT 1627574419
-	EQUAL
-	IFJMPREF {
-		CALL $transferOwnership$
 	}
 	DUP
 	PUSHINT 1643665857
@@ -1758,16 +2112,27 @@ IFJMPREF {
 	IFJMPREF {
 		CALL $getOwner$
 	}
+}
+DUP
+PUSHINT 2003540608
+LEQ
+IFJMPREF {
 	DUP
 	PUSHINT 1795764025
 	EQUAL
 	IFJMPREF {
 		CALL $setIndexDeployValue$
 	}
-}
-DUP
-PUSHINT 2003540608
-EQUAL
-IFJMPREF {
-	CALL $resolveCodeHashIndex$
+	DUP
+	PUSHINT 1965481664
+	EQUAL
+	IFJMPREF {
+		CALL $setIndexDestroyValue$
+	}
+	DUP
+	PUSHINT 2003540608
+	EQUAL
+	IFJMPREF {
+		CALL $resolveCodeHashIndex$
+	}
 }

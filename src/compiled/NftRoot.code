@@ -1052,7 +1052,7 @@ PUSHCONT {
 IFNOT
 ENDS
 ;; param: addrRoot
-;; param: addrData
+;; param: addrNft
 ;; param: addrOwner
 CALLREF {
 	CALL $resolveIndex_internal_macro$
@@ -1096,7 +1096,7 @@ CALL $resolveIndex_internal_macro$
 
 .macro resolveIndex_internal_macro
 ;; param: addrRoot
-;; param: addrData
+;; param: addrNft
 ;; param: addrOwner
 ;; ret param: addrIndex
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
@@ -1109,7 +1109,7 @@ CALLREF {
 }
 ;; decl: code
 ;; push identifier code
-;; push identifier addrData
+;; push identifier addrNft
 PUSH2 S0, S3
 CALLREF {
 	CALL $_buildIndexState_internal_macro$
@@ -1278,7 +1278,7 @@ CALL $_buildIndexState_internal_macro$
 
 .macro _buildIndexState_internal_macro
 ;; param: code
-;; param: addrData
+;; param: addrNft
 ; function _buildIndexState
 ;; return
 NEWDICT
@@ -1289,7 +1289,7 @@ PUSHINT 0
 ROT
 PUSHINT 64
 DICTUSETB
-;; push identifier addrData
+;; push identifier addrNft
 PUSH S1
 PUSHINT 1
 ROT
