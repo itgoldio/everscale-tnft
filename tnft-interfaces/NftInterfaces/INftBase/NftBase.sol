@@ -7,6 +7,7 @@ pragma AbiHeader time;
 import '../../../src/resolvers/IndexResolver.sol';
 import '../../../src/errors/NftErrors.sol';
 import './INftBase.sol';
+import './IManager.sol';
 import './ITokenTransferCallback.sol';
 
 
@@ -16,6 +17,8 @@ abstract contract NftBase is INftBase, IndexResolver {
 
     address _addrRoot;
     address _addrOwner;
+    address _addrManager = _addrOwner;
+    string _json;
 
     uint128 _indexDeployValue;
     uint128 _indexDestroyValue;
@@ -30,7 +33,7 @@ abstract contract NftBase is INftBase, IndexResolver {
         address sendGasToAddr, 
         address addrTo, 
         mapping(address => CallbackParams) callbacks
-    ) public override onlyOwner {
+    ) public override onlyManager {
         require(msg.value >= (_indexDeployValue * 2), NftErrors.value_less_than_required);
         require(addrTo.value != 0, NftErrors.value_is_empty);
         tvm.rawReserve(msg.value, 1);
@@ -49,7 +52,7 @@ abstract contract NftBase is INftBase, IndexResolver {
                         value: p.value,
                         flag: 0,
                         bounce: false
-                    }(addrOwner, addrTo, _addrRoot, sendGasToAddr, p.payload);
+                    }(_id, addrOwner, addrTo, _addrRoot, sendGasToAddr, p.payload);
                 } else {
                     callbackToGasOwner.set(p.payload);
                 }
@@ -62,7 +65,7 @@ abstract contract NftBase is INftBase, IndexResolver {
                     value: 0,
                     flag: 128,
                     bounce: false
-                }(addrOwner, addrTo, _addrRoot, sendGasToAddr, callbackToGasOwner.get());
+                }(_id, addrOwner, addrTo, _addrRoot, sendGasToAddr, callbackToGasOwner.get());
             } else {
                 sendGasToAddr.transfer({
                     value: 0,
@@ -102,16 +105,49 @@ abstract contract NftBase is INftBase, IndexResolver {
         IIndex(oldIndexOwnerRoot).destruct{value: _indexDestroyValue}(sendGasToAddr);
     }
 
-    function setIndexDeployValue(uint128 indexDeployValue) public override onlyOwner {
+    function setManager(address manager, TvmCell payload) public override onlyManager {
+        require(msg.value != 0);
+        tvm.accept();
+        tvm.rawReserve(msg.value, 1);
+    
+        _addrManager = manager;
+        IManager(manager).setManagerCallback{value: 0, flag: 128}(payload);
+    }
+
+    function returnOwnership() public override onlyManager {
+        require(_addrManager != _addrOwner);
+        tvm.accept();
+        tvm.rawReserve(msg.value, 1);
+
+        address manager = _addrManager;
+        _addrManager = _addrOwner;
+
+        IManager(manager).resetManagerCallback{value: 0, flag: 128}();
+    }
+
+    function setIndexDeployValue(uint128 indexDeployValue) public override onlyManager {
         tvm.rawReserve(msg.value, 1);
         _indexDeployValue = indexDeployValue;
         msg.sender.transfer({value: 0, flag: 128});
     }
 
-    function setIndexDestroyValue(uint128 indexDestroyValue) public override onlyOwner {
+    function setIndexDestroyValue(uint128 indexDestroyValue) public override onlyManager {
         tvm.rawReserve(msg.value, 1);
         _indexDestroyValue = indexDestroyValue;
         msg.sender.transfer({value: 0, flag: 128});
+    }
+
+    function getInfo() external override responsible returns(
+        uint256 id,
+        address addrOwner,
+        address addrCollection,
+        address addrManager
+    ) {
+        return {value: 0, flag: 64}( _id, _addrOwner, _addrRoot, _addrManager );
+    }
+
+    function getJsonInfo() external override responsible returns(string json) {
+        return {value: 0, flag: 64}(_json);
     }
 
     function getIndexDeployValue() public responsible override returns(uint128) {
@@ -122,11 +158,7 @@ abstract contract NftBase is INftBase, IndexResolver {
         return {value: 0, flag: 64} _indexDestroyValue;
     }
 
-    function getOwner() public responsible override returns(address addrOwner) {
-        return {value: 0, flag: 64} _addrOwner;
-    }
-
-    modifier onlyOwner virtual {
+    modifier onlyManager virtual {
         require(msg.sender == _addrOwner, NftErrors.sender_is_not_owner);
         _;
     }

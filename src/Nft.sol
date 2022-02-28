@@ -14,6 +14,7 @@ contract Nft is NftBase, Name, TIP6 {
         address addrOwner, 
         TvmCell codeIndex,
         uint128 indexDeployValue, 
+        string json,
         string dataName
     ) public {
         optional(TvmCell) optSalt = tvm.codeSalt(tvm.code());
@@ -26,14 +27,19 @@ contract Nft is NftBase, Name, TIP6 {
         _addrOwner = addrOwner;
         _codeIndex = codeIndex;
         _indexDeployValue = indexDeployValue;
+        _json = json;
         _dataName = dataName;
 
         _supportedInterfaces[ 
             bytes4(
+            tvm.functionId(INftBase.setIndexDestroyValue) ^
             tvm.functionId(INftBase.setIndexDeployValue) ^ 
             tvm.functionId(INftBase.transferOwnership) ^
             tvm.functionId(INftBase.getIndexDeployValue) ^
-            tvm.functionId(INftBase.getOwner)
+            tvm.functionId(INftBase.getIndexDestroyValue) ^
+            tvm.functionId(INftBase.setManager) ^ 
+            tvm.functionId(INftBase.returnOwnership) ^
+            tvm.functionId(INftBase.getInfo)
             )
         ] = true;
 

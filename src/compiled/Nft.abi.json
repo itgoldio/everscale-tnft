@@ -8,6 +8,7 @@
 				{"name":"addrOwner","type":"address"},
 				{"name":"codeIndex","type":"cell"},
 				{"name":"indexDeployValue","type":"uint128"},
+				{"name":"json","type":"bytes"},
 				{"name":"dataName","type":"bytes"}
 			],
 			"outputs": [
@@ -43,6 +44,22 @@
 			]
 		},
 		{
+			"name": "setManager",
+			"inputs": [
+				{"name":"manager","type":"address"},
+				{"name":"payload","type":"cell"}
+			],
+			"outputs": [
+			]
+		},
+		{
+			"name": "returnOwnership",
+			"inputs": [
+			],
+			"outputs": [
+			]
+		},
+		{
 			"name": "setIndexDeployValue",
 			"inputs": [
 				{"name":"indexDeployValue","type":"uint128"}
@@ -56,6 +73,27 @@
 				{"name":"indexDestroyValue","type":"uint128"}
 			],
 			"outputs": [
+			]
+		},
+		{
+			"name": "getInfo",
+			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"id","type":"uint256"},
+				{"name":"addrOwner","type":"address"},
+				{"name":"addrCollection","type":"address"},
+				{"name":"addrManager","type":"address"}
+			]
+		},
+		{
+			"name": "getJsonInfo",
+			"inputs": [
+				{"name":"_answer_id","type":"uint32"}
+			],
+			"outputs": [
+				{"name":"json","type":"bytes"}
 			]
 		},
 		{
@@ -74,15 +112,6 @@
 			],
 			"outputs": [
 				{"name":"value0","type":"uint128"}
-			]
-		},
-		{
-			"name": "getOwner",
-			"inputs": [
-				{"name":"_answer_id","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"addrOwner","type":"address"}
 			]
 		},
 		{

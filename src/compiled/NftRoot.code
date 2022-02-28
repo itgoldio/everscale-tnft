@@ -91,8 +91,10 @@ IFREF {
 	CALL $c4_to_c7$
 }
 LDREF
+LDREF
 ENDS
 ;; param: dataName
+;; param: json
 CALLREF {
 	CALL $mintNft_internal_macro$
 }
@@ -108,6 +110,7 @@ CALL $mintNft_internal_macro$
 
 .macro mintNft_internal_macro
 ;; param: dataName
+;; param: json
 ; function mintNft
 ;; get member value
 DEPTH
@@ -146,7 +149,8 @@ CALLREF {
 }
 ;; decl: stateNft
 ;; push identifier dataName
-PUSH S2
+;; push identifier json
+OVER2
 ;; push identifier _indexDeployValue
 GETGLOB 15
 ;; push identifier _codeIndex
@@ -154,14 +158,14 @@ GETGLOB 11
 ;; get member sender
 GETGLOB 9
 ;; push identifier stateNft
-PUSH2 S4, S4
+PUSH2 S5, S5
 HASHCU
 NEWC
 STSLICECONST x801_
 STU 256
 ENDC
 CTOS
-BLKSWAP 5, 1
+BLKSWAP 6, 1
 ;; push identifier _indexDeployValue
 GETGLOB 15
 ;; *
@@ -172,7 +176,7 @@ UFITS 128
 GETGLOB 16
 ADD
 UFITS 128
-PUSH S6
+PUSH S7
 NEWC
 STSLICECONST x62_
 STSLICE
@@ -182,12 +186,13 @@ PUSHSLICE x000000000000000000000000007_
 STSLICER
 STREF
 STSLICECONST 1
-BLKSWAP 4, 1
+BLKSWAP 5, 1
 NEWC
-STSLICECONST x05ffdad4
+STSLICECONST x0654ec93
 STSLICE
 STREF
 STU 128
+STREF
 STREF
 STBREFR
 ENDC
@@ -235,7 +240,7 @@ ENDC
 PUSHINT 128
 SENDRAWMSG
 ; end function mintNft
-BLKDROP 4
+BLKDROP 5
 
 .macro deployIndexBasis
 DROP
@@ -1918,7 +1923,7 @@ IFJMPREF {
 		}
 	}
 	DUP
-	PUSHINT 1119196584
+	PUSHINT 1211552541
 	LEQ
 	IFJMPREF {
 		DUP
@@ -1940,10 +1945,10 @@ IFJMPREF {
 			CALL $setDeployIndexValue$
 		}
 		DUP
-		PUSHINT 1119196584
+		PUSHINT 1211552541
 		EQUAL
 		IFJMPREF {
-			CALL $mintNft$
+			CALL $getIndexBasisAddress$
 		}
 	}
 	DUP
@@ -1951,10 +1956,10 @@ IFJMPREF {
 	LEQ
 	IFJMPREF {
 		DUP
-		PUSHINT 1211552541
+		PUSHINT 1769234753
 		EQUAL
 		IFJMPREF {
-			CALL $getIndexBasisAddress$
+			CALL $mintNft$
 		}
 		DUP
 		PUSHINT 1795764025

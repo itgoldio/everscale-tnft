@@ -17,7 +17,15 @@ interface INftBase is ICallbackParamsStructure {
         mapping(address => CallbackParams) callbacks
     ) external;
     function getIndexDeployValue() external responsible returns(uint128);
-    function getOwner() external responsible returns(address addrOwner);
     function getIndexDestroyValue() external responsible returns(uint128);
- 
+    function setManager(address manager, TvmCell payload) external;
+    function returnOwnership() external;
+    function getInfo() external responsible returns(
+        uint256 id,
+        address addrOwner,
+        address addrCollection,
+        address addrManager
+    );
+    function getJsonInfo() external responsible returns(string json);
+
 }

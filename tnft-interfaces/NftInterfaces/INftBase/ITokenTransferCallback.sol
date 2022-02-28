@@ -3,6 +3,7 @@ pragma AbiHeader expire;
 
 interface ITokenTransferCallback {
     function tokenTransferCallback(
+        uint256 id,
         address oldOwner,
         address newOwner,
         address tokenRoot,
