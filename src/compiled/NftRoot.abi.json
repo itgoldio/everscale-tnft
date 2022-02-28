@@ -5,7 +5,6 @@
 		{
 			"name": "constructor",
 			"inputs": [
-				{"name":"codeIndex","type":"cell"},
 				{"name":"codeNft","type":"cell"},
 				{"name":"ownerPubkey","type":"uint256"}
 			],
@@ -22,33 +21,10 @@
 			]
 		},
 		{
-			"name": "deployIndexBasis",
-			"inputs": [
-				{"name":"codeIndexBasis","type":"cell"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "destructIndexBasis",
-			"inputs": [
-			],
-			"outputs": [
-			]
-		},
-		{
 			"name": "withdraw",
 			"inputs": [
 				{"name":"to","type":"address"},
 				{"name":"value","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "setIndexDeployValue",
-			"inputs": [
-				{"name":"indexDeployValue","type":"uint128"}
 			],
 			"outputs": [
 			]
@@ -62,22 +38,6 @@
 			]
 		},
 		{
-			"name": "setDeployIndexValue",
-			"inputs": [
-				{"name":"deployIndexValue","type":"uint128"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "getIndexDeployValue",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"uint128"}
-			]
-		},
-		{
 			"name": "getRemainOnNft",
 			"inputs": [
 			],
@@ -86,48 +46,11 @@
 			]
 		},
 		{
-			"name": "getDeployIndexValue",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"uint128"}
-			]
-		},
-		{
-			"name": "getIndexBasisAddress",
-			"inputs": [
-			],
-			"outputs": [
-				{"name":"value0","type":"address"}
-			]
-		},
-		{
 			"name": "getTotalMinted",
 			"inputs": [
 			],
 			"outputs": [
 				{"name":"value0","type":"uint256"}
-			]
-		},
-		{
-			"name": "resolveCodeHashIndex",
-			"inputs": [
-				{"name":"addrRoot","type":"address"},
-				{"name":"addrOwner","type":"address"}
-			],
-			"outputs": [
-				{"name":"codeHashIndex","type":"uint256"}
-			]
-		},
-		{
-			"name": "resolveIndex",
-			"inputs": [
-				{"name":"addrRoot","type":"address"},
-				{"name":"addrNft","type":"address"},
-				{"name":"addrOwner","type":"address"}
-			],
-			"outputs": [
-				{"name":"addrIndex","type":"address"}
 			]
 		},
 		{

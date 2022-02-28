@@ -9,15 +9,11 @@ import './structures/ICallbackParamsStructure.sol';
 
 interface INftBase is ICallbackParamsStructure {
     
-    function setIndexDestroyValue(uint128 indexDestroyValue) external;
-    function setIndexDeployValue(uint128 indexDeployValue) external;
     function transferOwnership(
         address sendGasToAddr, 
         address addrTo, 
         mapping(address => CallbackParams) callbacks
     ) external;
-    function getIndexDeployValue() external responsible returns(uint128);
-    function getIndexDestroyValue() external responsible returns(uint128);
     function setManager(address manager, TvmCell payload) external;
     function returnOwnership() external;
     function getInfo() external responsible returns(
@@ -26,6 +22,6 @@ interface INftBase is ICallbackParamsStructure {
         address addrCollection,
         address addrManager
     );
-    function getJsonInfo() external responsible returns(string json);
+    function getJSONInfo() external responsible returns(string json);
 
 }

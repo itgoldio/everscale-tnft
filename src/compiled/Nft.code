@@ -24,26 +24,6 @@ PUSHCONT {
 	LDMSGADDR
 }
 IFNOT
-;; decode TvmCell
-DUP
-SREFS
-EQINT 1
-PUSHCONT {
-	LDREF
-	ENDS
-	CTOS
-}
-IF
-LDREF
-LDUQ 128
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDU 128
-}
-IFNOT
 DUP
 SREFS
 EQINT 1
@@ -57,8 +37,6 @@ LDREF
 LDREF
 ENDS
 ;; param: addrOwner
-;; param: codeIndex
-;; param: indexDeployValue
 ;; param: json
 ;; param: dataName
 ; constructor Nft
@@ -153,78 +131,40 @@ GETGLOB 9
 PUSH S1
 SDEQ
 THROWIFNOT 102
-;; get member value
-DEPTH
-ADDCONST -2
-PICK
-;; >=
-;; push identifier _indexDeployValue
-GETGLOB 16
-;; *
-MULCONST 2
-UFITS 128
-GEQ
-THROWIFNOT 103
 ACCEPT
 ; expValue
 ; end expValue
 ;; push identifier addrRoot
 DUP
 ; colValue
-SETGLOB 12
+SETGLOB 11
 ; end colValue
 ; expValue
 ; end expValue
 ;; push identifier addrOwner
-PUSH S6
-; colValue
-SETGLOB 13
-; end colValue
-; expValue
-; end expValue
-;; push identifier codeIndex
-PUSH S5
-; colValue
-SETGLOB 10
-; end colValue
-; expValue
-; end expValue
-;; push identifier indexDeployValue
 PUSH S4
 ; colValue
-SETGLOB 16
+SETGLOB 12
 ; end colValue
 ; expValue
 ; end expValue
 ;; push identifier json
 PUSH S3
 ; colValue
-SETGLOB 15
+SETGLOB 14
 ; end colValue
 ; expValue
 ; end expValue
 ;; push identifier dataName
 PUSH S2
 ; colValue
-SETGLOB 18
+SETGLOB 15
 ; end colValue
 TRUE
 ; expValue
 ;; fetch _supportedInterfaces
-GETGLOB 19
-PUSHINT 1965481664
-;; ^
-PUSHINT 1795764025
-XOR
-;; ^
+GETGLOB 16
 PUSHINT 502498758
-XOR
-;; ^
-PUSHINT 1643665857
-XOR
-;; ^
-PUSHINT 313202631
-XOR
 ;; ^
 PUSHINT 111879361
 XOR
@@ -243,14 +183,14 @@ STI 1
 ROTREV
 PUSHINT 32
 DICTUSETB
-SETGLOB 19
+SETGLOB 16
 ; end colValue
 TRUE
 ; expValue
 ;; fetch _supportedInterfaces
 ;; bytes4
 PUSHINT 1118824496
-GETGLOB 19
+GETGLOB 16
 ; end expValue
 ROT
 ; colValue
@@ -259,14 +199,14 @@ STI 1
 ROTREV
 PUSHINT 32
 DICTUSETB
-SETGLOB 19
+SETGLOB 16
 ; end colValue
 TRUE
 ; expValue
 ;; fetch _supportedInterfaces
 ;; bytes4
 PUSHINT 839183401
-GETGLOB 19
+GETGLOB 16
 ; end expValue
 ROT
 ; colValue
@@ -275,10 +215,10 @@ STI 1
 ROTREV
 PUSHINT 32
 DICTUSETB
-SETGLOB 19
+SETGLOB 16
 ; end colValue
 ;; push identifier addrOwner
-PUSH S6
+PUSH S4
 ;; emit TokenWasMinted
 PUSHSLICE xc00000000000000000000000001240b639
 NEWC
@@ -287,13 +227,8 @@ STSLICE
 ENDC
 PUSHINT 0
 SENDRAWMSG
-;; push identifier addrOwner
-PUSH S6
-CALLREF {
-	CALL $_deployIndex_internal_macro$
-}
 ; end constructor Nft
-BLKDROP 7
+BLKDROP 5
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -321,7 +256,7 @@ ENDS
 ;; push identifier interfaceID
 DUP
 ;; push identifier _supportedInterfaces
-GETGLOB 19
+GETGLOB 16
 PUSHINT 32
 DICTUGET
 PUSHCONT {
@@ -479,7 +414,7 @@ SETINDEXQ 4
 SETGLOB 4
 ;; push identifier _dataName
 DROP
-GETGLOB 18
+GETGLOB 15
 ; end function getName
 
 .macro transferOwnership
@@ -541,22 +476,10 @@ CALL $transferOwnership_internal_macro$
 ;; get member sender
 GETGLOB 9
 ;; push identifier _addrOwner
-GETGLOB 13
+GETGLOB 12
 SDEQ
 THROWIFNOT 104
 ; function transferOwnership
-;; get member value
-DEPTH
-ADDCONST -2
-PICK
-;; >=
-;; push identifier _indexDeployValue
-GETGLOB 16
-;; *
-MULCONST 2
-UFITS 128
-GEQ
-THROWIFNOT 103
 ;; get member value
 ;; push identifier addrTo
 PUSH S1
@@ -571,7 +494,7 @@ PICK
 PUSHINT 1
 RAWRESERVE
 ;; push identifier _addrOwner
-GETGLOB 13
+GETGLOB 12
 ;; decl: addrOwner
 ; expValue
 ; end expValue
@@ -595,8 +518,7 @@ IFELSE
 POP S4
 ; end colValue
 ;; push identifier addrTo
-;; push identifier sendGasToAddr
-PUSH2 S2, S3
+PUSH S2
 CALLREF {
 	CALL $_transfer_internal_macro$
 }
@@ -669,12 +591,12 @@ PUSHCONT {
 			;; push identifier sendGasToAddr
 			PUSH S9
 			;; push identifier _addrRoot
-			GETGLOB 12
+			GETGLOB 11
 			;; push identifier addrTo
 			;; push identifier addrOwner
 			PUSH2 S10, S8
 			;; push identifier _id
-			GETGLOB 11
+			GETGLOB 10
 			;; get member value
 			;; push identifier p
 			PUSH S6
@@ -776,12 +698,12 @@ PUSHCONT {
 		;; push identifier sendGasToAddr
 		PUSH S5
 		;; push identifier _addrRoot
-		GETGLOB 12
+		GETGLOB 11
 		;; push identifier addrTo
 		;; push identifier addrOwner
 		PUSH2 S6, S4
 		;; push identifier _id
-		GETGLOB 11
+		GETGLOB 10
 		;; push identifier sendGasToAddr
 		PUSH S10
 		FALSE
@@ -844,229 +766,21 @@ CALL $_transfer_internal_macro$
 
 .macro _transfer_internal_macro
 ;; param: to
-;; param: sendGasToAddr
 ; function _transfer
 ;; get member value
 ;; push identifier to
-PUSH S1
+DUP
 PARSEMSGADDR
 INDEX 3
 PLDU 256
 THROWIFNOT 101
-;; push identifier sendGasToAddr
-DUP
-CALLREF {
-	CALL $_destructIndex_internal_macro$
-}
 ; expValue
 ; end expValue
 ;; push identifier to
-PUSH S1
 ; colValue
-SETGLOB 13
 ; end colValue
-;; push identifier sendGasToAddr
-DUP
-CALLREF {
-	CALL $_deployIndex_internal_macro$
-}
 ; end function _transfer
-DROP2
-
-.globl	_deployIndex_internal
-.type	_deployIndex_internal, @function
-CALL $_deployIndex_internal_macro$
-
-.macro _deployIndex_internal_macro
-;; param: sendGasToAddr
-; function _deployIndex
-;; push identifier _addrRoot
-GETGLOB 12
-;; push identifier _addrOwner
-GETGLOB 13
-CALLREF {
-	CALL $_buildIndexCode_internal_macro$
-}
-;; decl: codeIndexOwner
-;; push identifier codeIndexOwner
-DUP
-MYADDR
-CALLREF {
-	CALL $_buildIndexState_internal_macro$
-}
-;; decl: stateIndexOwner
-;; push identifier _indexDeployValue
-GETGLOB 16
-;; -
-PUSHINT 100000000
-SUB
-UFITS 128
-;; push identifier sendGasToAddr
-PUSH S3
-;; push identifier _addrRoot
-GETGLOB 12
-;; push identifier stateIndexOwner
-PUSH2 S3, S3
-HASHCU
-NEWC
-STSLICECONST x801_
-STU 256
-BLKSWAP 4, 1
-;; push identifier _indexDeployValue
-GETGLOB 16
-PUSH S5
-NEWC
-STSLICECONST x62_
-STB
-SWAP
-STGRAMS
-PUSHSLICE x000000000000000000000000007_
-STSLICER
-STREF
-STSLICECONST 1
-BLKSWAP 3, 1
-NEWC
-STSLICECONST x454f13ec
-STSLICE
-ROTREV
-NEWC
-STSLICE
-STU 128
-STBREFR
-STBREFR
-ENDC
-PUSHINT 0
-SENDRAWMSG
-DROP
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-;; push identifier _addrOwner
-GETGLOB 13
-CALLREF {
-	CALL $_buildIndexCode_internal_macro$
-}
-;; decl: codeIndexOwnerRoot
-;; push identifier codeIndexOwnerRoot
-DUP
-MYADDR
-CALLREF {
-	CALL $_buildIndexState_internal_macro$
-}
-;; decl: stateIndexOwnerRoot
-;; push identifier _indexDeployValue
-GETGLOB 16
-;; -
-PUSHINT 100000000
-SUB
-UFITS 128
-;; push identifier sendGasToAddr
-PUSH S5
-;; push identifier _addrRoot
-GETGLOB 12
-;; push identifier stateIndexOwnerRoot
-PUSH2 S3, S3
-HASHCU
-NEWC
-STSLICECONST x801_
-STU 256
-BLKSWAP 4, 1
-;; push identifier _indexDeployValue
-GETGLOB 16
-PUSH S5
-NEWC
-STSLICECONST x62_
-STB
-SWAP
-STGRAMS
-PUSHSLICE x000000000000000000000000007_
-STSLICER
-STREF
-STSLICECONST 1
-BLKSWAP 3, 1
-NEWC
-STSLICECONST x454f13ec
-STSLICE
-ROTREV
-NEWC
-STSLICE
-STU 128
-STBREFR
-STBREFR
-ENDC
-PUSHINT 0
-SENDRAWMSG
-; end function _deployIndex
-BLKDROP 6
-
-.globl	_destructIndex_internal
-.type	_destructIndex_internal, @function
-CALL $_destructIndex_internal_macro$
-
-.macro _destructIndex_internal_macro
-;; param: sendGasToAddr
-; function _destructIndex
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-MYADDR
-;; push identifier _addrOwner
-GETGLOB 13
-CALLREF {
-	CALL $resolveIndex_internal_macro$
-}
-;; decl: oldIndexOwner
-;; Remote call IIndex.destruct
-;; push identifier sendGasToAddr
-PUSH S1
-;; push identifier _indexDestroyValue
-GETGLOB 17
-;; push identifier oldIndexOwner
-PUSH S2
-NEWC
-STSLICECONST x62_
-STSLICE
-SWAP
-STGRAMS
-PUSHINT 1
-STUR 107
-SWAP
-NEWC
-STSLICECONST x03a3add7
-STSLICE
-STBREFR
-ENDC
-PUSHINT 0
-SENDRAWMSG
-;; push identifier _addrRoot
-GETGLOB 12
-MYADDR
-;; push identifier _addrOwner
-GETGLOB 13
-CALLREF {
-	CALL $resolveIndex_internal_macro$
-}
-;; decl: oldIndexOwnerRoot
-;; Remote call IIndex.destruct
-;; push identifier sendGasToAddr
-PUSH S2
-;; push identifier _indexDestroyValue
-GETGLOB 17
-;; push identifier oldIndexOwnerRoot
-PUSH S2
-NEWC
-STSLICECONST x62_
-STSLICE
-SWAP
-STGRAMS
-PUSHINT 1
-STUR 107
-SWAP
-NEWC
-STSLICECONST x03a3add7
-STSLICE
-STBREFR
-ENDC
-PUSHINT 0
-SENDRAWMSG
-; end function _destructIndex
-BLKDROP 3
+SETGLOB 12
 
 .macro setManager
 DROP
@@ -1109,7 +823,7 @@ CALL $setManager_internal_macro$
 ;; get member sender
 GETGLOB 9
 ;; push identifier _addrOwner
-GETGLOB 13
+GETGLOB 12
 SDEQ
 THROWIFNOT 104
 ; function setManager
@@ -1130,7 +844,7 @@ RAWRESERVE
 ;; push identifier manager
 PUSH S1
 ; colValue
-SETGLOB 14
+SETGLOB 13
 ; end colValue
 ;; Remote call IManager.setManagerCallback
 ;; push identifier payload
@@ -1175,14 +889,14 @@ CALL $returnOwnership_internal_macro$
 ;; get member sender
 GETGLOB 9
 ;; push identifier _addrOwner
-GETGLOB 13
+GETGLOB 12
 SDEQ
 THROWIFNOT 104
 ; function returnOwnership
 ;; push identifier _addrManager
-GETGLOB 14
-;; push identifier _addrOwner
 GETGLOB 13
+;; push identifier _addrOwner
+GETGLOB 12
 SDEQ
 THROWIF 100
 ACCEPT
@@ -1193,14 +907,14 @@ PICK
 PUSHINT 1
 RAWRESERVE
 ;; push identifier _addrManager
-GETGLOB 14
+GETGLOB 13
 ;; decl: manager
 ; expValue
 ; end expValue
 ;; push identifier _addrOwner
-GETGLOB 13
+GETGLOB 12
 ; colValue
-SETGLOB 14
+SETGLOB 13
 ; end colValue
 ;; Remote call IManager.resetManagerCallback
 ;; push identifier manager
@@ -1216,144 +930,6 @@ SENDRAWMSG
 DROP
 ; end function returnOwnership
 ; end modifier onlyManager
-
-.macro setIndexDeployValue
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-LDUQ 128
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDU 128
-}
-IFNOT
-ENDS
-;; param: indexDeployValue
-CALLREF {
-	CALL $setIndexDeployValue_internal_macro$
-}
-CALLREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	setIndexDeployValue_internal
-.type	setIndexDeployValue_internal, @function
-CALL $setIndexDeployValue_internal_macro$
-
-.macro setIndexDeployValue_internal_macro
-;; param: indexDeployValue
-; modifier onlyManager
-;; get member sender
-GETGLOB 9
-;; push identifier _addrOwner
-GETGLOB 13
-SDEQ
-THROWIFNOT 104
-; function setIndexDeployValue
-;; get member value
-DEPTH
-ADDCONST -2
-PICK
-PUSHINT 1
-RAWRESERVE
-; expValue
-; end expValue
-;; push identifier indexDeployValue
-DUP
-; colValue
-SETGLOB 16
-; end colValue
-;; transfer()
-;; get member sender
-GETGLOB 9
-NEWC
-STSLICECONST x62_
-STSLICE
-PUSHINT 111
-STZEROES
-ENDC
-PUSHINT 128
-SENDRAWMSG
-; end function setIndexDeployValue
-; end modifier onlyManager
-DROP
-
-.macro setIndexDestroyValue
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-LDUQ 128
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDU 128
-}
-IFNOT
-ENDS
-;; param: indexDestroyValue
-CALLREF {
-	CALL $setIndexDestroyValue_internal_macro$
-}
-CALLREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	setIndexDestroyValue_internal
-.type	setIndexDestroyValue_internal, @function
-CALL $setIndexDestroyValue_internal_macro$
-
-.macro setIndexDestroyValue_internal_macro
-;; param: indexDestroyValue
-; modifier onlyManager
-;; get member sender
-GETGLOB 9
-;; push identifier _addrOwner
-GETGLOB 13
-SDEQ
-THROWIFNOT 104
-; function setIndexDestroyValue
-;; get member value
-DEPTH
-ADDCONST -2
-PICK
-PUSHINT 1
-RAWRESERVE
-; expValue
-; end expValue
-;; push identifier indexDestroyValue
-DUP
-; colValue
-SETGLOB 17
-; end colValue
-;; transfer()
-;; get member sender
-GETGLOB 9
-NEWC
-STSLICECONST x62_
-STSLICE
-PUSHINT 111
-STZEROES
-ENDC
-PUSHINT 128
-SENDRAWMSG
-; end function setIndexDestroyValue
-; end modifier onlyManager
-DROP
 
 .macro getInfo
 DROP
@@ -1385,13 +961,13 @@ PUSHINT 64
 SETINDEXQ 4
 SETGLOB 4
 ;; push identifier _id
-GETGLOB 11
+GETGLOB 10
 ;; push identifier _addrOwner
-GETGLOB 13
-;; push identifier _addrRoot
 GETGLOB 12
+;; push identifier _addrRoot
+GETGLOB 11
 ;; push identifier _addrManager
-GETGLOB 14
+GETGLOB 13
 BLKDROP2 4, 4
 ; end function getInfo
 ;; emitting 4 value(s)
@@ -1477,7 +1053,7 @@ CALLREF {
 TRUE
 SETGLOB 7
 
-.macro getJsonInfo
+.macro getJSONInfo
 DROP
 GETGLOB 2
 ISNULL
@@ -1493,7 +1069,7 @@ ENDS
 ;; ret param: json
 PUSHREF {
 }
-; function getJsonInfo
+; function getJSONInfo
 ;; return
 GETGLOB 4
 PUSHINT 0
@@ -1503,8 +1079,8 @@ SETINDEXQ 4
 SETGLOB 4
 ;; push identifier _json
 DROP
-GETGLOB 15
-; end function getJsonInfo
+GETGLOB 14
+; end function getJSONInfo
 ;; emitting 1 value(s)
 PUSH S1
 PUSHCONT {
@@ -1517,7 +1093,7 @@ PUSHCONT {
 	NEWC
 	STSLICECONST xc
 	STSLICE
-	PUSHSLICE x00000000000000000000000027138c166_
+	PUSHSLICE x0000000000000000000000003f4d2d832_
 	STSLICER
 	STREF
 	ENDC
@@ -1560,564 +1136,8 @@ CALLREF {
 }
 TRUE
 SETGLOB 7
-
-.macro getIndexDeployValue
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-LDU 32
-GETGLOB 4
-ROT
-SETINDEXQ 5
-SETGLOB 4
-ENDS
-CALLREF {
-	CALL $getIndexDeployValue_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHSLICE x000000000000000000000000387e16706_
-	STSLICER
-	STU 128
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	GETGLOB 4
-	DUP
-	INDEX 3
-	PUSH S1
-	INDEX 2
-	GETGLOB 9
-	BLKSWAP 1, 3
-	INDEX 1
-	NEWC
-	PUSHINT 2
-	STZEROES
-	STI 1
-	PUSHINT 3
-	STZEROES
-	STSLICE
-	SWAP
-	STGRAMS
-	STDICT
-	PUSHINT 106
-	STZEROES
-	GETGLOB 4
-	INDEX 5
-	STUR 32
-	STU 128
-	ENDC
-	GETGLOB 4
-	INDEX 4
-	SENDRAWMSG
-}
-IFELSE
-CALLREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getIndexDeployValue_internal
-.type	getIndexDeployValue_internal, @function
-CALL $getIndexDeployValue_internal_macro$
-
-.macro getIndexDeployValue_internal_macro
-; function getIndexDeployValue
-;; return
-GETGLOB 4
-PUSHINT 0
-SETINDEXQ 2
-PUSHINT 64
-SETINDEXQ 4
-SETGLOB 4
-;; push identifier _indexDeployValue
-GETGLOB 16
-; end function getIndexDeployValue
-
-.macro getIndexDestroyValue
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-LDU 32
-GETGLOB 4
-ROT
-SETINDEXQ 5
-SETGLOB 4
-ENDS
-CALLREF {
-	CALL $getIndexDestroyValue_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHSLICE x00000000000000000000000024aac5f1e_
-	STSLICER
-	STU 128
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	GETGLOB 4
-	DUP
-	INDEX 3
-	PUSH S1
-	INDEX 2
-	GETGLOB 9
-	BLKSWAP 1, 3
-	INDEX 1
-	NEWC
-	PUSHINT 2
-	STZEROES
-	STI 1
-	PUSHINT 3
-	STZEROES
-	STSLICE
-	SWAP
-	STGRAMS
-	STDICT
-	PUSHINT 106
-	STZEROES
-	GETGLOB 4
-	INDEX 5
-	STUR 32
-	STU 128
-	ENDC
-	GETGLOB 4
-	INDEX 4
-	SENDRAWMSG
-}
-IFELSE
-CALLREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getIndexDestroyValue_internal
-.type	getIndexDestroyValue_internal, @function
-CALL $getIndexDestroyValue_internal_macro$
-
-.macro getIndexDestroyValue_internal_macro
-; function getIndexDestroyValue
-;; return
-GETGLOB 4
-PUSHINT 0
-SETINDEXQ 2
-PUSHINT 64
-SETINDEXQ 4
-SETGLOB 4
-;; push identifier _indexDestroyValue
-GETGLOB 17
-; end function getIndexDestroyValue
-
-.macro resolveCodeHashIndex
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-ENDS
-;; param: addrRoot
-;; param: addrOwner
-CALLREF {
-	CALL $resolveCodeHashIndex_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHSLICE x0000000000000000000000003ddae6a02_
-	STSLICER
-	STU 256
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	DROP
-}
-IFELSE
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	resolveCodeHashIndex_internal
-.type	resolveCodeHashIndex_internal, @function
-CALL $resolveCodeHashIndex_internal_macro$
-
-.macro resolveCodeHashIndex_internal_macro
-;; param: addrRoot
-;; param: addrOwner
-;; ret param: codeHashIndex
-PUSHINT 0
-; function resolveCodeHashIndex
-;; return
-;; push identifier addrRoot
-;; push identifier addrOwner
-BLKPUSH 2, 2
-CALLREF {
-	CALL $_buildIndexCode_internal_macro$
-}
-HASHCU
-NIP
-; end function resolveCodeHashIndex
-BLKDROP2 2, 1
-
-.macro resolveIndex
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-ENDS
-;; param: addrRoot
-;; param: addrNft
-;; param: addrOwner
-CALLREF {
-	CALL $resolveIndex_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHINT 1
-	STUR 98
-	SWAP
-	NEWC
-	STSLICECONST x9d7864c9
-	STSLICE
-	STBREFR
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	DROP
-}
-IFELSE
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	resolveIndex_internal
-.type	resolveIndex_internal, @function
-CALL $resolveIndex_internal_macro$
-
-.macro resolveIndex_internal_macro
-;; param: addrRoot
-;; param: addrNft
-;; param: addrOwner
-;; ret param: addrIndex
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-; function resolveIndex
-;; push identifier addrRoot
-;; push identifier addrOwner
-PUSH2 S3, S1
-CALLREF {
-	CALL $_buildIndexCode_internal_macro$
-}
-;; decl: code
-;; push identifier code
-;; push identifier addrNft
-PUSH2 S0, S3
-CALLREF {
-	CALL $_buildIndexState_internal_macro$
-}
-;; decl: state
-;; push identifier state
-;; decl: hashState
-;; address.makeAddrStd()
-;; push identifier hashState
-; expValue
-; end expValue
-; colValue
-; end colValue
-HASHCU
-PUSHINT 0
-NEWC
-STSLICECONST x9_
-STI 8
-STU 256
-ENDC
-CTOS
-POP S2
-DROP
-; end function resolveIndex
-BLKDROP2 3, 1
-
-.globl	_buildIndexCode_internal
-.type	_buildIndexCode_internal, @function
-CALL $_buildIndexCode_internal_macro$
-
-.macro _buildIndexCode_internal_macro
-;; param: addrRoot
-;; param: addrOwner
-; function _buildIndexCode
-;; decl: salt
-; expValue
-; end expValue
-;; push identifier addrRoot
-; colValue
-PUSH S1
-NEWC
-STSLICE
-; end colValue
-; expValue
-; end expValue
-;; push identifier addrOwner
-DUP2
-STSLICE
-; colValue
-NIP
-; end colValue
-;; return
-;; push identifier _codeIndex
-GETGLOB 10
-CTOS
-;; push identifier salt
-PUSH S1
-ENDC
-CALLREF {
-	PUSH S1
-	PUSHSLICE x8adb35
-	SDEQ
-	PUSHREFCONT {
-		SWAP      ; salt sliceCode
-		LDREF
-		LDREF
-		DROP         ; salt selfCallCode usualSelector
-		XCHG S1, S2  ; selfCallCode salt usualSelector
-		CTOS         ; selfCallCode salt usualSelector
-		CALLREF {
-			
-			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
-			PUSHSLICE xF4A4_
-			SDBEGINSX
-			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
-			LDU 10
-			NIP
-			DUP
-			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
-			PUSHCONT {
-				LDREF
-			}
-			PUSHCONT {
-				PUSHREF {
-				}
-				SWAP
-			}
-			IFELSE
-		                ; selfCallCode salt restUsualSelector dict version intSelector
-			PUSHSLICE xF4A1
-			SDBEGINSX
-			DROP
-			            ; selfCallCode salt restUsualSelector dict version
-			SWAP        ; selfCallCode salt restUsualSelector version dict
-			NEWC        ; selfCallCode salt restUsualSelector version dict builder
-			STSLICECONST xF4A4_ ; DICTPUSHCONST
-			STDICT
-			PUSHINT 32
-			STUR 10
-			STSLICECONST xF4A1 ; DICTUGETJMP
-			STREF       ; selfCallCode salt restUsualSelector builder
-			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
-			STREF       ; selfCallCode restUsualSelector builder
-			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
-			STBREF      ; selfCallCode restUsualSelector usualBuilder
-			STSLICE     ; selfCallCode usualBuilder
-		}
-		NEWC        ; selfCallCode usualBuilder mainBuilder
-		STSLICECONST x8adb35
-		XCHG S1, S2 ; usualBuilder selfCallCode mainBuilder
-		STREF
-		STBREF
-		ENDC
-	}
-	PUSHREFCONT {
-		SWAP
-		CALLREF {
-			
-			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
-			PUSHSLICE xF4A4_
-			SDBEGINSX
-			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
-			LDU 10
-			NIP
-			DUP
-			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
-			PUSHCONT {
-				LDREF
-			}
-			PUSHCONT {
-				PUSHREF {
-				}
-				SWAP
-			}
-			IFELSE
-		                ; selfCallCode salt restUsualSelector dict version intSelector
-			PUSHSLICE xF4A1
-			SDBEGINSX
-			DROP
-			            ; selfCallCode salt restUsualSelector dict version
-			SWAP        ; selfCallCode salt restUsualSelector version dict
-			NEWC        ; selfCallCode salt restUsualSelector version dict builder
-			STSLICECONST xF4A4_ ; DICTPUSHCONST
-			STDICT
-			PUSHINT 32
-			STUR 10
-			STSLICECONST xF4A1 ; DICTUGETJMP
-			STREF       ; selfCallCode salt restUsualSelector builder
-			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
-			STREF       ; selfCallCode restUsualSelector builder
-			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
-			STBREF      ; selfCallCode restUsualSelector usualBuilder
-			STSLICE     ; selfCallCode usualBuilder
-		}
-		ENDC
-	}
-	IFELSE
-}
-NIP
-; end function _buildIndexCode
-BLKDROP2 2, 1
-
-.globl	_buildIndexState_internal
-.type	_buildIndexState_internal, @function
-CALL $_buildIndexState_internal_macro$
-
-.macro _buildIndexState_internal_macro
-;; param: code
-;; param: addrNft
-; function _buildIndexState
-;; return
-NEWDICT
-PUSHINT 0
-NEWC
-STU 256
-PUSHINT 0
-ROT
-PUSHINT 64
-DICTUSETB
-;; push identifier addrNft
-PUSH S1
-PUSHINT 1
-ROT
-PUSHINT 64
-DICTUSET
-NEWC
-STDICT
-ENDC
-;; push identifier code
-PUSH S2
-NEWC
-STSLICECONST x2_
-STOPTREF
-STOPTREF
-STZERO
-ENDC
-; end function _buildIndexState
-BLKDROP2 2, 1
 
 .macro c7_to_c4
-GETGLOB 19
-GETGLOB 18
-GETGLOB 17
 GETGLOB 16
 GETGLOB 15
 GETGLOB 14
@@ -2132,20 +1152,17 @@ NEWC
 STU 256
 STU 64
 STI 1
-STREF
 STU 256
-BLKSWAP 8, 1
-NEWC
-STSLICE
-BLKSWAP 7, 1
-NEWC
-STSLICE
 BLKSWAP 6, 1
 NEWC
 STSLICE
+BLKSWAP 5, 1
+NEWC
+STSLICE
+BLKSWAP 4, 1
+NEWC
+STSLICE
 STREF
-STU 128
-STU 128
 STREF
 STDICT
 STBREFR
@@ -2160,8 +1177,6 @@ CTOS
 LDU 256      ; pubkey c4
 LDU 64      ; pubkey timestamp c4
 LDI 1       ; pubkey [timestamp] constructor_flag memory
-;; decode TvmCell
-LDREF
 LDU 256
 ;; load next cell
 LDREF
@@ -2179,14 +1194,9 @@ ENDS
 CTOS
 LDMSGADDR
 LDREF
-LDU 128
-LDU 128
 LDREF
 LDDICT
 ENDS
-SETGLOB 19
-SETGLOB 18
-SETGLOB 17
 SETGLOB 16
 SETGLOB 15
 SETGLOB 14
@@ -2212,10 +1222,6 @@ PUSHCONT {
 	PUSHROOT
 	CTOS
 	PLDDICT   ; D
-	; init _codeIndex
-	PUSHREF {
-	}
-	SETGLOB 10
 	; init _id
 	PUSHINT 1
 	PUSH S1
@@ -2228,33 +1234,27 @@ PUSHCONT {
 		PUSHINT 0
 	}
 	IFELSE
-	SETGLOB 11
+	SETGLOB 10
 	; init _addrRoot
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SETGLOB 12
+	SETGLOB 11
 	; init _addrOwner
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SETGLOB 13
+	SETGLOB 12
 	; init _addrManager
 	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SETGLOB 14
+	SETGLOB 13
 	; init _json
 	PUSHREF {
 	}
-	SETGLOB 15
-	; init _indexDeployValue
-	PUSHINT 0
-	SETGLOB 16
-	; init _indexDestroyValue
-	PUSHINT 0
-	SETGLOB 17
+	SETGLOB 14
 	; init _dataName
 	PUSHREF {
 	}
-	SETGLOB 18
+	SETGLOB 15
 	; init _supportedInterfaces
 	NEWDICT
-	SETGLOB 19
+	SETGLOB 16
 	PUSHINT 64
 	DICTUGET
 	THROWIFNOT 61
@@ -2266,8 +1266,8 @@ PUSHCONT {
 	SETGLOB 6
 	;; init state var: _addrManager
 	;; push identifier _addrOwner
-	GETGLOB 13
-	SETGLOB 14
+	GETGLOB 12
+	SETGLOB 13
 }
 IFELSE
 
@@ -2376,15 +1376,9 @@ THROWIF 60
 
 .macro public_function_selector
 DUP
-PUSHINT 313202631
+PUSHINT 790177674
 LEQ
 IFJMPREF {
-	DUP
-	PUSHINT 106228883
-	EQUAL
-	IFJMPREF {
-		CALL $constructor$
-	}
 	DUP
 	PUSHINT 111879361
 	EQUAL
@@ -2396,29 +1390,6 @@ IFJMPREF {
 	EQUAL
 	IFJMPREF {
 		CALL $getInfo$
-	}
-	DUP
-	PUSHINT 313202631
-	EQUAL
-	IFJMPREF {
-		CALL $getIndexDestroyValue$
-	}
-}
-DUP
-PUSHINT 790177674
-LEQ
-IFJMPREF {
-	DUP
-	PUSHINT 474886233
-	EQUAL
-	IFJMPREF {
-		CALL $getJsonInfo$
-	}
-	DUP
-	PUSHINT 494429385
-	EQUAL
-	IFJMPREF {
-		CALL $resolveIndex$
 	}
 	DUP
 	PUSHINT 502498758
@@ -2434,9 +1405,15 @@ IFJMPREF {
 	}
 }
 DUP
-PUSHINT 1795764025
+PUSHINT 2100606476
 LEQ
 IFJMPREF {
+	DUP
+	PUSHINT 816736980
+	EQUAL
+	IFJMPREF {
+		CALL $constructor$
+	}
 	DUP
 	PUSHINT 839183401
 	EQUAL
@@ -2450,32 +1427,9 @@ IFJMPREF {
 		CALL $getName$
 	}
 	DUP
-	PUSHINT 1643665857
+	PUSHINT 2100606476
 	EQUAL
 	IFJMPREF {
-		CALL $getIndexDeployValue$
-	}
-	DUP
-	PUSHINT 1795764025
-	EQUAL
-	IFJMPREF {
-		CALL $setIndexDeployValue$
-	}
-}
-DUP
-PUSHINT 2003540608
-LEQ
-IFJMPREF {
-	DUP
-	PUSHINT 1965481664
-	EQUAL
-	IFJMPREF {
-		CALL $setIndexDestroyValue$
-	}
-	DUP
-	PUSHINT 2003540608
-	EQUAL
-	IFJMPREF {
-		CALL $resolveCodeHashIndex$
+		CALL $getJSONInfo$
 	}
 }

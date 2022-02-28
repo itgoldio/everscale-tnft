@@ -4,14 +4,13 @@ pragma AbiHeader expire;
 pragma AbiHeader pubkey;
 pragma AbiHeader time;
 
-import '../../../src/resolvers/IndexResolver.sol';
 import '../../../src/errors/NftErrors.sol';
 import './INftBase.sol';
 import './IManager.sol';
 import './ITokenTransferCallback.sol';
 
 
-abstract contract NftBase is INftBase, IndexResolver {
+abstract contract NftBase is INftBase {
 
     uint256 static _id;
 
@@ -19,9 +18,6 @@ abstract contract NftBase is INftBase, IndexResolver {
     address _addrOwner;
     address _addrManager = _addrOwner;
     string _json;
-
-    uint128 _indexDeployValue;
-    uint128 _indexDestroyValue;
     
     event TokenWasMinted(address owner);
     event OwnershipTransferred(address oldOwner, address newOwner);
@@ -34,14 +30,13 @@ abstract contract NftBase is INftBase, IndexResolver {
         address addrTo, 
         mapping(address => CallbackParams) callbacks
     ) public override onlyManager {
-        require(msg.value >= (_indexDeployValue * 2), NftErrors.value_less_than_required);
         require(addrTo.value != 0, NftErrors.value_is_empty);
         tvm.rawReserve(msg.value, 1);
 
         address addrOwner = _addrOwner;
         sendGasToAddr = sendGasToAddr.value != 0 ? sendGasToAddr : msg.sender;
 
-        _transfer(addrTo, sendGasToAddr);
+        _transfer(addrTo);
         emit OwnershipTransferred(addrOwner, addrTo);
 
         optional(TvmCell) callbackToGasOwner;
@@ -78,31 +73,11 @@ abstract contract NftBase is INftBase, IndexResolver {
     }
 
     function _transfer(
-        address to,
-        address sendGasToAddr
+        address to
     ) internal {
         require(to.value != 0, NftErrors.value_is_empty);
 
-        _destructIndex(sendGasToAddr);
         _addrOwner = to;
-        _deployIndex(sendGasToAddr);
-    }
-
-    function _deployIndex(address sendGasToAddr) internal view {
-        TvmCell codeIndexOwner = _buildIndexCode(_addrRoot, _addrOwner);
-        TvmCell stateIndexOwner = _buildIndexState(codeIndexOwner, address(this));
-        new Index{stateInit: stateIndexOwner, value: _indexDeployValue}(_addrRoot, sendGasToAddr, _indexDeployValue - 0.1 ton);
-
-        TvmCell codeIndexOwnerRoot = _buildIndexCode(address(0), _addrOwner);
-        TvmCell stateIndexOwnerRoot = _buildIndexState(codeIndexOwnerRoot, address(this));
-        new Index{stateInit: stateIndexOwnerRoot, value: _indexDeployValue}(_addrRoot, sendGasToAddr, _indexDeployValue - 0.1 ton);
-    }
-
-    function _destructIndex(address sendGasToAddr) internal view {
-        address oldIndexOwner = resolveIndex(address(0), address(this), _addrOwner);
-        IIndex(oldIndexOwner).destruct{value: _indexDestroyValue}(sendGasToAddr);
-        address oldIndexOwnerRoot = resolveIndex(_addrRoot, address(this), _addrOwner);
-        IIndex(oldIndexOwnerRoot).destruct{value: _indexDestroyValue}(sendGasToAddr);
     }
 
     function setManager(address manager, TvmCell payload) public override onlyManager {
@@ -125,18 +100,6 @@ abstract contract NftBase is INftBase, IndexResolver {
         IManager(manager).resetManagerCallback{value: 0, flag: 128}();
     }
 
-    function setIndexDeployValue(uint128 indexDeployValue) public override onlyManager {
-        tvm.rawReserve(msg.value, 1);
-        _indexDeployValue = indexDeployValue;
-        msg.sender.transfer({value: 0, flag: 128});
-    }
-
-    function setIndexDestroyValue(uint128 indexDestroyValue) public override onlyManager {
-        tvm.rawReserve(msg.value, 1);
-        _indexDestroyValue = indexDestroyValue;
-        msg.sender.transfer({value: 0, flag: 128});
-    }
-
     function getInfo() external override responsible returns(
         uint256 id,
         address addrOwner,
@@ -148,14 +111,6 @@ abstract contract NftBase is INftBase, IndexResolver {
 
     function getJSONInfo() external override responsible returns(string json) {
         return {value: 0, flag: 64}(_json);
-    }
-
-    function getIndexDeployValue() public responsible override returns(uint128) {
-        return {value: 0, flag: 64} _indexDeployValue;
-    }
-
-    function getIndexDestroyValue() public responsible override returns(uint128) {
-        return {value: 0, flag: 64} _indexDestroyValue;
     }
 
     modifier onlyManager virtual {
