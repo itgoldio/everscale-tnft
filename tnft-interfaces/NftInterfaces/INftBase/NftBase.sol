@@ -146,7 +146,7 @@ abstract contract NftBase is INftBase, IndexResolver {
         return {value: 0, flag: 64}( _id, _addrOwner, _addrRoot, _addrManager );
     }
 
-    function getJsonInfo() external override responsible returns(string json) {
+    function getJSONInfo() external override responsible returns(string json) {
         return {value: 0, flag: 64}(_json);
     }
 
