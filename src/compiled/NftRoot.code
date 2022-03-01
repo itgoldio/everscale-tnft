@@ -15,8 +15,6 @@ SETGLOB 6
 ;; end constructor protection
 ;; decode TvmCell
 LDREF
-;; decode TvmCell
-LDREF
 LDUQ 256
 PUSHCONT {
 	;; load next cell
@@ -27,7 +25,6 @@ PUSHCONT {
 }
 IFNOT
 ENDS
-;; param: codeIndex
 ;; param: codeNft
 ;; param: ownerPubkey
 ; constructor NftRoot
@@ -37,14 +34,6 @@ PUSHREF {
 ;; push identifier ownerPubkey
 PUSH S1
 THROWIFNOT 100
-;; push identifier codeIndex
-PUSH S3
-HASHCU
-;; push identifier empty
-PUSH S1
-HASHCU
-NEQ
-THROWIFNOT 105
 ;; push identifier codeNft
 PUSH S2
 HASHCU
@@ -56,11 +45,6 @@ THROWIFNOT 105
 ACCEPT
 ; expValue
 ; end expValue
-;; push identifier codeIndex
-; colValue
-; end colValue
-; expValue
-; end expValue
 ;; push identifier codeNft
 ; colValue
 ; end colValue
@@ -70,13 +54,10 @@ ACCEPT
 ; colValue
 ; end colValue
 DROP
-PUSH S2
-SETGLOB 11
 ; end constructor NftRoot
 SWAP
 SETGLOB 10
-SETGLOB 12
-DROP
+SETGLOB 11
 CALLREF {
 	CALL $c7_to_c4$
 }
@@ -91,8 +72,10 @@ IFREF {
 	CALL $c4_to_c7$
 }
 LDREF
+LDREF
 ENDS
 ;; param: dataName
+;; param: json
 CALLREF {
 	CALL $mintNft_internal_macro$
 }
@@ -108,24 +91,8 @@ CALL $mintNft_internal_macro$
 
 .macro mintNft_internal_macro
 ;; param: dataName
+;; param: json
 ; function mintNft
-;; get member value
-DEPTH
-ADDCONST -2
-PICK
-;; >=
-;; push identifier _indexDeployValue
-GETGLOB 15
-;; *
-MULCONST 2
-UFITS 128
-;; +
-;; push identifier _remainOnNft
-GETGLOB 16
-ADD
-UFITS 128
-GEQ
-THROWIFNOT 102
 ;; get member value
 DEPTH
 ADDCONST -2
@@ -140,39 +107,28 @@ CALLREF {
 ;; push identifier codeNft
 DUP
 ;; push identifier _totalMinted
-GETGLOB 13
+GETGLOB 12
 CALLREF {
 	CALL $_buildNftState_internal_macro$
 }
 ;; decl: stateNft
 ;; push identifier dataName
-PUSH S2
-;; push identifier _indexDeployValue
-GETGLOB 15
-;; push identifier _codeIndex
-GETGLOB 11
+;; push identifier json
+OVER2
 ;; get member sender
 GETGLOB 9
 ;; push identifier stateNft
-PUSH2 S4, S4
+PUSH2 S3, S3
 HASHCU
 NEWC
 STSLICECONST x801_
 STU 256
 ENDC
 CTOS
-BLKSWAP 5, 1
-;; push identifier _indexDeployValue
-GETGLOB 15
-;; *
-MULCONST 2
-UFITS 128
-;; +
+BLKSWAP 4, 1
 ;; push identifier _remainOnNft
-GETGLOB 16
-ADD
-UFITS 128
-PUSH S6
+GETGLOB 13
+PUSH S5
 NEWC
 STSLICECONST x62_
 STSLICE
@@ -182,12 +138,11 @@ PUSHSLICE x000000000000000000000000007_
 STSLICER
 STREF
 STSLICECONST 1
-BLKSWAP 4, 1
+BLKSWAP 3, 1
 NEWC
-STSLICECONST x05ffdad4
+STSLICECONST x30ae6ad4
 STSLICE
 STREF
-STU 128
 STREF
 STBREFR
 ENDC
@@ -217,11 +172,11 @@ SENDRAWMSG
 ;; ++
 ; expValue
 ;; fetch _totalMinted
-GETGLOB 13
+GETGLOB 12
 ; end expValue
 INC
 ; colValue
-SETGLOB 13
+SETGLOB 12
 ; end colValue
 ;; transfer()
 ;; get member sender
@@ -235,190 +190,7 @@ ENDC
 PUSHINT 128
 SENDRAWMSG
 ; end function mintNft
-BLKDROP 4
-
-.macro deployIndexBasis
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-;; decode TvmCell
-LDREF
-ENDS
-;; param: codeIndexBasis
-CALLREF {
-	CALL $deployIndexBasis_internal_macro$
-}
-CALLREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	deployIndexBasis_internal
-.type	deployIndexBasis_internal, @function
-CALL $deployIndexBasis_internal_macro$
-
-.macro deployIndexBasis_internal_macro
-;; param: codeIndexBasis
-; modifier onlyOwner
-GETGLOB 5
-DUP
-ISNULL
-PUSHCONT {
-	DROP
-	PUSHINT 0
-}
-IF
-;; ==
-;; push identifier _ownerPubkey
-GETGLOB 12
-EQUAL
-THROWIFNOT 101
-; function deployIndexBasis
-;; get member balance
-GETPARAM 7
-INDEX 0
-;; >
-;; push identifier _deployIndexBasisValue
-GETGLOB 17
-;; +
-PUSHINT 100000000
-ADD
-UFITS 128
-GREATER
-THROWIFNOT 102
-ACCEPT
-CALLREF {
-	CALL $resolveCodeHashNft_internal_macro$
-}
-;; decl: codeHashData
-NEWDICT
-PUSHINT 0
-NEWC
-STU 256
-PUSHINT 0
-ROT
-PUSHINT 64
-DICTUSETB
-;; push identifier codeHashData
-PUSH S1
-NEWC
-STU 256
-PUSHINT 2
-ROT
-PUSHINT 64
-DICTUSETB
-MYADDR
-PUSHINT 1
-ROT
-PUSHINT 64
-DICTUSET
-NEWC
-STDICT
-ENDC
-;; push identifier codeIndexBasis
-PUSH S2
-NEWC
-STSLICECONST x2_
-STOPTREF
-STOPTREF
-STZERO
-ENDC
-;; decl: state
-;; push identifier state
-BLKPUSH 2, 0
-HASHCU
-NEWC
-STSLICECONST x801_
-STU 256
-ENDC
-CTOS
-SWAP
-;; push identifier _deployIndexBasisValue
-GETGLOB 17
-PUSH S2
-NEWC
-STSLICECONST x62_
-STSLICE
-SWAP
-STGRAMS
-PUSHSLICE x000000000000000000000000007_
-STSLICER
-STREF
-STSLICECONST x345aaf9fc_
-ENDC
-PUSHINT 0
-SENDRAWMSG
-; expValue
-; end expValue
-; colValue
-SETGLOB 14
-; end colValue
-; end function deployIndexBasis
-; end modifier onlyOwner
-BLKDROP 3
-
-.macro destructIndexBasis
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-ENDS
-CALLREF {
-	CALL $destructIndexBasis_internal_macro$
-}
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	destructIndexBasis_internal
-.type	destructIndexBasis_internal, @function
-CALL $destructIndexBasis_internal_macro$
-
-.macro destructIndexBasis_internal_macro
-; modifier onlyOwner
-GETGLOB 5
-DUP
-ISNULL
-PUSHCONT {
-	DROP
-	PUSHINT 0
-}
-IF
-;; ==
-;; push identifier _ownerPubkey
-GETGLOB 12
-EQUAL
-THROWIFNOT 101
-; function destructIndexBasis
-;; get member value
-;; push identifier _addrIndexBasis
-GETGLOB 14
-PARSEMSGADDR
-INDEX 3
-PLDU 256
-THROWIFNOT 103
-ACCEPT
-;; Remote call IIndexBasis.destruct
-;; push identifier _addrIndexBasis
-GETGLOB 14
-NEWC
-STSLICECONST x62_
-STSLICE
-PUSHSLICE x39896800000000000000000000000000008f8c5bb5_
-STSLICER
-ENDC
-PUSHINT 0
-SENDRAWMSG
-; end function destructIndexBasis
-; end modifier onlyOwner
+BLKDROP 5
 
 .macro withdraw
 DROP
@@ -470,7 +242,7 @@ PUSHCONT {
 IF
 ;; ==
 ;; push identifier _ownerPubkey
-GETGLOB 12
+GETGLOB 11
 EQUAL
 THROWIFNOT 101
 ; function withdraw
@@ -500,64 +272,6 @@ SENDRAWMSG
 ; end function withdraw
 ; end modifier onlyOwner
 DROP2
-
-.macro setIndexDeployValue
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-LDUQ 128
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDU 128
-}
-IFNOT
-ENDS
-;; param: indexDeployValue
-CALLREF {
-	CALL $setIndexDeployValue_internal_macro$
-}
-CALLREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	setIndexDeployValue_internal
-.type	setIndexDeployValue_internal, @function
-CALL $setIndexDeployValue_internal_macro$
-
-.macro setIndexDeployValue_internal_macro
-;; param: indexDeployValue
-; modifier onlyOwner
-GETGLOB 5
-DUP
-ISNULL
-PUSHCONT {
-	DROP
-	PUSHINT 0
-}
-IF
-;; ==
-;; push identifier _ownerPubkey
-GETGLOB 12
-EQUAL
-THROWIFNOT 101
-; function setIndexDeployValue
-ACCEPT
-; expValue
-; end expValue
-;; push identifier indexDeployValue
-; colValue
-; end colValue
-; end function setIndexDeployValue
-; end modifier onlyOwner
-SETGLOB 15
 
 .macro setRemainOnNft
 DROP
@@ -603,7 +317,7 @@ PUSHCONT {
 IF
 ;; ==
 ;; push identifier _ownerPubkey
-GETGLOB 12
+GETGLOB 11
 EQUAL
 THROWIFNOT 101
 ; function setRemainOnNft
@@ -615,116 +329,7 @@ ACCEPT
 ; end colValue
 ; end function setRemainOnNft
 ; end modifier onlyOwner
-SETGLOB 16
-
-.macro setDeployIndexValue
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-LDUQ 128
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDU 128
-}
-IFNOT
-ENDS
-;; param: deployIndexValue
-CALLREF {
-	CALL $setDeployIndexValue_internal_macro$
-}
-CALLREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	setDeployIndexValue_internal
-.type	setDeployIndexValue_internal, @function
-CALL $setDeployIndexValue_internal_macro$
-
-.macro setDeployIndexValue_internal_macro
-;; param: deployIndexValue
-; modifier onlyOwner
-GETGLOB 5
-DUP
-ISNULL
-PUSHCONT {
-	DROP
-	PUSHINT 0
-}
-IF
-;; ==
-;; push identifier _ownerPubkey
-GETGLOB 12
-EQUAL
-THROWIFNOT 101
-; function setDeployIndexValue
-ACCEPT
-; expValue
-; end expValue
-;; push identifier deployIndexValue
-; colValue
-; end colValue
-; end function setDeployIndexValue
-; end modifier onlyOwner
-SETGLOB 17
-
-.macro getIndexDeployValue
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-ENDS
-CALLREF {
-	CALL $getIndexDeployValue_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHSLICE x00000000000000000000000021500f6be_
-	STSLICER
-	STU 128
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	DROP
-}
-IFELSE
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getIndexDeployValue_internal
-.type	getIndexDeployValue_internal, @function
-CALL $getIndexDeployValue_internal_macro$
-
-.macro getIndexDeployValue_internal_macro
-; function getIndexDeployValue
-;; return
-;; push identifier _indexDeployValue
-GETGLOB 15
-; end function getIndexDeployValue
+SETGLOB 13
 
 .macro getRemainOnNft
 DROP
@@ -774,114 +379,8 @@ CALL $getRemainOnNft_internal_macro$
 ; function getRemainOnNft
 ;; return
 ;; push identifier _remainOnNft
-GETGLOB 16
+GETGLOB 13
 ; end function getRemainOnNft
-
-.macro getDeployIndexValue
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-ENDS
-CALLREF {
-	CALL $getDeployIndexValue_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHSLICE x0000000000000000000000003d4fba106_
-	STSLICER
-	STU 128
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	DROP
-}
-IFELSE
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getDeployIndexValue_internal
-.type	getDeployIndexValue_internal, @function
-CALL $getDeployIndexValue_internal_macro$
-
-.macro getDeployIndexValue_internal_macro
-; function getDeployIndexValue
-;; return
-;; push identifier _deployIndexBasisValue
-GETGLOB 17
-; end function getDeployIndexValue
-
-.macro getIndexBasisAddress
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-ENDS
-CALLREF {
-	CALL $getIndexBasisAddress_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHINT 1
-	STUR 98
-	SWAP
-	NEWC
-	STSLICECONST xc836d31d
-	STSLICE
-	STBREFR
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	DROP
-}
-IFELSE
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	getIndexBasisAddress_internal
-.type	getIndexBasisAddress_internal, @function
-CALL $getIndexBasisAddress_internal_macro$
-
-.macro getIndexBasisAddress_internal_macro
-; function getIndexBasisAddress
-;; return
-;; push identifier _addrIndexBasis
-GETGLOB 14
-; end function getIndexBasisAddress
 
 .macro getTotalMinted
 DROP
@@ -931,383 +430,8 @@ CALL $getTotalMinted_internal_macro$
 ; function getTotalMinted
 ;; return
 ;; push identifier _totalMinted
-GETGLOB 13
+GETGLOB 12
 ; end function getTotalMinted
-
-.macro resolveCodeHashIndex
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-ENDS
-;; param: addrRoot
-;; param: addrOwner
-CALLREF {
-	CALL $resolveCodeHashIndex_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHSLICE x0000000000000000000000003ddae6a02_
-	STSLICER
-	STU 256
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	DROP
-}
-IFELSE
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	resolveCodeHashIndex_internal
-.type	resolveCodeHashIndex_internal, @function
-CALL $resolveCodeHashIndex_internal_macro$
-
-.macro resolveCodeHashIndex_internal_macro
-;; param: addrRoot
-;; param: addrOwner
-;; ret param: codeHashIndex
-PUSHINT 0
-; function resolveCodeHashIndex
-;; return
-;; push identifier addrRoot
-;; push identifier addrOwner
-BLKPUSH 2, 2
-CALLREF {
-	CALL $_buildIndexCode_internal_macro$
-}
-HASHCU
-NIP
-; end function resolveCodeHashIndex
-BLKDROP2 2, 1
-
-.macro resolveIndex
-DROP
-GETGLOB 2
-ISNULL
-IFREF {
-	CALL $c4_to_c7$
-}
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-LDMSGADDRQ
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDMSGADDR
-}
-IFNOT
-ENDS
-;; param: addrRoot
-;; param: addrNft
-;; param: addrOwner
-CALLREF {
-	CALL $resolveIndex_internal_macro$
-}
-;; emitting 1 value(s)
-PUSH S1
-PUSHCONT {
-	PUSH S3
-	CTOS
-	LDU 2
-	LDMSGADDR
-	DROP
-	NIP
-	NEWC
-	STSLICECONST xc
-	STSLICE
-	PUSHINT 1
-	STUR 98
-	SWAP
-	NEWC
-	STSLICECONST x9d7864c9
-	STSLICE
-	STBREFR
-	ENDC
-	PUSHINT 0
-	SENDRAWMSG
-}
-PUSHCONT {
-	DROP
-}
-IFELSE
-IFREF {
-	CALL $c7_to_c4$
-}
-TRUE
-SETGLOB 7
-
-.globl	resolveIndex_internal
-.type	resolveIndex_internal, @function
-CALL $resolveIndex_internal_macro$
-
-.macro resolveIndex_internal_macro
-;; param: addrRoot
-;; param: addrNft
-;; param: addrOwner
-;; ret param: addrIndex
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-; function resolveIndex
-;; push identifier addrRoot
-;; push identifier addrOwner
-PUSH2 S3, S1
-CALLREF {
-	CALL $_buildIndexCode_internal_macro$
-}
-;; decl: code
-;; push identifier code
-;; push identifier addrNft
-PUSH2 S0, S3
-CALLREF {
-	CALL $_buildIndexState_internal_macro$
-}
-;; decl: state
-;; push identifier state
-;; decl: hashState
-;; address.makeAddrStd()
-;; push identifier hashState
-; expValue
-; end expValue
-; colValue
-; end colValue
-HASHCU
-PUSHINT 0
-NEWC
-STSLICECONST x9_
-STI 8
-STU 256
-ENDC
-CTOS
-POP S2
-DROP
-; end function resolveIndex
-BLKDROP2 3, 1
-
-.globl	_buildIndexCode_internal
-.type	_buildIndexCode_internal, @function
-CALL $_buildIndexCode_internal_macro$
-
-.macro _buildIndexCode_internal_macro
-;; param: addrRoot
-;; param: addrOwner
-; function _buildIndexCode
-;; decl: salt
-; expValue
-; end expValue
-;; push identifier addrRoot
-; colValue
-PUSH S1
-NEWC
-STSLICE
-; end colValue
-; expValue
-; end expValue
-;; push identifier addrOwner
-DUP2
-STSLICE
-; colValue
-NIP
-; end colValue
-;; return
-;; push identifier _codeIndex
-GETGLOB 11
-CTOS
-;; push identifier salt
-PUSH S1
-ENDC
-CALLREF {
-	PUSH S1
-	PUSHSLICE x8adb35
-	SDEQ
-	PUSHREFCONT {
-		SWAP      ; salt sliceCode
-		LDREF
-		LDREF
-		DROP         ; salt selfCallCode usualSelector
-		XCHG S1, S2  ; selfCallCode salt usualSelector
-		CTOS         ; selfCallCode salt usualSelector
-		CALLREF {
-			
-			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
-			PUSHSLICE xF4A4_
-			SDBEGINSX
-			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
-			LDU 10
-			NIP
-			DUP
-			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
-			PUSHCONT {
-				LDREF
-			}
-			PUSHCONT {
-				PUSHREF {
-				}
-				SWAP
-			}
-			IFELSE
-		                ; selfCallCode salt restUsualSelector dict version intSelector
-			PUSHSLICE xF4A1
-			SDBEGINSX
-			DROP
-			            ; selfCallCode salt restUsualSelector dict version
-			SWAP        ; selfCallCode salt restUsualSelector version dict
-			NEWC        ; selfCallCode salt restUsualSelector version dict builder
-			STSLICECONST xF4A4_ ; DICTPUSHCONST
-			STDICT
-			PUSHINT 32
-			STUR 10
-			STSLICECONST xF4A1 ; DICTUGETJMP
-			STREF       ; selfCallCode salt restUsualSelector builder
-			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
-			STREF       ; selfCallCode restUsualSelector builder
-			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
-			STBREF      ; selfCallCode restUsualSelector usualBuilder
-			STSLICE     ; selfCallCode usualBuilder
-		}
-		NEWC        ; selfCallCode usualBuilder mainBuilder
-		STSLICECONST x8adb35
-		XCHG S1, S2 ; usualBuilder selfCallCode mainBuilder
-		STREF
-		STBREF
-		ENDC
-	}
-	PUSHREFCONT {
-		SWAP
-		CALLREF {
-			
-			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
-			PUSHSLICE xF4A4_
-			SDBEGINSX
-			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
-			LDU 10
-			NIP
-			DUP
-			SREFS      ; selfCallCode salt restUsualSelector dict intSelector refs
-			PUSHCONT {
-				LDREF
-			}
-			PUSHCONT {
-				PUSHREF {
-				}
-				SWAP
-			}
-			IFELSE
-		                ; selfCallCode salt restUsualSelector dict version intSelector
-			PUSHSLICE xF4A1
-			SDBEGINSX
-			DROP
-			            ; selfCallCode salt restUsualSelector dict version
-			SWAP        ; selfCallCode salt restUsualSelector version dict
-			NEWC        ; selfCallCode salt restUsualSelector version dict builder
-			STSLICECONST xF4A4_ ; DICTPUSHCONST
-			STDICT
-			PUSHINT 32
-			STUR 10
-			STSLICECONST xF4A1 ; DICTUGETJMP
-			STREF       ; selfCallCode salt restUsualSelector builder
-			XCHG S1, S2 ; selfCallCode restUsualSelector salt builder
-			STREF       ; selfCallCode restUsualSelector builder
-			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
-			STBREF      ; selfCallCode restUsualSelector usualBuilder
-			STSLICE     ; selfCallCode usualBuilder
-		}
-		ENDC
-	}
-	IFELSE
-}
-NIP
-; end function _buildIndexCode
-BLKDROP2 2, 1
-
-.globl	_buildIndexState_internal
-.type	_buildIndexState_internal, @function
-CALL $_buildIndexState_internal_macro$
-
-.macro _buildIndexState_internal_macro
-;; param: code
-;; param: addrNft
-; function _buildIndexState
-;; return
-NEWDICT
-PUSHINT 0
-NEWC
-STU 256
-PUSHINT 0
-ROT
-PUSHINT 64
-DICTUSETB
-;; push identifier addrNft
-PUSH S1
-PUSHINT 1
-ROT
-PUSHINT 64
-DICTUSET
-NEWC
-STDICT
-ENDC
-;; push identifier code
-PUSH S2
-NEWC
-STSLICECONST x2_
-STOPTREF
-STOPTREF
-STZERO
-ENDC
-; end function _buildIndexState
-BLKDROP2 2, 1
 
 .macro resolveCodeHashNft
 DROP
@@ -1642,10 +766,6 @@ ENDC
 BLKDROP2 2, 1
 
 .macro c7_to_c4
-GETGLOB 17
-GETGLOB 16
-GETGLOB 15
-GETGLOB 14
 GETGLOB 13
 GETGLOB 12
 GETGLOB 11
@@ -1658,16 +778,9 @@ STU 256
 STU 64
 STI 1
 STREF
-STREF
 STU 256
 STU 256
-BLKSWAP 4, 1
-NEWC
-STSLICE
 STU 128
-STU 128
-STU 128
-STBREFR
 ENDC
 POP C4
 
@@ -1679,23 +792,10 @@ LDU 64      ; pubkey timestamp c4
 LDI 1       ; pubkey [timestamp] constructor_flag memory
 ;; decode TvmCell
 LDREF
-;; decode TvmCell
-LDREF
 LDU 256
 LDU 256
-;; load next cell
-LDREF
-ENDS
-CTOS
-LDMSGADDR
-LDU 128
-LDU 128
 LDU 128
 ENDS
-SETGLOB 17
-SETGLOB 16
-SETGLOB 15
-SETGLOB 14
 SETGLOB 13
 SETGLOB 12
 SETGLOB 11
@@ -1722,28 +822,15 @@ PUSHCONT {
 	PUSHREF {
 	}
 	SETGLOB 10
-	; init _codeIndex
-	PUSHREF {
-	}
-	SETGLOB 11
 	; init _ownerPubkey
 	PUSHINT 0
-	SETGLOB 12
+	SETGLOB 11
 	; init _totalMinted
 	PUSHINT 0
-	SETGLOB 13
-	; init _addrIndexBasis
-	PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-	SETGLOB 14
-	; init _indexDeployValue
-	PUSHINT 0
-	SETGLOB 15
+	SETGLOB 12
 	; init _remainOnNft
 	PUSHINT 0
-	SETGLOB 16
-	; init _deployIndexBasisValue
-	PUSHINT 0
-	SETGLOB 17
+	SETGLOB 13
 	PUSHINT 64
 	DICTUGET
 	THROWIFNOT 61
@@ -1753,15 +840,9 @@ PUSHCONT {
 	SETGLOB 3
 	PUSHINT 0 ; constructor_flag
 	SETGLOB 6
-	;; init state var: _indexDeployValue
-	PUSHINT 400000000
-	SETGLOB 15
 	;; init state var: _remainOnNft
 	PUSHINT 300000000
-	SETGLOB 16
-	;; init state var: _deployIndexBasisValue
-	PUSHINT 400000000
-	SETGLOB 17
+	SETGLOB 13
 }
 IFELSE
 
@@ -1856,129 +937,60 @@ THROWIF 60
 
 .macro public_function_selector
 DUP
-PUSHINT 2003540608
+PUSHINT 852767119
 LEQ
 IFJMPREF {
 	DUP
-	PUSHINT 153116852
-	LEQ
+	PUSHINT 140691317
+	EQUAL
 	IFJMPREF {
-		DUP
-		PUSHINT 88096175
-		EQUAL
-		IFJMPREF {
-			CALL $getIndexDeployValue$
-		}
-		DUP
-		PUSHINT 140691317
-		EQUAL
-		IFJMPREF {
-			CALL $getRemainOnNft$
-		}
-		DUP
-		PUSHINT 141807997
-		EQUAL
-		IFJMPREF {
-			CALL $withdraw$
-		}
-		DUP
-		PUSHINT 153116852
-		EQUAL
-		IFJMPREF {
-			CALL $constructor$
-		}
+		CALL $getRemainOnNft$
 	}
 	DUP
-	PUSHINT 904047439
-	LEQ
+	PUSHINT 141807997
+	EQUAL
 	IFJMPREF {
-		DUP
-		PUSHINT 454846103
-		EQUAL
-		IFJMPREF {
-			CALL $getTotalMinted$
-		}
-		DUP
-		PUSHINT 494429385
-		EQUAL
-		IFJMPREF {
-			CALL $resolveIndex$
-		}
-		DUP
-		PUSHINT 852767119
-		EQUAL
-		IFJMPREF {
-			CALL $setRemainOnNft$
-		}
-		DUP
-		PUSHINT 904047439
-		EQUAL
-		IFJMPREF {
-			CALL $resolveCodeHashNft$
-		}
+		CALL $withdraw$
 	}
 	DUP
-	PUSHINT 1119196584
-	LEQ
+	PUSHINT 454846103
+	EQUAL
 	IFJMPREF {
-		DUP
-		PUSHINT 930815647
-		EQUAL
-		IFJMPREF {
-			CALL $resolveNft$
-		}
-		DUP
-		PUSHINT 1058986941
-		EQUAL
-		IFJMPREF {
-			CALL $destructIndexBasis$
-		}
-		DUP
-		PUSHINT 1079203788
-		EQUAL
-		IFJMPREF {
-			CALL $setDeployIndexValue$
-		}
-		DUP
-		PUSHINT 1119196584
-		EQUAL
-		IFJMPREF {
-			CALL $mintNft$
-		}
+		CALL $getTotalMinted$
 	}
 	DUP
-	PUSHINT 2003540608
-	LEQ
+	PUSHINT 852767119
+	EQUAL
 	IFJMPREF {
-		DUP
-		PUSHINT 1211552541
-		EQUAL
-		IFJMPREF {
-			CALL $getIndexBasisAddress$
-		}
-		DUP
-		PUSHINT 1795764025
-		EQUAL
-		IFJMPREF {
-			CALL $setIndexDeployValue$
-		}
-		DUP
-		PUSHINT 1967056961
-		EQUAL
-		IFJMPREF {
-			CALL $getDeployIndexValue$
-		}
-		DUP
-		PUSHINT 2003540608
-		EQUAL
-		IFJMPREF {
-			CALL $resolveCodeHashIndex$
-		}
+		CALL $setRemainOnNft$
 	}
 }
 DUP
-PUSHINT 2082711571
-EQUAL
+PUSHINT 1769234753
+LEQ
 IFJMPREF {
-	CALL $deployIndexBasis$
+	DUP
+	PUSHINT 904047439
+	EQUAL
+	IFJMPREF {
+		CALL $resolveCodeHashNft$
+	}
+	DUP
+	PUSHINT 930815647
+	EQUAL
+	IFJMPREF {
+		CALL $resolveNft$
+	}
+	DUP
+	PUSHINT 1403760811
+	EQUAL
+	IFJMPREF {
+		CALL $constructor$
+	}
+	DUP
+	PUSHINT 1769234753
+	EQUAL
+	IFJMPREF {
+		CALL $mintNft$
+	}
 }
