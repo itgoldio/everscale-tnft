@@ -1,4 +1,4 @@
-.version sol 0.47.0
+.version sol 0.58.1
 
 .macro constructor
 DROP
@@ -7,126 +7,101 @@ ISNULL
 IFREF {
 	CALL $c4_to_c7_with_init_storage$
 }
-;; constructor protection
 GETGLOB 6
 THROWIF 51
-TRUE
-SETGLOB 6
-;; end constructor protection
-;; decode TvmCell
-LDREF
-LDUQ 256
+OVER
 PUSHCONT {
-	;; load next cell
+	LDREF
 	LDREF
 	ENDS
 	CTOS
-	LDU 256
 }
-IFNOT
+PUSHCONT {
+	LDREF
+}
+IFELSE
+LDU 256
 ENDS
-;; param: codeNft
-;; param: ownerPubkey
-; constructor NftRoot
+.loc NftRoot.sol, 28
+DUP
+THROWIFNOT 100
+.loc NftRoot.sol, 29
+OVER
+HASHCU
 PUSHREF {
 }
-;; decl: empty
-;; push identifier ownerPubkey
-PUSH S1
-THROWIFNOT 100
-;; push identifier codeNft
-PUSH S2
-HASHCU
-;; push identifier empty
-PUSH S1
 HASHCU
 NEQ
 THROWIFNOT 105
+.loc NftRoot.sol, 30
 ACCEPT
-; expValue
-; end expValue
-;; push identifier codeNft
-; colValue
-; end colValue
-; expValue
-; end expValue
-;; push identifier ownerPubkey
-; colValue
-; end colValue
-DROP
-; end constructor NftRoot
+.loc NftRoot.sol, 32
 SWAP
 SETGLOB 10
+.loc NftRoot.sol, 33
 SETGLOB 11
+.loc NftRoot.sol, 0
 CALLREF {
 	CALL $c7_to_c4$
 }
-TRUE
-SETGLOB 7
+THROW 0
 
 .macro mintNft
 DROP
+GETGLOB 6
+THROWIFNOT 76
 GETGLOB 2
 ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
+.loc NftRoot.sol, 36
 LDREF
 LDREF
 ENDS
-;; param: dataName
-;; param: json
+.loc NftRoot.sol, 0
 CALLREF {
 	CALL $mintNft_internal_macro$
 }
+DROP
 CALLREF {
 	CALL $c7_to_c4$
 }
-TRUE
-SETGLOB 7
+THROW 0
 
 .globl	mintNft_internal
 .type	mintNft_internal, @function
 CALL $mintNft_internal_macro$
 
 .macro mintNft_internal_macro
-;; param: dataName
-;; param: json
-; function mintNft
-;; get member value
+.loc NftRoot.sol, 40
 DEPTH
 ADDCONST -2
 PICK
 PUSHINT 1
 RAWRESERVE
+.loc NftRoot.sol, 42
 MYADDR
 CALLREF {
 	CALL $_buildNftCode_internal_macro$
 }
-;; decl: codeNft
-;; push identifier codeNft
-DUP
-;; push identifier _totalMinted
+.loc NftRoot.sol, 43
 GETGLOB 12
 CALLREF {
 	CALL $_buildNftState_internal_macro$
 }
-;; decl: stateNft
-;; push identifier dataName
-;; push identifier json
-OVER2
-;; get member sender
+.loc NftRoot.sol, 44
+ROTREV
 GETGLOB 9
-;; push identifier stateNft
-PUSH2 S3, S3
+ROLL 3
+DUP
 HASHCU
 NEWC
 STSLICECONST x801_
 STU 256
 ENDC
 CTOS
-BLKSWAP 4, 1
-;; push identifier _remainOnNft
+ROLLREV 4
 GETGLOB 13
 PUSH S5
 NEWC
@@ -134,13 +109,36 @@ STSLICECONST x62_
 STSLICE
 SWAP
 STGRAMS
-PUSHSLICE x000000000000000000000000007_
-STSLICER
+PUSHINT 3
+STUR 107
+OVER
+CALLREF {
+	CTOS
+	LDI 1
+	SWAP
+	PUSHCONT {
+		LDI 5
+		NIP
+	}
+	IF
+	LDI 1
+	SWAP
+	PUSHCONT {
+		LDI 2
+		NIP
+	}
+	IF
+	LDOPTREF
+	LDOPTREF
+	LDDICT
+	ENDS
+	BLKDROP 3
+}
 STREF
 STSLICECONST 1
-BLKSWAP 3, 1
+ROLLREV 3
 NEWC
-STSLICECONST x30ae6ad4
+STSLICECONST x6c0122d3
 STSLICE
 STREF
 STREF
@@ -148,12 +146,9 @@ STBREFR
 ENDC
 PUSHINT 0
 SENDRAWMSG
-;; decl: nftAddr
-;; get member sender
+.loc NftRoot.sol, 53
 GETGLOB 9
-;; push identifier nftAddr
-PUSH S1
-;; emit TokenWasMinted
+SWAP
 PUSHSLICE xc0000000000000000000000001
 NEWC
 STSLICE
@@ -169,17 +164,11 @@ STBREFR
 ENDC
 PUSHINT 0
 SENDRAWMSG
-;; ++
-; expValue
-;; fetch _totalMinted
+.loc NftRoot.sol, 55
 GETGLOB 12
-; end expValue
 INC
-; colValue
 SETGLOB 12
-; end colValue
-;; transfer()
-;; get member sender
+.loc NftRoot.sol, 57
 GETGLOB 9
 NEWC
 STSLICECONST x62_
@@ -189,49 +178,38 @@ STZEROES
 ENDC
 PUSHINT 128
 SENDRAWMSG
-; end function mintNft
-BLKDROP 5
+.loc NftRoot.sol, 0
 
 .macro withdraw
 DROP
-LDMSGADDRQ
+GETGLOB 6
+THROWIFNOT 76
+.loc NftRoot.sol, 60
+OVER
 PUSHCONT {
-	;; load next cell
 	LDREF
 	ENDS
 	CTOS
-	LDMSGADDR
 }
-IFNOT
-LDUQ 128
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDU 128
-}
-IFNOT
+IF
+LDMSGADDR
+LDU 128
 ENDS
-;; param: to
-;; param: value
+.loc NftRoot.sol, 0
 CALLREF {
 	CALL $withdraw_internal_macro$
 }
 IFREF {
-	CALL $c7_to_c4$
+	CALL $upd_only_time_in_c4$
 }
-TRUE
-SETGLOB 7
+THROW 0
 
 .globl	withdraw_internal
 .type	withdraw_internal, @function
 CALL $withdraw_internal_macro$
 
 .macro withdraw_internal_macro
-;; param: to
-;; param: value
-; modifier onlyOwner
+.loc NftRoot.sol, 80
 GETGLOB 5
 DUP
 ISNULL
@@ -240,25 +218,19 @@ PUSHCONT {
 	PUSHINT 0
 }
 IF
-;; ==
-;; push identifier _ownerPubkey
 GETGLOB 11
 EQUAL
 THROWIFNOT 101
-; function withdraw
-;; get member balance
+.loc NftRoot.sol, 61
 GETPARAM 7
-INDEX 0
-;; >
-;; push identifier value
-PUSH S1
+FIRST
+OVER
 GREATER
 THROWIFNOT 104
+.loc NftRoot.sol, 62
 ACCEPT
-;; transfer()
-;; push identifier value
-;; push identifier to
-PUSH2 S0, S1
+.loc NftRoot.sol, 63
+SWAP
 NEWC
 STSLICECONST x62_
 STSLICE
@@ -269,44 +241,43 @@ STZEROES
 ENDC
 PUSHINT 0
 SENDRAWMSG
-; end function withdraw
-; end modifier onlyOwner
-DROP2
+.loc NftRoot.sol, 0
 
 .macro setRemainOnNft
 DROP
+GETGLOB 6
+THROWIFNOT 76
 GETGLOB 2
 ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-LDUQ 128
+.loc NftRoot.sol, 66
+OVER
 PUSHCONT {
-	;; load next cell
 	LDREF
 	ENDS
 	CTOS
-	LDU 128
 }
-IFNOT
+IF
+LDU 128
 ENDS
-;; param: remainOnNft
+.loc NftRoot.sol, 0
 CALLREF {
 	CALL $setRemainOnNft_internal_macro$
 }
+DROP
 CALLREF {
 	CALL $c7_to_c4$
 }
-TRUE
-SETGLOB 7
+THROW 0
 
 .globl	setRemainOnNft_internal
 .type	setRemainOnNft_internal, @function
 CALL $setRemainOnNft_internal_macro$
 
 .macro setRemainOnNft_internal_macro
-;; param: remainOnNft
-; modifier onlyOwner
+.loc NftRoot.sol, 80
 GETGLOB 5
 DUP
 ISNULL
@@ -315,35 +286,31 @@ PUSHCONT {
 	PUSHINT 0
 }
 IF
-;; ==
-;; push identifier _ownerPubkey
 GETGLOB 11
 EQUAL
 THROWIFNOT 101
-; function setRemainOnNft
+.loc NftRoot.sol, 67
 ACCEPT
-; expValue
-; end expValue
-;; push identifier remainOnNft
-; colValue
-; end colValue
-; end function setRemainOnNft
-; end modifier onlyOwner
+.loc NftRoot.sol, 68
 SETGLOB 13
+.loc NftRoot.sol, 0
 
 .macro getRemainOnNft
 DROP
+GETGLOB 6
+THROWIFNOT 76
 GETGLOB 2
 ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
+.loc NftRoot.sol, 71
 ENDS
+.loc NftRoot.sol, 0
 CALLREF {
 	CALL $getRemainOnNft_internal_macro$
 }
-;; emitting 1 value(s)
-PUSH S1
+OVER
 PUSHCONT {
 	PUSH S3
 	CTOS
@@ -354,8 +321,8 @@ PUSHCONT {
 	NEWC
 	STSLICECONST xc
 	STSLICE
-	PUSHSLICE x0000000000000000000000002218b1dd6_
-	STSLICER
+	PUSHINT 2288174965
+	STUR 130
 	STU 128
 	ENDC
 	PUSHINT 0
@@ -366,35 +333,35 @@ PUSHCONT {
 }
 IFELSE
 IFREF {
-	CALL $c7_to_c4$
+	CALL $upd_only_time_in_c4$
 }
-TRUE
-SETGLOB 7
+THROW 0
 
 .globl	getRemainOnNft_internal
 .type	getRemainOnNft_internal, @function
 CALL $getRemainOnNft_internal_macro$
 
 .macro getRemainOnNft_internal_macro
-; function getRemainOnNft
-;; return
-;; push identifier _remainOnNft
+.loc NftRoot.sol, 72
 GETGLOB 13
-; end function getRemainOnNft
+.loc NftRoot.sol, 0
 
 .macro getTotalMinted
 DROP
+GETGLOB 6
+THROWIFNOT 76
 GETGLOB 2
 ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
+.loc NftRoot.sol, 75
 ENDS
+.loc NftRoot.sol, 0
 CALLREF {
 	CALL $getTotalMinted_internal_macro$
 }
-;; emitting 1 value(s)
-PUSH S1
+OVER
 PUSHCONT {
 	PUSH S3
 	CTOS
@@ -405,8 +372,8 @@ PUSHCONT {
 	NEWC
 	STSLICECONST xc
 	STSLICE
-	PUSHSLICE x00000000000000000000000026c719a5e_
-	STSLICER
+	PUSHINT 2602329751
+	STUR 130
 	STU 256
 	ENDC
 	PUSHINT 0
@@ -417,35 +384,35 @@ PUSHCONT {
 }
 IFELSE
 IFREF {
-	CALL $c7_to_c4$
+	CALL $upd_only_time_in_c4$
 }
-TRUE
-SETGLOB 7
+THROW 0
 
 .globl	getTotalMinted_internal
 .type	getTotalMinted_internal, @function
 CALL $getTotalMinted_internal_macro$
 
 .macro getTotalMinted_internal_macro
-; function getTotalMinted
-;; return
-;; push identifier _totalMinted
+.loc NftRoot.sol, 76
 GETGLOB 12
-; end function getTotalMinted
+.loc NftRoot.sol, 0
 
 .macro resolveCodeHashNft
 DROP
+GETGLOB 6
+THROWIFNOT 76
 GETGLOB 2
 ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
+.loc resolvers/NftResolver.sol, 13
 ENDS
+.loc resolvers/NftResolver.sol, 0
 CALLREF {
 	CALL $resolveCodeHashNft_internal_macro$
 }
-;; emitting 1 value(s)
-PUSH S1
+OVER
 PUSHCONT {
 	PUSH S3
 	CTOS
@@ -456,8 +423,8 @@ PUSHCONT {
 	NEWC
 	STSLICECONST xc
 	STSLICE
-	PUSHSLICE x0000000000000000000000002d78aad3e_
-	STSLICER
+	PUSHINT 3051531087
+	STUR 130
 	STU 256
 	ENDC
 	PUSHINT 0
@@ -468,61 +435,48 @@ PUSHCONT {
 }
 IFELSE
 IFREF {
-	CALL $c7_to_c4$
+	CALL $upd_only_time_in_c4$
 }
-TRUE
-SETGLOB 7
+THROW 0
 
 .globl	resolveCodeHashNft_internal
 .type	resolveCodeHashNft_internal, @function
 CALL $resolveCodeHashNft_internal_macro$
 
 .macro resolveCodeHashNft_internal_macro
-;; ret param: codeHashData
-PUSHINT 0
-; function resolveCodeHashNft
-;; return
+.loc resolvers/NftResolver.sol, 14
 MYADDR
 CALLREF {
 	CALL $_buildNftCode_internal_macro$
 }
 HASHCU
-NIP
-; end function resolveCodeHashNft
+.loc resolvers/NftResolver.sol, 0
 
 .macro resolveNft
 DROP
+GETGLOB 6
+THROWIFNOT 76
 GETGLOB 2
 ISNULL
 IFREF {
 	CALL $c4_to_c7$
 }
-LDMSGADDRQ
+.loc resolvers/NftResolver.sol, 17
+OVER
 PUSHCONT {
-	;; load next cell
 	LDREF
 	ENDS
 	CTOS
-	LDMSGADDR
 }
-IFNOT
-LDUQ 256
-PUSHCONT {
-	;; load next cell
-	LDREF
-	ENDS
-	CTOS
-	LDU 256
-}
-IFNOT
+IF
+LDMSGADDR
+LDU 256
 ENDS
-;; param: addrRoot
-;; param: id
+.loc resolvers/NftResolver.sol, 0
 CALLREF {
 	CALL $resolveNft_internal_macro$
 }
-;; emitting 1 value(s)
-PUSH S1
+OVER
 PUSHCONT {
 	PUSH S3
 	CTOS
@@ -549,43 +503,28 @@ PUSHCONT {
 }
 IFELSE
 IFREF {
-	CALL $c7_to_c4$
+	CALL $upd_only_time_in_c4$
 }
-TRUE
-SETGLOB 7
+THROW 0
 
 .globl	resolveNft_internal
 .type	resolveNft_internal, @function
 CALL $resolveNft_internal_macro$
 
 .macro resolveNft_internal_macro
-;; param: addrRoot
-;; param: id
-;; ret param: addrNft
-PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
-; function resolveNft
-;; push identifier addrRoot
-PUSH S2
+.loc resolvers/NftResolver.sol, 21
+SWAP
 CALLREF {
 	CALL $_buildNftCode_internal_macro$
 }
-;; decl: code
-;; push identifier code
-;; push identifier id
-PUSH2 S0, S2
+.loc resolvers/NftResolver.sol, 22
+SWAP
 CALLREF {
 	CALL $_buildNftState_internal_macro$
 }
-;; decl: state
-;; push identifier state
-;; decl: hashState
-;; address.makeAddrStd()
-;; push identifier hashState
-; expValue
-; end expValue
-; colValue
-; end colValue
+.loc resolvers/NftResolver.sol, 23
 HASHCU
+.loc resolvers/NftResolver.sol, 24
 PUSHINT 0
 NEWC
 STSLICECONST x9_
@@ -593,35 +532,22 @@ STI 8
 STU 256
 ENDC
 CTOS
-POP S2
-DROP
-; end function resolveNft
-BLKDROP2 2, 1
+.loc resolvers/NftResolver.sol, 0
 
 .globl	_buildNftCode_internal
 .type	_buildNftCode_internal, @function
 CALL $_buildNftCode_internal_macro$
 
 .macro _buildNftCode_internal_macro
-;; param: addrRoot
-; function _buildNftCode
+.loc resolvers/NftResolver.sol, 29
 NEWC
-;; decl: salt
-; expValue
-; end expValue
-;; push identifier addrRoot
-DUP2
 STSLICE
-; colValue
-NIP
-; end colValue
-;; return
-;; push identifier _codeNft
+.loc resolvers/NftResolver.sol, 30
 GETGLOB 10
 CTOS
-;; push identifier salt
-PUSH S1
+SWAP
 ENDC
+
 CALLREF {
 	PUSH S1
 	PUSHSLICE x8adb35
@@ -636,6 +562,7 @@ CALLREF {
 		CALLREF {
 			
 			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
+
 			PUSHSLICE xF4A4_
 			SDBEGINSX
 			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
@@ -670,6 +597,7 @@ CALLREF {
 			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
 			STBREF      ; selfCallCode restUsualSelector usualBuilder
 			STSLICE     ; selfCallCode usualBuilder
+
 		}
 		NEWC        ; selfCallCode usualBuilder mainBuilder
 		STSLICECONST x8adb35
@@ -683,6 +611,7 @@ CALLREF {
 		CALLREF {
 			
 			LDREFRTOS  ; selfCallCode salt restUsualSelector intSelector
+
 			PUSHSLICE xF4A4_
 			SDBEGINSX
 			LDDICT     ; selfCallCode salt restUsualSelector dict intSelector
@@ -717,34 +646,28 @@ CALLREF {
 			NEWC        ; selfCallCode restUsualSelector builder usualBuilder
 			STBREF      ; selfCallCode restUsualSelector usualBuilder
 			STSLICE     ; selfCallCode usualBuilder
+
 		}
 		ENDC
 	}
 	IFELSE
 }
-NIP
-; end function _buildNftCode
-NIP
+.loc resolvers/NftResolver.sol, 0
 
 .globl	_buildNftState_internal
 .type	_buildNftState_internal, @function
 CALL $_buildNftState_internal_macro$
 
 .macro _buildNftState_internal_macro
-;; param: code
-;; param: id
-; function _buildNftState
-;; return
-NEWDICT
+.loc resolvers/NftResolver.sol, 37
 PUSHINT 0
 NEWC
 STU 256
 PUSHINT 0
-ROT
+NEWDICT
 PUSHINT 64
 DICTUSETB
-;; push identifier id
-PUSH S1
+SWAP
 NEWC
 STU 256
 PUSHINT 1
@@ -754,43 +677,22 @@ DICTUSETB
 NEWC
 STDICT
 ENDC
-;; push identifier code
-PUSH S2
+SWAP
 NEWC
 STSLICECONST x2_
 STOPTREF
 STOPTREF
 STZERO
 ENDC
-; end function _buildNftState
-BLKDROP2 2, 1
-
-.macro c7_to_c4
-GETGLOB 13
-GETGLOB 12
-GETGLOB 11
-GETGLOB 10
-GETGLOB 6
-GETGLOB 3
-GETGLOB 2
-NEWC
-STU 256
-STU 64
-STI 1
-STREF
-STU 256
-STU 256
-STU 128
-ENDC
-POP C4
+.loc resolvers/NftResolver.sol, 0
 
 .macro c4_to_c7
 PUSHROOT
 CTOS
-LDU 256      ; pubkey c4
-LDU 64      ; pubkey timestamp c4
-LDI 1       ; pubkey [timestamp] constructor_flag memory
-;; decode TvmCell
+LDU 256 ; pubkey c4
+LDU 64 ; pubkey timestamp c4
+LDU 1 ; ctor flag
+NIP
 LDREF
 LDU 256
 LDU 256
@@ -800,9 +702,7 @@ SETGLOB 13
 SETGLOB 12
 SETGLOB 11
 SETGLOB 10
-; pubkey [timestamp] constructor_flag
-SETGLOB 6   ; pubkey [timestamp]
-SETGLOB 3   ; pubkey
+SETGLOB 3
 SETGLOB 2
 
 .macro c4_to_c7_with_init_storage
@@ -810,27 +710,19 @@ PUSHROOT
 CTOS
 SBITS
 GTINT 1
-PUSHREFCONT {
-	CALL $c4_to_c7$
-}
 PUSHCONT {
 	PUSHINT 0
 	PUSHROOT
 	CTOS
-	PLDDICT   ; D
-	; init _codeNft
+	PLDDICT ; D
 	PUSHREF {
 	}
-	SETGLOB 10
-	; init _ownerPubkey
 	PUSHINT 0
-	SETGLOB 11
-	; init _totalMinted
-	PUSHINT 0
-	SETGLOB 12
-	; init _remainOnNft
-	PUSHINT 0
+	BLKPUSH 2, 0
 	SETGLOB 13
+	SETGLOB 12
+	SETGLOB 11
+	SETGLOB 10
 	PUSHINT 64
 	DICTUGET
 	THROWIFNOT 61
@@ -838,52 +730,91 @@ PUSHCONT {
 	SETGLOB 2
 	PUSHINT 0 ; timestamp
 	SETGLOB 3
-	PUSHINT 0 ; constructor_flag
-	SETGLOB 6
-	;; init state var: _remainOnNft
 	PUSHINT 300000000
 	SETGLOB 13
 }
-IFELSE
+IFREFELSE {
+	CALL $c4_to_c7$
+}
+
+.macro c7_to_c4
+GETGLOB 13
+GETGLOB 12
+GETGLOB 11
+GETGLOB 10
+GETGLOB 3
+GETGLOB 2
+NEWC
+STU 256
+STU 64
+STONE
+STREF
+STU 256
+STU 256
+STU 128
+ENDC
+POPROOT
+
+.macro upd_only_time_in_c4
+PUSHROOT
+CTOS
+LDU 256
+LDU 64
+NIP
+GETGLOB 3
+ROT
+NEWC
+STU 256
+STU 64
+STSLICE
+ENDC
+POPROOT
 
 .internal-alias :main_internal, 0
 .internal :main_internal
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Function: main_internal
-;; param: contract_balance
-;; param: msg_balance
-;; param: int_msg_info
-;; param: msg_body_slice
-;; param: transaction_type
+PUSHROOT
+CTOS
+SBITS
+NEQINT 1
+SETGLOB 6
 PUSH S2
 CTOS
-LDU 4       ; bounced tail
-LDMSGADDR   ; bounced src tail
+LDU 4 ; bounced tail
+LDMSGADDR ; bounced src tail
 DROP
 SETGLOB 9
 MODPOW2 1
 IFRET
-PUSH S1    ; body
-SEMPTY     ; isEmpty
-IFRET
-PUSH S1 ; body
+OVER
+SEMPTY ; isEmpty
+IFJMPREF {
+	GETGLOB 6
+	THROWIFNOT 76
+}
+OVER
 LDUQ 32  ; [funcId] body' ok
-THROWIFNOT 60 ; funcId body'
-PUSH S1 ; funcId body' funcId
-IFNOTRET
+THROWIFNOT 60
+OVER
+IFNOTJMPREF {
+	GETGLOB 6
+	THROWIFNOT 76
+}
 SWAP
 CALLREF {
 	CALL $public_function_selector$
 }
-GETGLOB 7
-ISNULL
-THROWIF 60
+THROW 60
 
 .internal-alias :main_external, -1
 .internal :main_external
+PUSHROOT
+CTOS
+SBITS
+NEQINT 1
+SETGLOB 6
 PUSHSLICE x8000000000000000000000000000000000000000000000000000000000000000001_
 SETGLOB 9
-PUSH S1
+OVER
 CALLREF {
 	CALL $c4_to_c7_with_init_storage$
 }
@@ -892,48 +823,46 @@ SWAP
 PUSHCONT {
 	PUSHINT 512
 	LDSLICEX ; signatureSlice msgSlice
-	DUP      ; signatureSlice msgSlice msgSlice
-	HASHSU   ; signatureSlice msgSlice hashMsgSlice
-	SWAP  ; signatureSlice hashMsgSlice msgSlice
+	DUP
+	HASHSU ; signatureSlice msgSlice hashMsgSlice
+	SWAP
 	LDU 1 ; signatureSlice hashMsgSlice havePubkey msgSlice
-	SWAP  ; signatureSlice hashMsgSlice msgSlice havePubkey
+	SWAP
 	PUSHCONT {
-		LDU 256       ; signatureSlice hashMsgSlice pubkey msgSlice
-		XCHG s3
+		LDU 256 ; signatureSlice hashMsgSlice pubkey msgSlice
+		XCHG S3
 		SWAP
 	}
 	PUSHCONT {
-		XCHG s2
+		XCHG S2
 		GETGLOB 2
 	}
 	IFELSE
 	DUP
 	SETGLOB 5
-	CHKSIGNU      ; msgSlice isSigned
-	THROWIFNOT 40 ; msgSlice
+	CHKSIGNU ; msgSlice isSigned
+	THROWIFNOT 40
 }
 PUSHCONT {
-	LDU 1      ; havePubkey msgSlice
-	SWAP       ; msgSlice havePubkey
-	THROWIF 58 ; msgSlice
+	LDU 1 ; havePubkey msgSlice
+	SWAP
+	THROWIF 58
 }
 IFELSE
-LDU 64                         ; timestamp msgSlice
-SWAP                           ; msgSlice timestamp
-CALL $replay_protection_macro$ ; msgSlice
-LDU 32  ; expireAt msgSlice
-SWAP    ; msgSlice expireAt
-NOW     ; msgSlice expireAt now
+LDU 64 ; timestamp msgSlice
+SWAP
+CALL $replay_protection_macro$
+LDU 32 ; expireAt msgSlice
+SWAP
+NOW ; msgSlice expireAt now
 GREATER ; msgSlice expireAt>now
 THROWIFNOT 57
-LDU  32 ; funcId body
-SWAP    ; body funcId
+LDU 32 ; funcId body
+SWAP
 CALLREF {
 	CALL $public_function_selector$
 }
-GETGLOB 7
-ISNULL
-THROWIF 60
+THROW 60
 
 .macro public_function_selector
 DUP
@@ -966,7 +895,7 @@ IFJMPREF {
 	}
 }
 DUP
-PUSHINT 1769234753
+PUSHINT 1403760811
 LEQ
 IFJMPREF {
 	DUP
@@ -982,15 +911,16 @@ IFJMPREF {
 		CALL $resolveNft$
 	}
 	DUP
+	PUSHINT 1029653725
+	EQUAL
+	IFJMPREF {
+		CALL $mintNft$
+	}
+	DUP
 	PUSHINT 1403760811
 	EQUAL
 	IFJMPREF {
 		CALL $constructor$
 	}
-	DUP
-	PUSHINT 1769234753
-	EQUAL
-	IFJMPREF {
-		CALL $mintNft$
-	}
 }
+

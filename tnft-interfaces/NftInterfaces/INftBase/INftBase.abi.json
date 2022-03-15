@@ -4,35 +4,6 @@
 	"header": ["pubkey", "time", "expire"],
 	"functions": [
 		{
-			"name": "constructor",
-			"inputs": [
-				{"name":"addrOwner","type":"address"},
-				{"name":"json","type":"string"},
-				{"name":"dataName","type":"string"}
-			],
-			"outputs": [
-			]
-		},
-		{
-			"name": "supportsInterface",
-			"inputs": [
-				{"name":"answerId","type":"uint32"},
-				{"name":"interfaceID","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"value0","type":"bool"}
-			]
-		},
-		{
-			"name": "getName",
-			"inputs": [
-				{"name":"answerId","type":"uint32"}
-			],
-			"outputs": [
-				{"name":"dataName","type":"string"}
-			]
-		},
-		{
 			"name": "transferOwnership",
 			"inputs": [
 				{"name":"sendGasToAddr","type":"address"},
