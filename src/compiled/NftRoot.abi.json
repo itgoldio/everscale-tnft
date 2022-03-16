@@ -1,5 +1,6 @@
 {
 	"ABI version": 2,
+	"version": "2.2",
 	"header": ["pubkey", "time", "expire"],
 	"functions": [
 		{
@@ -14,8 +15,8 @@
 		{
 			"name": "mintNft",
 			"inputs": [
-				{"name":"dataName","type":"bytes"},
-				{"name":"json","type":"bytes"}
+				{"name":"dataName","type":"string"},
+				{"name":"json","type":"string"}
 			],
 			"outputs": [
 			]
@@ -84,5 +85,14 @@
 			"outputs": [
 			]
 		}
+	],
+	"fields": [
+		{"name":"_pubkey","type":"uint256"},
+		{"name":"_timestamp","type":"uint64"},
+		{"name":"_constructorFlag","type":"bool"},
+		{"name":"_codeNft","type":"cell"},
+		{"name":"_ownerPubkey","type":"uint256"},
+		{"name":"_totalMinted","type":"uint256"},
+		{"name":"_remainOnNft","type":"uint128"}
 	]
 }
